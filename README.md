@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FastSwype 🚀
 
-## Getting Started
+**Find Your FYP Partner for Just PKR 250 (~$1)**
 
-First, run the development server:
+A brutalist-design Tinder-style matching app for FAST University students to find Final Year Project partners.
+
+## ✨ Features
+
+- 🎯 **2 FREE Proposals** - Try before you buy!
+- 💰 **Only PKR 250** - One-time payment for unlimited proposals
+- ⚡ **Swipe to Match** - Like Tinder, but for your GPA
+- 🎓 **FAST Students Only** - Email validation with campus verification
+- 💬 **Direct Proposals** - Send personalized messages
+- 🔒 **Secure** - Built with Supabase authentication and RLS policies
+
+## 🚀 Getting Started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework**: Next.js 16.1.4 with React 19.2.3
+- **Database**: Supabase (PostgreSQL with RLS)
+- **Styling**: Tailwind CSS 4 + Styled Components
+- **Authentication**: Supabase Auth with FAST email validation
+- **Payment**: Manual verification via bank transfer
 
-## Learn More
+## 💳 Payment Flow
 
-To learn more about Next.js, take a look at the following resources:
+1. Users get 2 free proposals
+2. After that, payment modal appears
+3. Send PKR 250 to IBAN account
+4. Upload screenshot
+5. Admin verifies within 24 hours
+6. Unlimited proposals unlocked!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 👨‍💻 Creator
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Built by a broke FAST student trying to get a new laptop 💻
 
-## Deploy on Vercel
+**Connect with me**: [bento.me/shahmpooh](https://bento.me/shahmpooh)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📝 License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open source and available under the MIT License.

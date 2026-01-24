@@ -32,14 +32,10 @@ const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
   width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: #e5e5f7;
-  z-index: 9999;
-
+  height: 100%;
+  min-height: 200px;
+  
   .wheel-and-hamster {
     --dur: 1s;
     position: relative;

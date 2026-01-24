@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useClickSound } from "@/hooks/useClickSound";
 
 interface TooltipProps {
   message: string;
@@ -11,6 +12,7 @@ interface TooltipProps {
 
 export default function Tooltip({ message, storageKey, delay = 2000 }: TooltipProps) {
   const [show, setShow] = useState(false);
+  const { playClick } = useClickSound();
 
   useEffect(() => {
     // Check if user has seen this tooltip
@@ -31,6 +33,7 @@ export default function Tooltip({ message, storageKey, delay = 2000 }: TooltipPr
   }, [storageKey, delay]);
 
   const handleClose = () => {
+    playClick();
     setShow(false);
     localStorage.setItem(`tooltip_seen_${storageKey}`, 'true');
   };
@@ -50,14 +53,14 @@ export default function Tooltip({ message, storageKey, delay = 2000 }: TooltipPr
 
 const TooltipWrapper = styled.div`
   position: fixed;
-  bottom: 20px;
+  top: 80px;
   right: 20px;
   z-index: 10000;
-  animation: slideUp 0.3s ease-out;
+  animation: slideDown 0.3s ease-out;
 
-  @keyframes slideUp {
+  @keyframes slideDown {
     from {
-      transform: translateY(100px);
+      transform: translateY(-100px);
       opacity: 0;
     }
     to {
@@ -69,14 +72,14 @@ const TooltipWrapper = styled.div`
   @media (max-width: 640px) {
     left: 20px;
     right: 20px;
-    bottom: 20px;
+    top: 70px;
   }
 `;
 
 const TooltipBox = styled.div`
   background: #fff;
   border: 3px solid #000;
-  box-shadow: 6px 6px 0 #000;
+  box-shadow: 6px 6px 0 #58A0C8;
   padding: 16px 20px;
   display: flex;
   align-items: flex-start;

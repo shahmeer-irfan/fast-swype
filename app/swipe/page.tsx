@@ -201,7 +201,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -2px;
-    color: #000;
+    color: #113F67;
     cursor: pointer;
     transition: all 0.2s;
   }
@@ -221,7 +221,7 @@ const StyledWrapper = styled.div`
     height: 48px;
     background: #fff;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #58A0C8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -237,7 +237,7 @@ const StyledWrapper = styled.div`
     bottom: -40px;
     left: 50%;
     transform: translateX(-50%);
-    background: #000;
+    background: #58A0C8;
     color: #fff;
     padding: 6px 12px;
     font-size: 11px;
@@ -245,7 +245,7 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     white-space: nowrap;
     border: 2px solid #000;
-    box-shadow: 3px 3px 0 #000;
+    box-shadow: 3px 3px 0 #113F67;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s;
@@ -260,7 +260,7 @@ const StyledWrapper = styled.div`
   .profile-button:hover,
   .proposals-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #58A0C8;
   }
 
   .profile-button:active,
@@ -316,7 +316,7 @@ const StyledWrapper = styled.div`
     background: #fff;
     border: 4px solid #000;
     padding: 60px 40px;
-    box-shadow: 10px 10px 0 #000;
+    box-shadow: 10px 10px 0 #58A0C8;
     text-align: center;
     max-width: 500px;
     width: 100%;
@@ -333,7 +333,7 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     letter-spacing: -2px;
     margin-bottom: 15px;
-    color: #000;
+    color: #113F67;
   }
 
   .completion-text {
@@ -357,10 +357,10 @@ const StyledWrapper = styled.div`
     font-size: 22px;
     font-weight: 900;
     text-transform: uppercase;
-    background: #000;
+    background: #58A0C8;
     color: #fff;
     border: 4px solid #000;
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #113F67;
     cursor: pointer;
     transition: all 0.2s;
     letter-spacing: -1px;
@@ -368,19 +368,19 @@ const StyledWrapper = styled.div`
 
   .completion-button.secondary {
     background: #fff;
-    color: #000;
+    color: #113F67;
+    box-shadow: 6px 6px 0 #58A0C8;
   }
 
   .completion-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 8px 8px 0 #000;
-    background: #fff;
-    color: #000;
+    box-shadow: 8px 8px 0 #113F67;
   }
 
   .completion-button.secondary:hover {
-    background: #000;
+    background: #58A0C8;
     color: #fff;
+    box-shadow: 8px 8px 0 #113F67;
   }
 
   .completion-button:active {

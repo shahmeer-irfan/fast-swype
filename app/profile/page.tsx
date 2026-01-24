@@ -151,7 +151,7 @@ const StyledWrapper = styled.div`
     background: #fff;
     color: #000;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #58A0C8;
     cursor: pointer;
     transition: all 0.2s;
   }
@@ -162,7 +162,7 @@ const StyledWrapper = styled.div`
 
   .back-button:hover, .edit-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #58A0C8;
   }
 
   .back-button:active, .edit-button:active {
@@ -175,7 +175,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -1.5px;
-    color: #000;
+    color: #113F67;
   }
 
   .content-wrapper {
@@ -190,7 +190,7 @@ const StyledWrapper = styled.div`
     background: #fff;
     border: 3px solid #000;
     padding: 25px 20px;
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #58A0C8;
     width: 100%;
   }
 
@@ -220,8 +220,8 @@ const StyledWrapper = styled.div`
     width: 80px;
     height: 80px;
     border: 3px solid #000;
-    box-shadow: 3px 3px 0 #000;
-    background: #000;
+    box-shadow: 3px 3px 0 #58A0C8;
+    background: #58A0C8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -243,7 +243,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -2px;
-    color: #000;
+    color: #113F67;
     margin-bottom: 8px;
     line-height: 1;
   }
@@ -276,24 +276,24 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     text-align: center;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #58A0C8;
   }
 
   .domain-badge {
-    background: #000;
+    background: #58A0C8;
     color: #fff;
   }
 
   .looking-badge {
     background: #fff;
-    color: #000;
+    color: #113F67;
   }
 
   .section-card {
     background: #fff;
     border: 3px solid #000;
     padding: 20px;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #58A0C8;
   }
 
   .section-title {
@@ -301,7 +301,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #000;
+    color: #113F67;
     margin-bottom: 12px;
     padding-bottom: 8px;
     border-bottom: 2px solid #000;
@@ -345,10 +345,10 @@ const StyledWrapper = styled.div`
     font-size: 22px;
     font-weight: 900;
     text-transform: uppercase;
-    background: #000;
+    background: #58A0C8;
     color: #fff;
     border: 4px solid #000;
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #113F67;
     cursor: pointer;
     transition: all 0.2s;
     letter-spacing: -1px;
@@ -356,9 +356,7 @@ const StyledWrapper = styled.div`
 
   .swipe-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 8px 8px 0 #000;
-    background: #fff;
-    color: #000;
+    box-shadow: 8px 8px 0 #113F67;
   }
 
   .swipe-button:active {

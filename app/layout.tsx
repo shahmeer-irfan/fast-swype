@@ -3,6 +3,7 @@ import { Montserrat, Karla } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import StyledComponentsRegistry from "@/lib/registry";
+import MusicPlayer from "@/components/MusicPlayer";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -26,7 +27,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${montserrat.variable} ${karla.variable} antialiased`}>
         <StyledComponentsRegistry>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+            <MusicPlayer />
+          </AuthProvider>
         </StyledComponentsRegistry>
       </body>
     </html>

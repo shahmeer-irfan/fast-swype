@@ -218,7 +218,7 @@ const StyledWrapper = styled.div`
     height: 48px;
     background: #fff;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #58A0C8;
     font-size: 24px;
     font-weight: 900;
     color: #000;
@@ -231,7 +231,7 @@ const StyledWrapper = styled.div`
 
   .back-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #58A0C8;
   }
 
   .back-button:active {
@@ -262,7 +262,7 @@ const StyledWrapper = styled.div`
     padding: 8px 16px;
     background: #fff;
     border: 3px solid #000;
-    box-shadow: 3px 3px 0 #000;
+    box-shadow: 3px 3px 0 #58A0C8;
     font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
@@ -273,14 +273,14 @@ const StyledWrapper = styled.div`
 
   .filter-tab:hover {
     transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #58A0C8;
   }
 
   .filter-tab:active,
   .filter-tab.active {
     transform: translate(3px, 3px);
     box-shadow: none;
-    background: #000;
+    background: #58A0C8;
     color: #fff;
   }
 
@@ -293,7 +293,7 @@ const StyledWrapper = styled.div`
   .proposal-card {
     background: #fff;
     border: 3px solid #000;
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #58A0C8;
     padding: 20px;
     cursor: pointer;
     transition: all 0.2s;
@@ -301,7 +301,7 @@ const StyledWrapper = styled.div`
 
   .proposal-card:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 8px 8px 0 #000;
+    box-shadow: 8px 8px 0 #58A0C8;
   }
 
   .proposal-card:active {
@@ -381,7 +381,7 @@ const StyledWrapper = styled.div`
     padding: 60px 20px;
     background: #fff;
     border: 3px solid #000;
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #58A0C8;
   }
 
   .empty-icon {

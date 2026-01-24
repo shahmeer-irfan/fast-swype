@@ -149,14 +149,15 @@ export async function getAllProfiles(excludeUserId?: string): Promise<Profile[]>
 }
 
 export async function getUnswipedProfiles(userId: string) {
-  // Get all profiles except current user and already swiped
-  const { data: swipedIds } = await supabase
-    .from('swipes')
-    .select('swiped_user_id')
-    .eq('user_id', userId);
+  // Get profiles where user has sent proposals (exclude these forever)
+  const { data: proposalIds } = await supabase
+    .from('proposals')
+    .select('to_user_id')
+    .eq('from_user_id', userId);
 
-  const swipedUserIds = swipedIds?.map(s => s.swiped_user_id) || [];
+  const proposalUserIds = proposalIds?.map(p => p.to_user_id) || [];
 
+  // Get all profiles except current user and users who already received proposals
   let query = supabase
     .from('profiles')
     .select(`
@@ -166,8 +167,9 @@ export async function getUnswipedProfiles(userId: string) {
     `)
     .neq('id', userId);
 
-  if (swipedUserIds.length > 0) {
-    query = query.not('id', 'in', `(${swipedUserIds.join(',')})`);
+  // Only exclude profiles where user has sent proposals, not just swiped left
+  if (proposalUserIds.length > 0) {
+    query = query.not('id', 'in', `(${proposalUserIds.join(',')})`);
   }
 
   const { data, error } = await query;

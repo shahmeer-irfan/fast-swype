@@ -1,11 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #e5e5f7;
-  --foreground: #000000;
-  --primary: #000000;
-  --primary-light: #e5e5f7;
-  --border-color: #000000;
+  --background: #FDF5AA;
+  --foreground: #113F67;
+  --primary: #113F67;
+  --primary-medium: #34699A;
+  --primary-light: #58A0C8;
+  --accent: #FDF5AA;
+  --border-color: #113F67;
 }
 
 @theme inline {
@@ -42,15 +44,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 72px;
+  font-size: 50px;
 }
 
 h2 {
-  font-size: 56px;
+  font-size: 60px;
 }
 
 h3 {
-  font-size: 40px;
+  font-size: 32px;
 }
 
 h4 {

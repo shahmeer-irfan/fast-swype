@@ -407,7 +407,7 @@ const StyledWrapper = styled.div`
     padding: 12px;
     background: #ff6b6b;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #58A0C8;
     color: #fff;
     font-weight: 700;
     text-align: center;
@@ -429,14 +429,14 @@ const StyledWrapper = styled.div`
     background: #fff;
     color: #000;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #58A0C8;
     cursor: pointer;
     transition: all 0.2s;
   }
 
   .back-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #58A0C8;
   }
 
   .back-button:active {
@@ -468,7 +468,7 @@ const StyledWrapper = styled.div`
     background: #fff;
     border: 3px solid #000;
     padding: 20px;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #58A0C8;
   }
 
   .section-title {
@@ -520,7 +520,7 @@ const StyledWrapper = styled.div`
     width: 120px;
     height: 120px;
     border: 4px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #58A0C8;
     overflow: hidden;
     background: #f0f0f0;
   }
@@ -568,7 +568,7 @@ const StyledWrapper = styled.div`
     border: 3px solid #000;
     background: #fff;
     color: #000;
-    box-shadow: 3px 3px 0 #000;
+    box-shadow: 3px 3px 0 #58A0C8;
     cursor: pointer;
     transition: all 0.2s;
     text-align: center;
@@ -577,7 +577,7 @@ const StyledWrapper = styled.div`
   .upload-button:hover,
   .remove-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0 #000;
+    box-shadow: 5px 5px 0 #58A0C8;
   }
 
   .upload-button:active,
@@ -599,7 +599,7 @@ const StyledWrapper = styled.div`
     border: 3px solid #000;
     background: #fff;
     color: #000;
-    box-shadow: 3px 3px 0 #000;
+    box-shadow: 3px 3px 0 #58A0C8;
     transition: all 0.2s;
     font-family: "Arial", "Helvetica", sans-serif;
   }
@@ -607,7 +607,7 @@ const StyledWrapper = styled.div`
   .form-input:focus, .form-textarea:focus, .form-select:focus {
     outline: none;
     transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0 #000;
+    box-shadow: 5px 5px 0 #58A0C8;
   }
 
   .form-textarea {
@@ -635,13 +635,13 @@ const StyledWrapper = styled.div`
 
   .tag-select:hover {
     transform: translate(-1px, -1px);
-    box-shadow: 3px 3px 0 #000;
+    box-shadow: 3px 3px 0 #58A0C8;
   }
 
   .tag-select.selected {
-    background: #000;
+    background: #58A0C8;
     color: #fff;
-    box-shadow: 2px 2px 0 #000;
+    box-shadow: 2px 2px 0 #58A0C8;
   }
 
   .submit-button {
@@ -650,10 +650,10 @@ const StyledWrapper = styled.div`
     font-size: 20px;
     font-weight: 900;
     text-transform: uppercase;
-    background: #000;
+    background: #58A0C8;
     color: #fff;
     border: 3px solid #000;
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #58A0C8;
     cursor: pointer;
     transition: all 0.2s;
     letter-spacing: -1px;
@@ -661,7 +661,7 @@ const StyledWrapper = styled.div`
 
   .submit-button:hover:not(:disabled) {
     transform: translate(-2px, -2px);
-    box-shadow: 8px 8px 0 #000;
+    box-shadow: 8px 8px 0 #58A0C8;
     background: #00ff00;
     color: #000;
   }

@@ -142,9 +142,9 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
 
   const getStatusColor = (s: string) => {
     const colors: Record<string, { bg: string; text: string }> = {
-      pending: { bg: "#fff", text: "#000" },
-      accepted: { bg: "#000", text: "#fff" },
-      rejected: { bg: "#e5e5f7", text: "#000" },
+      pending: { bg: "#fff", text: "#58A0C8" },
+      accepted: { bg: "#58A0C8", text: "#fff" },
+      rejected: { bg: "#e5e5f7", text: "#113F67" },
     };
     return colors[s] || colors.pending;
   };
@@ -321,6 +321,9 @@ const StyledWrapper = styled.div`
     position: relative;
     max-width: 600px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .header {
@@ -328,6 +331,7 @@ const StyledWrapper = styled.div`
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    width: 100%;
   }
 
   .back-button {
@@ -335,10 +339,10 @@ const StyledWrapper = styled.div`
     height: 48px;
     background: #fff;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #113F67;
     font-size: 24px;
     font-weight: 900;
-    color: #000;
+    color: #58A0C8;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
@@ -348,7 +352,7 @@ const StyledWrapper = styled.div`
 
   .back-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #113F67;
   }
 
   .back-button:active {
@@ -361,7 +365,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -1px;
-    color: #000;
+    color: #113F67;
   }
 
   .spacer {
@@ -371,8 +375,9 @@ const StyledWrapper = styled.div`
   .proposal-detail-card {
     background: #fff;
     border: 3px solid #000;
-    box-shadow: 8px 8px 0 #000;
+    box-shadow: 8px 8px 0 #58A0C8;
     padding: 30px;
+    width: 100%;
   }
 
   .user-section {
@@ -387,7 +392,7 @@ const StyledWrapper = styled.div`
   .user-avatar {
     width: 64px;
     height: 64px;
-    background: #000;
+    background: #58A0C8;
     color: #fff;
     border: 3px solid #000;
     display: flex;
@@ -406,7 +411,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -0.5px;
-    color: #000;
+    color: #113F67;
     margin-bottom: 4px;
   }
 
@@ -437,14 +442,14 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #000;
+    color: #113F67;
     margin-bottom: 12px;
   }
 
   .message-content {
     font-size: 18px;
     line-height: 1.6;
-    color: #000;
+    color: #113F67;
     padding: 16px;
     background: #f5f5f5;
     border: 2px solid #000;
@@ -467,7 +472,7 @@ const StyledWrapper = styled.div`
     flex: 1;
     padding: 16px;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #113F67;
     font-size: 14px;
     font-weight: 900;
     text-transform: uppercase;
@@ -478,7 +483,7 @@ const StyledWrapper = styled.div`
 
   .action-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #113F67;
   }
 
   .action-button:active {
@@ -494,18 +499,11 @@ const StyledWrapper = styled.div`
 
   .reject-button {
     background: #fff;
-    color: #000;
+    color: #113F67;
   }
 
   .accept-button {
-    background: #000;
-    color: #fff;
-  }
-    color: #000;
-  }
-
-  .accept-button {
-    background: #000;
+    background: #58A0C8;
     color: #fff;
   }
 
@@ -545,13 +543,13 @@ const StyledWrapper = styled.div`
   }
 
   .status-message.accepted {
-    background: #000;
+    background: #58A0C8;
     color: #fff;
   }
 
   .status-message.rejected {
     background: #e5e5f7;
-    color: #000;
+    color: #113F67;
   }
 
   .sent-status-info {
@@ -585,7 +583,7 @@ const StyledWrapper = styled.div`
   .modal-card {
     background: #fff;
     border: 4px solid #000;
-    box-shadow: 12px 12px 0 #000;
+    box-shadow: 12px 12px 0 #58A0C8;
     padding: 30px;
     max-width: 450px;
     width: 100%;
@@ -595,7 +593,7 @@ const StyledWrapper = styled.div`
     font-size: 24px;
     font-weight: 900;
     text-transform: uppercase;
-    color: #000;
+    color: #113F67;
     margin-bottom: 16px;
     letter-spacing: -0.5px;
   }
@@ -604,7 +602,7 @@ const StyledWrapper = styled.div`
     font-size: 14px;
     font-weight: 600;
     line-height: 1.5;
-    color: #000;
+    color: #113F67;
     margin-bottom: 12px;
   }
 
@@ -625,7 +623,7 @@ const StyledWrapper = styled.div`
     flex: 1;
     padding: 14px;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #113F67;
     font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
@@ -635,7 +633,7 @@ const StyledWrapper = styled.div`
 
   .modal-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #113F67;
   }
 
   .modal-button:active {
@@ -645,11 +643,11 @@ const StyledWrapper = styled.div`
 
   .cancel-button {
     background: #e5e5f7;
-    color: #000;
+    color: #113F67;
   }
 
   .confirm-button {
-    background: #000;
+    background: #58A0C8;
     color: #fff;
   }
 
@@ -701,7 +699,7 @@ const StyledWrapper = styled.div`
   .error-card {
     background: #fff;
     border: 3px solid #000;
-    box-shadow: 8px 8px 0 #000;
+    box-shadow: 8px 8px 0 #58A0C8;
     padding: 40px;
     text-align: center;
     max-width: 400px;
@@ -716,16 +714,16 @@ const StyledWrapper = styled.div`
     font-size: 24px;
     font-weight: 900;
     text-transform: uppercase;
-    color: #000;
+    color: #113F67;
     margin-bottom: 24px;
   }
 
   .back-button-large {
     padding: 12px 24px;
-    background: #000;
+    background: #58A0C8;
     color: #fff;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #113F67;
     font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
@@ -735,7 +733,7 @@ const StyledWrapper = styled.div`
 
   .back-button-large:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #113F67;
   }
 
   .back-button-large:active {

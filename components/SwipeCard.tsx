@@ -187,6 +187,7 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
                   handleCloseProfile();
                   handleReject();
                 }}
+                onMouseEnter={playDismiss}
               >
                 Pass
               </button>
@@ -196,6 +197,7 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
                   handleCloseProfile();
                   handleFlip();
                 }}
+                onMouseEnter={playConfirm}
               >
                 Send Proposal
               </button>
@@ -260,6 +262,7 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
               <button 
                 className="brutalist-card__button brutalist-card__button--view" 
                 onClick={handleViewProfile}
+                onMouseEnter={playClick}
                 type="button"
               >
                 View Profile
@@ -267,6 +270,7 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
               <button 
                 className="brutalist-card__button brutalist-card__button--send" 
                 onClick={handleFlip}
+                onMouseEnter={playClick}
                 type="button"
               >
                 Let's Go
@@ -315,6 +319,7 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
                 <button 
                   className="brutalist-card__button brutalist-card__button--back" 
                   onClick={handleFlip}
+                  onMouseEnter={playClick}
                   type="button"
                   disabled={sending}
                 >
@@ -323,6 +328,7 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
                 <button 
                   className="brutalist-card__button brutalist-card__button--confirm" 
                   type="submit"
+                  onMouseEnter={playConfirm}
                   disabled={sending}
                 >
                   {sending ? 'Sending...' : 'Send It'}
@@ -373,6 +379,7 @@ const StyledWrapper = styled.div`
     font-family: "Arial", sans-serif;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
   .card-back {
@@ -399,8 +406,8 @@ const StyledWrapper = styled.div`
     height: 120px;
     margin: 0 auto 20px;
     border: 4px solid #000;
-    box-shadow: 4px 4px 0 #000;
-    background: #000;
+    box-shadow: 4px 4px 0 #58A0C8;
+    background: #58A0C8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -420,7 +427,7 @@ const StyledWrapper = styled.div`
 
   .brutalist-card__name {
     font-weight: 900;
-    color: #000;
+    color: #113F67;
     font-size: 32px;
     text-transform: uppercase;
     line-height: 1;
@@ -435,7 +442,7 @@ const StyledWrapper = styled.div`
   }
 
   .meta-tag {
-    background-color: #000;
+    background-color: #58A0C8;
     color: #fff;
     padding: 4px 10px;
     font-size: 11px;
@@ -461,7 +468,7 @@ const StyledWrapper = styled.div`
   .section-title {
     font-size: 11px;
     font-weight: 900;
-    color: #000;
+    color: #113F67;
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -481,7 +488,7 @@ const StyledWrapper = styled.div`
   }
 
   .domain-badge, .looking-badge {
-    background-color: #000;
+    background-color: #58A0C8;
     color: #fff;
     padding: 8px 12px;
     font-size: 12px;
@@ -489,13 +496,14 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     display: inline-block;
     border: 2px solid #000;
-    box-shadow: 3px 3px 0 #000;
+    box-shadow: 3px 3px 0 #113F67;
   }
 
   .looking-badge {
     background-color: #fff;
-    color: #000;
+    color: #113F67;
     border: 3px solid #000;
+    box-shadow: 3px 3px 0 #58A0C8;
   }
 
   .tags-container {
@@ -520,7 +528,7 @@ const StyledWrapper = styled.div`
   }
 
   .availability-badge {
-    background-color: #000;
+    background-color: #58A0C8;
     color: #fff;
     border: 2px solid #000;
     padding: 8px 12px;
@@ -528,7 +536,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     display: inline-block;
-    box-shadow: 3px 3px 0 #000;
+    box-shadow: 3px 3px 0 #113F67;
   }
 
   .swipe-hint {
@@ -574,12 +582,12 @@ const StyledWrapper = styled.div`
   }
 
   .brutalist-card__button--send {
-    background-color: #000;
+    background-color: #58A0C8;
     color: #fff;
   }
 
   .brutalist-card__button--confirm {
-    background-color: #000;
+    background-color: #58A0C8;
     color: #fff;
   }
 
@@ -595,13 +603,13 @@ const StyledWrapper = styled.div`
   }
 
   .brutalist-card__button--send:hover {
-    background-color: #00ff00;
-    color: #000;
+    background-color: #113F67;
+    color: #fff;
   }
 
   .brutalist-card__button--confirm:hover {
-    background-color: #00ff00;
-    color: #000;
+    background-color: #113F67;
+    color: #fff;
   }
 
   .brutalist-card__button--back:hover {
@@ -779,7 +787,7 @@ const StyledWrapper = styled.div`
   }
 
   .modal-header {
-    background: #000;
+    background: #58A0C8;
     color: #fff;
     padding: 30px;
     display: flex;
@@ -792,7 +800,7 @@ const StyledWrapper = styled.div`
     width: 80px;
     height: 80px;
     background: #fff;
-    color: #000;
+    color: #113F67;
     border: 4px solid #fff;
     display: flex;
     align-items: center;
@@ -839,7 +847,7 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 12px;
-    color: #000;
+    color: #113F67;
     padding-bottom: 8px;
     border-bottom: 3px solid #000;
   }
@@ -855,7 +863,7 @@ const StyledWrapper = styled.div`
   .modal-domain,
   .modal-looking,
   .modal-availability {
-    background: #000;
+    background: #58A0C8;
     color: #fff;
     padding: 10px 15px;
     font-size: 13px;
@@ -863,7 +871,7 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     display: inline-block;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #113F67;
   }
 
   .modal-tags {
@@ -913,13 +921,13 @@ const StyledWrapper = styled.div`
   }
 
   .modal-action-button.send-button {
-    background: #000;
+    background: #58A0C8;
     color: #fff;
   }
 
   .modal-action-button.send-button:hover {
-    background: #00ff00;
-    color: #000;
+    background: #113F67;
+    color: #fff;
   }
 
   .modal-action-button:active {

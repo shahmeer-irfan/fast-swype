@@ -139,9 +139,9 @@ const LoginSignupForm = () => {
               setError('');
             }}
           />
-          <div className="w-full h-full border-3 border-black bg-[#e5e5f7] rounded-md shadow-[4px_4px_0_#000] transition-colors">
+          <div className="w-full h-full border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] transition-colors">
             <div
-              className={`absolute w-5 h-5 bg-[#e5e5f7] border-3 border-black rounded-md shadow-[0_3px_0_#000] -top-[3px] transition-transform ${
+              className={`absolute w-5 h-5 bg-white border-3 border-black rounded-md shadow-[0_3px_0_#58A0C8] -top-[3px] transition-transform ${
                 isSignUp ? 'translate-x-[28px]' : 'translate-x-[-3px]'
               }`}
             />
@@ -170,7 +170,7 @@ const LoginSignupForm = () => {
       )}
 
       {/* Card Container */}
-      <div className="relative w-[300px] h-[420px]" style={{ perspective: '1000px' }}>
+      <div className="relative w-[300px] h-[380px]" style={{ perspective: '1000px' }}>
         <div
           className="relative w-full h-full transition-transform duration-700"
           style={{
@@ -180,16 +180,16 @@ const LoginSignupForm = () => {
         >
           {/* Login Card (Front) */}
           <div
-            className="absolute w-full h-full bg-[#e5e5f7] border-3 border-black rounded-md shadow-[4px_4px_0_#000] p-7 flex flex-col items-center justify-center"
+            className="absolute w-full h-full bg-white border-3 border-black rounded-md shadow-[4px_4px_0_#58A0C8] p-6 flex flex-col items-center justify-center"
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
             }}
           >
-            <h2 className="text-4xl font-black uppercase tracking-[-2px] mb-6">
+            <h2 className="!text-lg font-black uppercase tracking-[-2px] mb-7 text-[#113F67]" style={{fontSize: '22px'}}>
               LOG IN
             </h2>
-            <form onSubmit={handleLoginSubmit} className="w-full flex flex-col items-center gap-4">
+            <form onSubmit={handleLoginSubmit} className="w-full flex flex-col items-center gap-3.5">
               <input
                 type="email"
                 placeholder="k220123@nu.edu.pk"
@@ -197,7 +197,7 @@ const LoginSignupForm = () => {
                 onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                 required
                 disabled={loading}
-                className="w-full h-11 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#000] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#000] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
+                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
               />
               <input
                 type="password"
@@ -206,32 +206,32 @@ const LoginSignupForm = () => {
                 onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                 required
                 disabled={loading}
-                className="w-full h-11 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#000] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#000] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
+                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
               />
               <button
                 type="submit"
                 onMouseEnter={playHover}
                 disabled={loading}
-                className="mt-4 w-36 h-12 bg-black text-white border-3 border-black rounded-md shadow-[4px_4px_0_#000] font-black text-base uppercase active:shadow-none active:translate-x-1 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-2 w-36 h-10 bg-[#58A0C8] text-white border-3 border-black rounded-md shadow-[4px_4px_0_#113F67] font-black text-base uppercase active:shadow-none active:translate-x-1 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'WAIT...' : "LET'S GO!"}
               </button>
             </form>
-            <p className="mt-4 text-xs text-gray-600 text-center">
-              Use your FAST email
+            <p className="mt-3 text-xs text-gray-600 text-center">
+              valid FAST email only
             </p>
           </div>
 
           {/* Sign Up Card (Back) */}
           <div
-            className="absolute w-full h-full bg-[#e5e5f7] border-3 border-black rounded-md shadow-[4px_4px_0_#000] p-6 flex flex-col items-center justify-center"
+            className="absolute w-full h-full bg-white border-3 border-black rounded-md shadow-[4px_4px_0_#58A0C8] p-5 flex flex-col items-center justify-center"
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
               transform: 'rotateY(180deg)',
             }}
           >
-            <h2 className="text-3xl font-black uppercase tracking-[-2px] mb-3">
+            <h2 className="text-lg font-black uppercase tracking-[-2px] mb-4 text-[#113F67]" style={{fontSize: '22px'}}>
               SIGN UP
             </h2>
             <form onSubmit={handleSignupSubmit} className="w-full flex flex-col items-center gap-2.5">
@@ -242,7 +242,7 @@ const LoginSignupForm = () => {
                 onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
                 required
                 disabled={loading}
-                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#000] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#000] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
+                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
               />
               <input
                 type="email"
@@ -251,7 +251,7 @@ const LoginSignupForm = () => {
                 onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
                 required
                 disabled={loading}
-                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#000] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#000] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
+                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
               />
               <input
                 type="password"
@@ -260,7 +260,7 @@ const LoginSignupForm = () => {
                 onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
                 required
                 disabled={loading}
-                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#000] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#000] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
+                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
               />
               <input
                 type="password"
@@ -269,19 +269,19 @@ const LoginSignupForm = () => {
                 onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
                 required
                 disabled={loading}
-                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#000] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#000] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
+                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
               />
               <button
                 onMouseEnter={playHover}
                 type="submit"
                 disabled={loading}
-                className="mt-2 w-36 h-11 bg-black text-white border-3 border-black rounded-md shadow-[4px_4px_0_#000] font-black text-sm uppercase active:shadow-none active:translate-x-1 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-1 w-36 h-10 bg-[#58A0C8] text-white border-3 border-black rounded-md shadow-[4px_4px_0_#113F67] font-black text-sm uppercase active:shadow-none active:translate-x-1 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'WAIT...' : 'CONFIRM!'}
               </button>
             </form>
-            <p className="mt-3 text-xs text-gray-600 text-center">
-              FAST email only
+            <p className="mt-2 text-xs text-gray-600 text-center">
+              valid FAST email only
             </p>
           </div>
         </div>

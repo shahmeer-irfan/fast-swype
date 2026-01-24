@@ -195,7 +195,7 @@ const ModalOverlay = styled.div`
 const ModalCard = styled.div`
   background: #fff;
   border: 4px solid #000;
-  box-shadow: 12px 12px 0 #000;
+  box-shadow: 12px 12px 0 #58A0C8;
   max-width: 500px;
   width: 100%;
   max-height: 90vh;
@@ -208,7 +208,7 @@ const ModalHeader = styled.div`
   align-items: center;
   padding: 20px;
   border-bottom: 3px solid #000;
-  background: #000;
+  background: #58A0C8;
 `;
 
 const ModalTitle = styled.h2`
@@ -279,7 +279,7 @@ const Step = styled.div`
 const StepNumber = styled.div`
   width: 28px;
   height: 28px;
-  background: #000;
+  background: #58A0C8;
   color: #fff;
   border: 2px solid #000;
   display: flex;
@@ -318,7 +318,7 @@ const IBANText = styled.div`
 `;
 
 const CopyButton = styled.button`
-  background: #000;
+  background: #58A0C8;
   color: #fff;
   border: 2px solid #000;
   padding: 6px 12px;
@@ -428,12 +428,12 @@ const WhatsAppButton = styled.button`
   font-weight: 900;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 4px 4px 0 #000;
+  box-shadow: 4px 4px 0 #58A0C8;
   transition: all 0.2s;
 
   &:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #58A0C8;
   }
 
   &:active {
@@ -443,7 +443,7 @@ const WhatsAppButton = styled.button`
 `;
 
 const SubmitButton = styled.button`
-  background: #000;
+  background: #58A0C8;
   color: #fff;
   border: 3px solid #000;
   padding: 14px;
@@ -451,12 +451,12 @@ const SubmitButton = styled.button`
   font-weight: 900;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 4px 4px 0 #000;
+  box-shadow: 4px 4px 0 #58A0C8;
   transition: all 0.2s;
 
   &:hover:not(:disabled) {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000;
+    box-shadow: 6px 6px 0 #58A0C8;
   }
 
   &:active:not(:disabled) {

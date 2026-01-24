@@ -8,7 +8,7 @@ import BrutalistPattern from "@/components/BrutalistPattern";
 import { departments, domains, lookingForOptions, availabilityOptions, campuses, skillsList, interestsList } from "@/lib/data";
 import { useClickSound } from "@/hooks/useClickSound";
 import { useAuth } from "@/lib/auth-context";
-import { updateProfile, updateSkills, updateInterests } from "@/lib/supabase/api";
+import { updateProfile, updateSkills, updateInterests, uploadProfilePicture, deleteProfilePicture } from "@/lib/supabase/api";
 import Loader from "@/components/Loader";
 import Tooltip from "@/components/Tooltip";
 
@@ -19,6 +19,8 @@ export default function EditProfilePage() {
   const { playClick, playConfirm, playHover, playDismiss } = useClickSound();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     department: 'CS',
@@ -47,6 +49,9 @@ export default function EditProfilePage() {
         skills: profile.skills ? profile.skills.map((s: any) => s.skill) : [],
         interests: profile.interests ? profile.interests.map((i: any) => i.interest) : [],
       });
+      if (profile.profile_picture_url) {
+        setProfilePicturePreview(profile.profile_picture_url);
+      }
     }
   }, [profile]);
 
@@ -84,12 +89,50 @@ export default function EditProfilePage() {
     setFormData({ ...formData, interests: formData.interests.filter((i) => i !== interest) });
   };
 
+  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setProfilePicture(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePicturePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      playClick();
+    }
+  };
+
+  const handleRemoveProfilePicture = async () => {
+    if (profile?.profile_picture_url) {
+      try {
+        await deleteProfilePicture(user!.id, profile.profile_picture_url);
+        await updateProfile(user!.id, { profile_picture_url: null as any });
+        await refreshProfile();
+        playClick();
+      } catch (err) {
+        console.error('Failed to delete profile picture:', err);
+      }
+    }
+    setProfilePicture(null);
+    setProfilePicturePreview(null);
+    playClick();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSaving(true);
 
     try {
+      let profilePictureUrl = profile?.profile_picture_url;
+
+      // Upload profile picture if changed
+      if (profilePicture) {
+        profilePictureUrl = await uploadProfilePicture(profilePicture, user!.id);
+      }
+
       // Update profile
       const { error: profileError } = await updateProfile(user!.id, {
         name: formData.name,
@@ -100,6 +143,7 @@ export default function EditProfilePage() {
         looking_for: formData.lookingFor,
         availability: formData.availability,
         bio: formData.bio,
+        profile_picture_url: profilePictureUrl,
       });
 
       if (profileError) throw profileError;
@@ -152,6 +196,44 @@ export default function EditProfilePage() {
         )}
 
         <form onSubmit={handleSubmit} className="form-wrapper">
+          {/* Profile Picture Section */}
+          <div className="form-section">
+            <h2 className="section-title">PROFILE PICTURE (OPTIONAL)</h2>
+            <div className="profile-picture-upload">
+              <div className="picture-preview">
+                {profilePicturePreview ? (
+                  <img src={profilePicturePreview} alt="Profile" className="preview-image" />
+                ) : (
+                  <div className="preview-placeholder">
+                    <span className="placeholder-icon">📷</span>
+                    <span className="placeholder-text">No photo yet</span>
+                  </div>
+                )}
+              </div>
+              <div className="picture-actions">
+                <label htmlFor="profile-picture" className="upload-button">
+                  <input
+                    type="file"
+                    id="profile-picture"
+                    accept="image/*"
+                    onChange={handleProfilePictureChange}
+                    style={{ display: 'none' }}
+                  />
+                  {profilePicturePreview ? 'Change Photo' : 'Upload Photo'}
+                </label>
+                {profilePicturePreview && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveProfilePicture}
+                    className="remove-button"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className="form-section">
             <h2 className="section-title">THE BASICS</h2>
             
@@ -426,6 +508,87 @@ const StyledWrapper = styled.div`
     color: #000;
     margin-bottom: 8px;
     letter-spacing: 0.5px;
+  }
+
+  .profile-picture-upload {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .picture-preview {
+    width: 120px;
+    height: 120px;
+    border: 4px solid #000;
+    box-shadow: 4px 4px 0 #000;
+    overflow: hidden;
+    background: #f0f0f0;
+  }
+
+  .preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .preview-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #e5e5f7;
+  }
+
+  .placeholder-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+
+  .placeholder-text {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #666;
+  }
+
+  .picture-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .upload-button,
+  .remove-button {
+    padding: 10px 16px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    border: 3px solid #000;
+    background: #fff;
+    color: #000;
+    box-shadow: 3px 3px 0 #000;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .upload-button:hover,
+  .remove-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #000;
+  }
+
+  .upload-button:active,
+  .remove-button:active {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
+
+  .remove-button {
+    background: #ff0000;
+    color: #fff;
   }
 
   .form-input, .form-textarea, .form-select {

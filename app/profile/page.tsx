@@ -59,8 +59,22 @@ export default function ProfilePage() {
 
         <div className="content-wrapper">
           <div className="hero-card">
-            <div className="hero-name">{profile.name}</div>
-            <div className="hero-meta">{profile.department} • {profile.batch} • {profile.campus}</div>
+            <div className="hero-header">
+              {/* Profile Picture */}
+              {profile.profile_picture_url ? (
+                <div className="profile-picture">
+                  <img src={profile.profile_picture_url} alt={profile.name} />
+                </div>
+              ) : (
+                <div className="profile-picture-placeholder">
+                  <span className="profile-initial">{profile.name.charAt(0).toUpperCase()}</span>
+                </div>
+              )}
+              <div className="hero-info">
+                <div className="hero-name">{profile.name}</div>
+                <div className="hero-meta">{profile.department} • {profile.batch} • {profile.campus}</div>
+              </div>
+            </div>
             <p className="hero-bio">{profile.bio || 'No bio yet. Edit your profile to add one!'}</p>
           </div>
 
@@ -177,6 +191,51 @@ const StyledWrapper = styled.div`
     border: 3px solid #000;
     padding: 25px 20px;
     box-shadow: 6px 6px 0 #000;
+    width: 100%;
+  }
+
+  .hero-header {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .profile-picture {
+    width: 80px;
+    height: 80px;
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 #000;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .profile-picture-placeholder {
+    width: 80px;
+    height: 80px;
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 #000;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .profile-initial {
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
+  }
+
+  .hero-info {
+    flex: 1;
   }
 
   .hero-name {

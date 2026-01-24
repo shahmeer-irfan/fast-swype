@@ -28,6 +28,7 @@ export interface Profile {
   domain?: string;
   looking_for?: string;
   availability?: string;
+  profile_picture_url?: string;
   created_at: string;
   updated_at: string;
   skills?: Skill[];

@@ -50,18 +50,18 @@ export default function Tooltip({ message, storageKey, delay = 2000 }: TooltipPr
 
 const TooltipWrapper = styled.div`
   position: fixed;
-  top: 20px;
+  bottom: 20px;
   right: 20px;
   z-index: 10000;
-  animation: slideIn 0.3s ease-out;
+  animation: slideUp 0.3s ease-out;
 
-  @keyframes slideIn {
+  @keyframes slideUp {
     from {
-      transform: translateX(400px);
+      transform: translateY(100px);
       opacity: 0;
     }
     to {
-      transform: translateX(0);
+      transform: translateY(0);
       opacity: 1;
     }
   }
@@ -69,7 +69,7 @@ const TooltipWrapper = styled.div`
   @media (max-width: 640px) {
     left: 20px;
     right: 20px;
-    top: 80px;
+    bottom: 20px;
   }
 `;
 
@@ -77,11 +77,16 @@ const TooltipBox = styled.div`
   background: #fff;
   border: 3px solid #000;
   box-shadow: 6px 6px 0 #000;
-  padding: 15px 20px;
+  padding: 16px 20px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
-  max-width: 320px;
+  max-width: 350px;
+  border-radius: 0;
+
+  @media (max-width: 640px) {
+    max-width: 100%;
+  }
 `;
 
 const TooltipIcon = styled.div`
@@ -93,8 +98,10 @@ const TooltipText = styled.p`
   font-size: 13px;
   font-weight: 700;
   color: #000;
-  line-height: 1.4;
+  line-height: 1.5;
   flex: 1;
+  margin: 0;
+  word-wrap: break-word;
 `;
 
 const CloseButton = styled.button`

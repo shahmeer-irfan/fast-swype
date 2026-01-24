@@ -138,6 +138,7 @@ export default function SwipePage() {
                 onClick={playClick}
                 onMouseEnter={playHover}
                 className="proposals-button"
+                title="View Proposals"
               >
                 <span className="button-icon">📋</span>
               </button>
@@ -147,6 +148,7 @@ export default function SwipePage() {
                 onClick={playClick}
                 onMouseEnter={playHover}
                 className="profile-button"
+                title="View Profile"
               >
                 <span className="profile-icon">👤</span>
               </button>
@@ -225,6 +227,34 @@ const StyledWrapper = styled.div`
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
+    position: relative;
+  }
+
+  .profile-button::after,
+  .proposals-button::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 1000;
+  }
+
+  .profile-button:hover::after,
+  .proposals-button:hover::after {
+    opacity: 1;
   }
 
   .profile-button:hover,

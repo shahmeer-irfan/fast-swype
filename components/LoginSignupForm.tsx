@@ -100,6 +100,8 @@ const LoginSignupForm = () => {
       }
 
       playConfirm();
+      // Brief wait for auth state to sync
+      await new Promise(resolve => setTimeout(resolve, 500));
       // Redirect to profile edit to complete profile
       router.push('/profile/edit');
     } catch (err: any) {

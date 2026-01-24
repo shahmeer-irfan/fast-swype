@@ -36,21 +36,19 @@ export async function signUp(data: {
       };
     }
 
-    // 2. Wait a bit for session to establish
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // 3. Get fresh session
+    // 2. Get session immediately (auto-confirm should be enabled in Supabase)
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) {
-      console.error('No session after signup');
+      // Email confirmation required - return success but no profile yet
+      console.log('Email confirmation required');
       return { 
-        data: null, 
-        error: { message: 'Account created but login failed. Please try logging in.' } 
+        data: authData, 
+        error: null
       };
     }
 
-    // 4. Create profile with established session
+    // 3. Create profile if session exists
     const { error: profileError } = await supabase
       .from('profiles')
       .insert({
@@ -218,6 +216,38 @@ export async function updateInterests(userId: string, interests: string[]) {
     if (error) return { error };
   }
   return { error: null };
+}
+
+export async function uploadProfilePicture(file: File, userId: string) {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}.${fileExt}`;
+  const filePath = `${userId}/${fileName}`;
+
+  // Upload file to storage
+  const { error: uploadError } = await supabase.storage
+    .from('profile-pictures')
+    .upload(filePath, file, { upsert: true });
+
+  if (uploadError) throw uploadError;
+
+  // Get public URL
+  const { data } = supabase.storage
+    .from('profile-pictures')
+    .getPublicUrl(filePath);
+
+  return data.publicUrl;
+}
+
+export async function deleteProfilePicture(userId: string, url: string) {
+  // Extract file path from URL
+  const urlParts = url.split('/profile-pictures/');
+  if (urlParts.length < 2) return;
+  
+  const filePath = urlParts[1]; // This will be "userId/filename.ext"
+  
+  await supabase.storage
+    .from('profile-pictures')
+    .remove([filePath]);
 }
 
 // =====================================================

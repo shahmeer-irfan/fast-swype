@@ -19,6 +19,7 @@ CREATE TABLE public.profiles (
   domain TEXT, -- Full Stack, ML, Mobile, etc.
   looking_for TEXT, -- Research, Product, Startup, Easy FYP
   availability TEXT, -- Looking actively, Just exploring
+  profile_picture_url TEXT, -- Optional profile picture
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

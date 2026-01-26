@@ -20,6 +20,15 @@ export async function signUp(data: {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/login`,
+        data: {
+          name,
+          campus,
+          batch,
+          department,
+        }
+      }
     });
 
     if (authError) {
@@ -36,19 +45,17 @@ export async function signUp(data: {
       };
     }
 
-    // 2. Get session immediately (auto-confirm should be enabled in Supabase)
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
-      // Email confirmation required - return success but no profile yet
-      console.log('Email confirmation required');
+    // 2. Check if email confirmation is required
+    // If session is null, email verification is required
+    if (!authData.session) {
+      console.log('Email confirmation required for:', email);
       return { 
         data: authData, 
         error: null
       };
     }
 
-    // 3. Create profile if session exists
+    // 3. Create profile if session exists (auto-confirmed)
     const { error: profileError } = await supabase
       .from('profiles')
       .insert({
@@ -97,6 +104,67 @@ export async function signIn(email: string, password: string) {
       data: null, 
       error: { message: 'Login failed. Please try again.' } 
     };
+  }
+}
+
+export async function resendVerificationEmail(email: string) {
+  try {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email,
+    });
+
+    if (error) {
+      return { 
+        success: false, 
+        error: { message: 'Failed to resend email. Please try again.' } 
+      };
+    }
+
+    return { success: true, error: null };
+  } catch (err) {
+    console.error('Resend email error:', err);
+    return { 
+      success: false, 
+      error: { message: 'An unexpected error occurred.' } 
+    };
+  }
+}
+
+export async function createProfileFromMetadata(userId: string) {
+  try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      return { success: false, error: { message: 'User not found' } };
+    }
+
+    const { name, campus, batch, department } = user.user_metadata;
+    
+    if (!name || !campus || !batch || !department) {
+      return { success: false, error: { message: 'Missing user metadata' } };
+    }
+
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .insert({
+        id: userId,
+        email: user.email!,
+        name,
+        campus,
+        batch,
+        department,
+      });
+
+    if (profileError) {
+      console.error('Profile creation error:', profileError);
+      return { success: false, error: { message: 'Failed to create profile' } };
+    }
+
+    return { success: true, error: null };
+  } catch (err) {
+    console.error('Create profile error:', err);
+    return { success: false, error: { message: 'An unexpected error occurred' } };
   }
 }
 

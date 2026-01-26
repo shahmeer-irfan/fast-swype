@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export function usePageLoader(delayMs: number = 1500) {
+export function usePageLoader(delayMs: number = 800) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

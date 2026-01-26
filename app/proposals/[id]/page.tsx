@@ -142,9 +142,9 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
 
   const getStatusColor = (s: string) => {
     const colors: Record<string, { bg: string; text: string }> = {
-      pending: { bg: "#fff", text: "#58A0C8" },
-      accepted: { bg: "#58A0C8", text: "#fff" },
-      rejected: { bg: "#e5e5f7", text: "#113F67" },
+      pending: { bg: "#2d2d2d", text: "#4387f4" },
+      accepted: { bg: "#4387f4", text: "#fff" },
+      rejected: { bg: "#1a1a1a", text: "#ffffff" },
     };
     return colors[s] || colors.pending;
   };
@@ -337,12 +337,12 @@ const StyledWrapper = styled.div`
   .back-button {
     width: 48px;
     height: 48px;
-    background: #fff;
+    background: #4387f4;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #113F67;
+    box-shadow: 4px 4px 0 #2c5aa0;
     font-size: 24px;
     font-weight: 900;
-    color: #58A0C8;
+    color: #ffffff;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
@@ -352,7 +352,7 @@ const StyledWrapper = styled.div`
 
   .back-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #113F67;
+    box-shadow: 6px 6px 0 #2c5aa0;
   }
 
   .back-button:active {
@@ -365,7 +365,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -1px;
-    color: #113F67;
+    color: #ffffff;
   }
 
   .spacer {
@@ -373,9 +373,9 @@ const StyledWrapper = styled.div`
   }
 
   .proposal-detail-card {
-    background: #fff;
+    background: #2d2d2d;
     border: 3px solid #000;
-    box-shadow: 8px 8px 0 #58A0C8;
+    box-shadow: 8px 8px 0 #4387f4;
     padding: 30px;
     width: 100%;
   }
@@ -392,7 +392,7 @@ const StyledWrapper = styled.div`
   .user-avatar {
     width: 64px;
     height: 64px;
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
     border: 3px solid #000;
     display: flex;
@@ -411,7 +411,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -0.5px;
-    color: #113F67;
+    color: #ffffff;
     margin-bottom: 4px;
   }
 
@@ -419,7 +419,7 @@ const StyledWrapper = styled.div`
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #666;
+    color: #999;
   }
 
   .status-badge-large {
@@ -442,24 +442,24 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #113F67;
+    color: #ffffff;
     margin-bottom: 12px;
   }
 
   .message-content {
     font-size: 18px;
     line-height: 1.6;
-    color: #113F67;
+    color: #ffffff;
     padding: 16px;
-    background: #f5f5f5;
-    border: 2px solid #000;
+    background: #1a1a1a;
+    border: 2px solid #4387f4;
   }
 
   .timestamp {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #666;
+    color: #999;
     margin-bottom: 24px;
   }
 
@@ -472,7 +472,7 @@ const StyledWrapper = styled.div`
     flex: 1;
     padding: 16px;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #113F67;
+    box-shadow: 4px 4px 0 #2c5aa0;
     font-size: 14px;
     font-weight: 900;
     text-transform: uppercase;
@@ -483,7 +483,7 @@ const StyledWrapper = styled.div`
 
   .action-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #113F67;
+    box-shadow: 6px 6px 0 #2c5aa0;
   }
 
   .action-button:active {
@@ -498,12 +498,12 @@ const StyledWrapper = styled.div`
   }
 
   .reject-button {
-    background: #fff;
-    color: #113F67;
+    background: #1a1a1a;
+    color: #ffffff;
   }
 
   .accept-button {
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
   }
 
@@ -514,8 +514,8 @@ const StyledWrapper = styled.div`
   }
 
   .contact-info {
-    background: #f5f5f5;
-    border: 2px solid #000;
+    background: #1a1a1a;
+    border: 2px solid #4387f4;
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -525,10 +525,10 @@ const StyledWrapper = styled.div`
   .contact-item {
     font-size: 12px;
     line-height: 1.6;
-    color: #000;
+    color: #ffffff;
     padding: 10px;
-    background: #fff;
-    border: 2px solid #000;
+    background: #2d2d2d;
+    border: 2px solid #4387f4;
     font-weight: 600;
   }
 
@@ -543,26 +543,26 @@ const StyledWrapper = styled.div`
   }
 
   .status-message.accepted {
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
   }
 
   .status-message.rejected {
-    background: #e5e5f7;
-    color: #113F67;
+    background: #1a1a1a;
+    color: #ffffff;
   }
 
   .sent-status-info {
     margin-top: 20px;
     padding: 16px;
-    background: #f5f5f5;
-    border: 2px solid #000;
+    background: #1a1a1a;
+    border: 2px solid #4387f4;
   }
 
   .info-text {
     font-size: 13px;
     font-weight: 700;
-    color: #666;
+    color: #999;
     text-align: center;
   }
 
@@ -581,9 +581,9 @@ const StyledWrapper = styled.div`
   }
 
   .modal-card {
-    background: #fff;
+    background: #2d2d2d;
     border: 4px solid #000;
-    box-shadow: 12px 12px 0 #58A0C8;
+    box-shadow: 12px 12px 0 #4387f4;
     padding: 30px;
     max-width: 450px;
     width: 100%;
@@ -593,7 +593,7 @@ const StyledWrapper = styled.div`
     font-size: 24px;
     font-weight: 900;
     text-transform: uppercase;
-    color: #113F67;
+    color: #ffffff;
     margin-bottom: 16px;
     letter-spacing: -0.5px;
   }
@@ -602,7 +602,7 @@ const StyledWrapper = styled.div`
     font-size: 14px;
     font-weight: 600;
     line-height: 1.5;
-    color: #113F67;
+    color: #ffffff;
     margin-bottom: 12px;
   }
 
@@ -623,7 +623,7 @@ const StyledWrapper = styled.div`
     flex: 1;
     padding: 14px;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #113F67;
+    box-shadow: 4px 4px 0 #2c5aa0;
     font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
@@ -633,7 +633,7 @@ const StyledWrapper = styled.div`
 
   .modal-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #113F67;
+    box-shadow: 6px 6px 0 #2c5aa0;
   }
 
   .modal-button:active {
@@ -642,34 +642,34 @@ const StyledWrapper = styled.div`
   }
 
   .cancel-button {
-    background: #e5e5f7;
-    color: #113F67;
+    background: #1a1a1a;
+    color: #ffffff;
   }
 
   .confirm-button {
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
   }
 
   .rejected-message {
     margin-top: 20px;
     padding: 20px;
-    background: #f5f5f5;
-    border: 2px solid #000;
+    background: #1a1a1a;
+    border: 2px solid #4387f4;
     text-align: center;
   }
 
   .rejected-message p {
     font-size: 14px;
-    color: #666;
+    color: #999;
     margin-bottom: 16px;
   }
 
   .reconsider-button {
     padding: 12px 24px;
-    background: #fff;
+    background: #4387f4;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #2c5aa0;
     font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
@@ -697,9 +697,9 @@ const StyledWrapper = styled.div`
   }
 
   .error-card {
-    background: #fff;
+    background: #2d2d2d;
     border: 3px solid #000;
-    box-shadow: 8px 8px 0 #58A0C8;
+    box-shadow: 8px 8px 0 #4387f4;
     padding: 40px;
     text-align: center;
     max-width: 400px;
@@ -714,16 +714,16 @@ const StyledWrapper = styled.div`
     font-size: 24px;
     font-weight: 900;
     text-transform: uppercase;
-    color: #113F67;
+    color: #ffffff;
     margin-bottom: 24px;
   }
 
   .back-button-large {
     padding: 12px 24px;
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #113F67;
+    box-shadow: 4px 4px 0 #2c5aa0;
     font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
@@ -733,7 +733,7 @@ const StyledWrapper = styled.div`
 
   .back-button-large:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #113F67;
+    box-shadow: 6px 6px 0 #2c5aa0;
   }
 
   .back-button-large:active {

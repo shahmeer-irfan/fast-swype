@@ -6,7 +6,7 @@ export default function Loading() {
     <div style={{
       position: 'relative',
       minHeight: '100vh',
-      backgroundColor: '#fff'
+      backgroundColor: '#1a1a1a'
     }}>
       <BrutalistPattern />
       <div style={{
@@ -18,7 +18,7 @@ export default function Loading() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.85)'
+        backgroundColor: 'rgba(26, 26, 26, 0.85)'
       }}>
         <Loader />
       </div>

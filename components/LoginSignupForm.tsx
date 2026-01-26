@@ -5,14 +5,17 @@ import { useRouter } from 'next/navigation';
 import { useClickSound } from '@/hooks/useClickSound';
 import { signIn, signUp } from '@/lib/supabase/api';
 import { validateFastEmail, getCampusFromEmail, getBatchFromEmail } from '@/lib/validation';
+import EmailVerification from '@/components/EmailVerification';
 
 const LoginSignupForm = () => {
   const router = useRouter();
-  const [isSignUp, setIsSignUp] = useState(true);
+  const [isSignUp, setIsSignUp] = useState(false);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [signupData, setSignupData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
   const { playClick, playConfirm, playHover, playDismiss } = useClickSound();
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -21,7 +24,6 @@ const LoginSignupForm = () => {
     setLoading(true);
 
     try {
-      // Validate FAST email format
       const validation = validateFastEmail(loginData.email);
       if (!validation.isValid) {
         playDismiss();
@@ -54,7 +56,6 @@ const LoginSignupForm = () => {
     setLoading(true);
 
     try {
-      // Validate FAST email format
       const validation = validateFastEmail(signupData.email);
       if (!validation.isValid) {
         playDismiss();
@@ -63,7 +64,6 @@ const LoginSignupForm = () => {
         return;
       }
 
-      // Validate password match
       if (signupData.password !== signupData.confirmPassword) {
         playDismiss();
         setError('Passwords do not match');
@@ -71,7 +71,6 @@ const LoginSignupForm = () => {
         return;
       }
 
-      // Validate password length
       if (signupData.password.length < 6) {
         playDismiss();
         setError('Password must be at least 6 characters');
@@ -79,7 +78,6 @@ const LoginSignupForm = () => {
         return;
       }
 
-      // Extract campus and batch from email
       const campus = getCampusFromEmail(signupData.email);
       const batch = getBatchFromEmail(signupData.email);
 
@@ -89,7 +87,7 @@ const LoginSignupForm = () => {
         name: signupData.name,
         campus,
         batch,
-        department: 'CS', // Default, user can update later
+        department: 'CS',
       });
 
       if (signUpError || !data) {
@@ -99,10 +97,20 @@ const LoginSignupForm = () => {
         return;
       }
 
+      // Check if email verification is required
+      if (data.user && !data.session) {
+        // Email verification required
+        playConfirm();
+        setLoading(false);
+        setRegisteredEmail(signupData.email);
+        setShowEmailVerification(true);
+        return;
+      }
+
+      // Auto-confirmed, proceed to profile
       playConfirm();
-      // Brief wait for auth state to sync
+      setLoading(false);
       await new Promise(resolve => setTimeout(resolve, 500));
-      // Redirect to profile edit to complete profile
       router.push('/profile/edit');
     } catch (err: any) {
       playDismiss();
@@ -112,177 +120,178 @@ const LoginSignupForm = () => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center gap-8">
-      {/* Toggle Switch */}
-      <div className="relative flex items-center gap-12">
-        <button
-          onClick={() => {
-            playClick();
+    <div className="w-full flex flex-col items-center gap-6">
+      {/* Email Verification Modal */}
+      {showEmailVerification && (
+        <EmailVerification
+          email={registeredEmail}
+          onClose={() => {
+            setShowEmailVerification(false);
             setIsSignUp(false);
-            setError('');
+            setSignupData({ name: '', email: '', password: '', confirmPassword: '' });
           }}
-          className={`text-sm font-black uppercase ${
-            !isSignUp ? 'underline' : ''
-          }`}
-        >
-          Log in
-        </button>
-
-        <label className="relative w-12 h-5 cursor-pointer">
-          <input
-            type="checkbox"
-            className="sr-only"
-            checked={isSignUp}
-            onChange={(e) => {
-              playClick();
-              setIsSignUp(e.target.checked);
-              setError('');
-            }}
-          />
-          <div className="w-full h-full border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] transition-colors">
-            <div
-              className={`absolute w-5 h-5 bg-white border-3 border-black rounded-md shadow-[0_3px_0_#58A0C8] -top-[3px] transition-transform ${
-                isSignUp ? 'translate-x-[28px]' : 'translate-x-[-3px]'
-              }`}
-            />
-          </div>
-        </label>
-
-        <button
-          onClick={() => {
-            playClick();
-            setIsSignUp(true);
-            setError('');
-          }}
-          className={`text-sm font-black uppercase ${
-            isSignUp ? 'underline' : ''
-          }`}
-        >
-          Sign up
-        </button>
-      </div>
+        />
+      )}
 
       {/* Error Message */}
       {error && (
-        <div className="w-[300px] p-3 bg-red-100 border-3 border-red-600 rounded-md shadow-[4px_4px_0_#000] text-sm font-bold text-red-800 text-center">
+        <div className="w-[320px] px-4 py-3 bg-[#ff4444] border border-[#cc0000] rounded-lg text-sm font-semibold text-white text-center">
           {error}
         </div>
       )}
 
-      {/* Card Container */}
-      <div className="relative w-[300px] h-[380px]" style={{ perspective: '1000px' }}>
-        <div
-          className="relative w-full h-full transition-transform duration-700"
-          style={{
-            transformStyle: 'preserve-3d',
-            transform: isSignUp ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          }}
-        >
-          {/* Login Card (Front) */}
-          <div
-            className="absolute w-full h-full bg-white border-3 border-black rounded-md shadow-[4px_4px_0_#58A0C8] p-6 flex flex-col items-center justify-center"
-            style={{
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
-            }}
+      {/* Card Switch Container */}
+      <div className="relative flex flex-col items-center gap-8">
+        {/* Toggle Switch */}
+        <label className="relative flex items-center gap-16 cursor-pointer">
+          <span 
+            className={`text-sm font-bold uppercase transition-all ${
+              !isSignUp ? 'text-white underline' : 'text-[#999]'
+            }`}
           >
-            <h2 className="!text-lg font-black uppercase tracking-[-2px] mb-7 text-[#113F67]" style={{fontSize: '22px'}}>
-              LOG IN
-            </h2>
-            <form onSubmit={handleLoginSubmit} className="w-full flex flex-col items-center gap-3.5">
-              <input
-                type="email"
-                placeholder="k220123@nu.edu.pk"
-                value={loginData.email}
-                onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                required
-                disabled={loading}
-                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={loginData.password}
-                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                required
-                disabled={loading}
-                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
-              />
-              <button
-                type="submit"
-                onMouseEnter={playHover}
-                disabled={loading}
-                className="mt-2 w-36 h-10 bg-[#58A0C8] text-white border-3 border-black rounded-md shadow-[4px_4px_0_#113F67] font-black text-base uppercase active:shadow-none active:translate-x-1 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'WAIT...' : "LET'S GO!"}
-              </button>
-            </form>
-            <p className="mt-3 text-xs text-gray-600 text-center">
-              valid FAST email only
-            </p>
+            Log in
+          </span>
+          
+          <div className="relative w-12 h-6">
+            <input
+              type="checkbox"
+              className="sr-only"
+              checked={isSignUp}
+              onChange={(e) => {
+                playClick();
+                setIsSignUp(e.target.checked);
+                setError('');
+              }}
+            />
+            <div className="w-full h-full bg-[#2d2d2d] border-2 border-[#4387f4] rounded-md transition-all" />
+            <div
+              className={`absolute top-0 w-6 h-6 bg-[#4387f4] rounded-md transition-transform ${
+                isSignUp ? 'translate-x-6' : 'translate-x-0'
+              }`}
+            />
           </div>
 
-          {/* Sign Up Card (Back) */}
+          <span 
+            className={`text-sm font-bold uppercase transition-all ${
+              isSignUp ? 'text-white underline' : 'text-[#999]'
+            }`}
+          >
+            Sign up
+          </span>
+        </label>
+
+        {/* Flip Card Container */}
+        <div className="relative w-[320px] h-[400px]" style={{ perspective: '1000px' }}>
           <div
-            className="absolute w-full h-full bg-white border-3 border-black rounded-md shadow-[4px_4px_0_#58A0C8] p-5 flex flex-col items-center justify-center"
+            className="relative w-full h-full transition-all duration-700"
             style={{
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
-              transform: 'rotateY(180deg)',
+              transformStyle: 'preserve-3d',
+              transform: isSignUp ? 'rotateY(180deg)' : 'rotateY(0deg)',
             }}
           >
-            <h2 className="text-lg font-black uppercase tracking-[-2px] mb-4 text-[#113F67]" style={{fontSize: '22px'}}>
-              SIGN UP
-            </h2>
-            <form onSubmit={handleSignupSubmit} className="w-full flex flex-col items-center gap-2.5">
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={signupData.name}
-                onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
-                required
-                disabled={loading}
-                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
-              />
-              <input
-                type="email"
-                placeholder="k220123@nu.edu.pk"
-                value={signupData.email}
-                onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
-                required
-                disabled={loading}
-                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
-              />
-              <input
-                type="password"
-                placeholder="Password (6+ chars)"
-                value={signupData.password}
-                onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                required
-                disabled={loading}
-                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
-              />
-              <input
-                type="password"
-                placeholder="Confirm Password"
-                value={signupData.confirmPassword}
-                onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
-                required
-                disabled={loading}
-                className="w-full h-10 px-4 border-3 border-black bg-white rounded-md shadow-[4px_4px_0_#58A0C8] text-sm font-semibold outline-none focus:shadow-[6px_6px_0_#58A0C8] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all disabled:opacity-50"
-              />
-              <button
-                onMouseEnter={playHover}
-                type="submit"
-                disabled={loading}
-                className="mt-1 w-36 h-10 bg-[#58A0C8] text-white border-3 border-black rounded-md shadow-[4px_4px_0_#113F67] font-black text-sm uppercase active:shadow-none active:translate-x-1 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'WAIT...' : 'CONFIRM!'}
-              </button>
-            </form>
-            <p className="mt-2 text-xs text-gray-600 text-center">
-              valid FAST email only
-            </p>
+            {/* Login Card (Front) */}
+            <div
+              className="absolute w-full h-full bg-[#2d2d2d] border-2 border-[#4387f4] rounded-lg p-8 flex flex-col justify-center"
+              style={{
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+              }}
+            >
+              <h2 className="text-md font-black uppercase text-white mb-8 pb-4 text-center">
+                Hey there! Welcome back.
+              </h2>
+              <form onSubmit={handleLoginSubmit} className="flex flex-col gap-5">
+                <input
+                  type="email"
+                  placeholder="k990000@nu.edu.pk"
+                  value={loginData.email}
+                  onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                  required
+                  disabled={loading}
+                  className="w-full h-12 px-4 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
+                />
+                <input
+                  type="password"
+                  placeholder="Your Password"
+                  value={loginData.password}
+                  onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                  required
+                  minLength={6}
+                  disabled={loading}
+                  className="w-full h-12 px-4 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
+                />
+                <button
+                  type="submit"
+                  onMouseEnter={playHover}
+                  disabled={loading}
+                  className="w-full h-10 bg-[#4387f4] hover:bg-[#1a3a7d] text-white border-2 border-black rounded-lg font-black text-sm uppercase transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                >
+                  {loading ? 'WAIT...' : "LET'S GO!"}
+                </button>
+              </form>
+            </div>
+
+            {/* Sign Up Card (Back) */}
+            <div
+              className="absolute w-full h-full bg-[#2d2d2d] border-2 border-[#4387f4] rounded-lg p-8 flex flex-col  justify-center"
+              style={{
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                transform: 'rotateY(180deg)',
+              }}
+            >
+              <h2 className="text-lg font-black uppercase text-white mb-6 pb-2  pt-8 text-center">
+               Let's make your account!
+              </h2>
+              <form onSubmit={handleSignupSubmit} className="flex flex-col gap-4">
+                <input
+                  type="text"
+                  placeholder="Your Good Name"
+                  value={signupData.name}
+                  onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
+                  required
+                  disabled={loading}
+                  className="w-full h-12 px-4 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
+                />
+                <input
+                  type="email"
+                  placeholder="k990000@nu.edu.pk"
+                  value={signupData.email}
+                  onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                  required
+                  disabled={loading}
+                  className="w-full h-12 px-4 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
+                />
+                <input
+                  type="password"
+                  placeholder="Password (min 6 characters)"
+                  value={signupData.password}
+                  onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                  required
+                  minLength={6}
+                  disabled={loading}
+                  className="w-full h-12 px-4 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
+                />
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  value={signupData.confirmPassword}
+                  onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
+                  required
+                  minLength={6}
+                  disabled={loading}
+                  className="w-full h-12 px-4 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
+                />
+                <button
+                  type="submit"
+                  onMouseEnter={playHover}
+                  disabled={loading}
+                  className="w-full h-10 bg-[#4387f4] hover:bg-[#1a3a7d] text-white border-2 border-black rounded-lg font-black text-sm uppercase transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                >
+                  {loading ? 'WAIT...' : 'CONFIRM!'}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>

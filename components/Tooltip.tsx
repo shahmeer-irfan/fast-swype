@@ -77,9 +77,9 @@ const TooltipWrapper = styled.div`
 `;
 
 const TooltipBox = styled.div`
-  background: #fff;
-  border: 3px solid #000;
-  box-shadow: 6px 6px 0 #58A0C8;
+  background: #2d2d2d;
+  border: 3px solid #4387f4;
+  box-shadow: 6px 6px 0 #4387f4;
   padding: 16px 20px;
   display: flex;
   align-items: flex-start;
@@ -100,7 +100,7 @@ const TooltipIcon = styled.div`
 const TooltipText = styled.p`
   font-size: 13px;
   font-weight: 700;
-  color: #000;
+  color: #ffffff;
   line-height: 1.5;
   flex: 1;
   margin: 0;
@@ -110,8 +110,9 @@ const TooltipText = styled.p`
 const CloseButton = styled.button`
   width: 28px;
   height: 28px;
-  border: 2px solid #000;
-  background: #fff;
+  border: 2px solid #4387f4;
+  background: #2d2d2d;
+  color: #ffffff;
   font-size: 20px;
   font-weight: 900;
   display: flex;
@@ -122,7 +123,7 @@ const CloseButton = styled.button`
   transition: all 0.2s;
 
   &:hover {
-    background: #000;
+    background: #4387f4;
     color: #fff;
     transform: scale(1.1);
   }

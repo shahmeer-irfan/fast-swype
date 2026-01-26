@@ -18,10 +18,10 @@ const MusicPlayer = () => {
     audioRef.current.loop = true;
     audioRef.current.volume = 0.3; // Set volume to 30%
 
-    // Check if user previously disabled music, otherwise enable by default
+    // Music is OFF by default - user must explicitly enable it
     const savedState = localStorage.getItem('musicEnabled');
-    if (savedState === null || savedState === 'true') {
-      // Default to playing if no preference saved, or if user enabled it
+    if (savedState === 'true') {
+      // Only play if user previously enabled it
       setIsPlaying(true);
       audioRef.current.play().catch(err => console.log('Autoplay prevented:', err));
     }
@@ -79,30 +79,31 @@ const StyledWrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #fff;
+    background: #2d2d2d;
     padding: 12px 16px;
-    border: 3px solid #000;
-    box-shadow: 4px 4px 0 #58A0C8;
+    border: 3px solid #4387f4;
+    box-shadow: 4px 4px 0 #4387f4;
     transition: all 0.2s;
   }
 
   .music-player:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #58A0C8;
+    box-shadow: 6px 6px 0 #4387f4;
   }
 
   .music-label {
     font-size: 20px;
     line-height: 1;
+    color: #ffffff;
   }
 
   .switch {
-    --input-focus: #58A0C8;
-    --font-color: #323232;
-    --font-color-sub: #666;
-    --bg-color: #fff;
-    --bg-color-alt: #666;
-    --main-color: #000;
+    --input-focus: #4387f4;
+    --font-color: #ffffff;
+    --font-color-sub: #999;
+    --bg-color: #2d2d2d;
+    --bg-color-alt: #1a1a1a;
+    --main-color: #4387f4;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -144,7 +145,7 @@ const StyledWrapper = styled.div`
     border-radius: 5px;
     left: -2px;
     bottom: 2px;
-    background-color: var(--bg-color);
+    background-color: #ffffff;
     box-shadow: 0 3px 0 var(--main-color);
     transition: 0.3s;
   }

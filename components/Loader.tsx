@@ -6,23 +6,13 @@ import styled from 'styled-components';
 const Loader = () => {
   return (
     <StyledWrapper>
-      <div aria-label="Orange and tan hamster running in a metal wheel" role="img" className="wheel-and-hamster">
-        <div className="wheel" />
-        <div className="hamster">
-          <div className="hamster__body">
-            <div className="hamster__head">
-              <div className="hamster__ear" />
-              <div className="hamster__eye" />
-              <div className="hamster__nose" />
-            </div>
-            <div className="hamster__limb hamster__limb--fr" />
-            <div className="hamster__limb hamster__limb--fl" />
-            <div className="hamster__limb hamster__limb--br" />
-            <div className="hamster__limb hamster__limb--bl" />
-            <div className="hamster__tail" />
-          </div>
-        </div>
-        <div className="spoke" />
+      <div className="loader">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+          <path d="M10,20 C10,17.24 11.12,14.74 12.93,12.93 L12.93,12.93 C14.74,11.12 17.24,10 20,10 L80,10 C82.76,10 85.26,11.12 87.07,12.93 L87.07,12.93 C88.88,14.74 90,17.24 90,20 L90,80 C90,82.76 88.88,85.26 87.07,87.07 L87.07,87.07 C85.26,88.88 82.76,90 80,90 L20,90 C17.24,90 14.74,88.88 12.93,87.07 L12.93,87.07 C11.12,85.26 10,82.76 10,80Z M68,50 C68,45.02 65.98,40.52 62.72,37.27 L62.72,37.27 C59.47,34.01 54.97,32 50,32 L50,32 C45.02,32 40.52,34.01 37.27,37.27 L37.27,37.27 C34.01,40.52 32,45.02 32,50 L32,50 C32,54.97 34.01,59.47 37.27,62.72 L37.27,62.72 C40.52,65.98 45.02,68 50,68 L50,68 C54.97,68 59.47,65.98 62.72,62.72 L62.72,62.72 C65.98,59.47 68,54.97 68,50Z" />
+          <path d="M10,20 C10,17.24 11.12,14.74 12.93,12.93 L12.93,12.93 C14.74,11.12 17.24,10 20,10 L80,10 C82.76,10 85.26,11.12 87.07,12.93 L87.07,12.93 C88.88,14.74 90,17.24 90,20 L90,80 C90,82.76 88.88,85.26 87.07,87.07 L87.07,87.07 C85.26,88.88 82.76,90 80,90 L20,90 C17.24,90 14.74,88.88 12.93,87.07 L12.93,87.07 C11.12,85.26 10,82.76 10,80Z" />
+          <path d="M10,37.57 C10,34.92 11.05,32.37 12.92,30.5 L30.5,12.92 C32.37,11.05 34.92,10 37.57,10 L62.42,10 C65.07,10 67.62,11.05 69.49,12.92 L87.07,30.5 C88.94,32.37 90,34.92 90,37.57 L90,62.42 C90,65.07 88.94,67.62 87.07,69.49 L69.49,87.07 C67.62,88.94 65.07,90 62.42,90 L37.57,90 C34.92,90 32.37,88.94 30.5,87.07 L12.92,69.49 C11.05,67.62 10,65.07 10,62.42Z" />
+          <path d="M10,50 C10,38.95 14.48,28.95 21.72,21.72 L21.72,21.72 C28.95,14.48 38.95,10 50,10 L50,10 C61.05,10 71.05,14.48 78.28,21.72 L78.28,21.72 C85.52,28.95 90,38.95 90,50 L90,50 C90,61.05 85.52,71.05 78.28,78.28 L78.28,78.28 C71.05,85.52 61.05,90 50,90 L50,90 C38.95,90 28.95,85.52 21.72,78.28 L21.72,78.28 C14.48,71.05 10,61.05 10,50Z" />
+        </svg>
       </div>
     </StyledWrapper>
   );
@@ -34,278 +24,104 @@ const StyledWrapper = styled.div`
   justify-content: center;
   width: 100%;
   height: 100%;
-  min-height: 200px;
-  
-  .wheel-and-hamster {
-    --dur: 1s;
-    position: relative;
-    width: 12em;
-    height: 12em;
-    font-size: 14px;
+  min-height: 100vh;
+
+  .loader {
+    --main-color: #4387f4;
+    transform: scale(1);
+    z-index: 999;
   }
 
-  .wheel,
-  .hamster,
-  .hamster div,
-  .spoke {
-    position: absolute;
+  .loader svg {
+    width: 100px;
+    height: 100px;
   }
 
-  .wheel,
-  .spoke {
-    border-radius: 50%;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+  .loader svg path:first-child {
+    will-change: d;
+    fill: var(--main-color);
+    animation: morph 2s ease-in-out infinite;
   }
 
-  .wheel {
-    background: radial-gradient(100% 100% at center,hsla(0,0%,60%,0) 47.8%,hsl(0,0%,60%) 48%);
-    z-index: 2;
+  .loader svg path:not(:first-child) {
+    fill: none;
+    stroke: var(--main-color);
+    stroke-width: 0;
   }
 
-  .hamster {
-    animation: hamster var(--dur) ease-in-out infinite;
-    top: 50%;
-    left: calc(50% - 3.5em);
-    width: 7em;
-    height: 3.75em;
-    transform: rotate(4deg) translate(-0.8em,1.85em);
-    transform-origin: 50% 0;
-    z-index: 1;
+  .loader svg path:nth-child(2) {
+    animation: wave 2s linear infinite;
+    animation-delay: 1.7s;
   }
 
-  .hamster__head {
-    animation: hamsterHead var(--dur) ease-in-out infinite;
-    background: hsl(30,90%,55%);
-    border-radius: 70% 30% 0 100% / 40% 25% 25% 60%;
-    box-shadow: 0 -0.25em 0 hsl(30,90%,80%) inset,
-  		0.75em -1.55em 0 hsl(30,90%,90%) inset;
-    top: 0;
-    left: -2em;
-    width: 2.75em;
-    height: 2.5em;
-    transform-origin: 100% 50%;
+  .loader svg path:nth-child(3) {
+    animation: wave 2s linear infinite;
+    animation-delay: 0.3s;
   }
 
-  .hamster__ear {
-    animation: hamsterEar var(--dur) ease-in-out infinite;
-    background: hsl(0,90%,85%);
-    border-radius: 50%;
-    box-shadow: -0.25em 0 hsl(30,90%,55%) inset;
-    top: -0.25em;
-    right: -0.25em;
-    width: 0.75em;
-    height: 0.75em;
-    transform-origin: 50% 75%;
+  .loader svg path:nth-child(4) {
+    animation: wave 2s linear infinite;
+    animation-delay: 1s;
   }
 
-  .hamster__eye {
-    animation: hamsterEye var(--dur) linear infinite;
-    background-color: hsl(0,0%,0%);
-    border-radius: 50%;
-    top: 0.375em;
-    left: 1.25em;
-    width: 0.5em;
-    height: 0.5em;
-  }
-
-  .hamster__nose {
-    background: hsl(0,90%,75%);
-    border-radius: 35% 65% 85% 15% / 70% 50% 50% 30%;
-    top: 0.75em;
-    left: 0;
-    width: 0.2em;
-    height: 0.25em;
-  }
-
-  .hamster__body {
-    animation: hamsterBody var(--dur) ease-in-out infinite;
-    background: hsl(30,90%,90%);
-    border-radius: 50% 30% 50% 30% / 15% 60% 40% 40%;
-    box-shadow: 0.1em 0.75em 0 hsl(30,90%,55%) inset,
-  		0.15em -0.5em 0 hsl(30,90%,80%) inset;
-    top: 0.25em;
-    left: 2em;
-    width: 4.5em;
-    height: 3em;
-    transform-origin: 17% 50%;
-    transform-style: preserve-3d;
-  }
-
-  .hamster__limb--fr,
-  .hamster__limb--fl {
-    clip-path: polygon(0 0,100% 0,70% 80%,60% 100%,0% 100%,40% 80%);
-    top: 2em;
-    left: 0.5em;
-    width: 1em;
-    height: 1.5em;
-    transform-origin: 50% 0;
-  }
-
-  .hamster__limb--fr {
-    animation: hamsterFRLimb var(--dur) linear infinite;
-    background: linear-gradient(hsl(30,90%,80%) 80%,hsl(0,90%,75%) 80%);
-    transform: rotate(15deg) translateZ(-1px);
-  }
-
-  .hamster__limb--fl {
-    animation: hamsterFLLimb var(--dur) linear infinite;
-    background: linear-gradient(hsl(30,90%,90%) 80%,hsl(0,90%,85%) 80%);
-    transform: rotate(15deg);
-  }
-
-  .hamster__limb--br,
-  .hamster__limb--bl {
-    border-radius: 0.75em 0.75em 0 0;
-    clip-path: polygon(0 0,100% 0,100% 30%,70% 90%,70% 100%,30% 100%,40% 90%,0% 30%);
-    top: 1em;
-    left: 2.8em;
-    width: 1.5em;
-    height: 2.5em;
-    transform-origin: 50% 30%;
-  }
-
-  .hamster__limb--br {
-    animation: hamsterBRLimb var(--dur) linear infinite;
-    background: linear-gradient(hsl(30,90%,80%) 90%,hsl(0,90%,75%) 90%);
-    transform: rotate(-25deg) translateZ(-1px);
-  }
-
-  .hamster__limb--bl {
-    animation: hamsterBLLimb var(--dur) linear infinite;
-    background: linear-gradient(hsl(30,90%,90%) 90%,hsl(0,90%,85%) 90%);
-    transform: rotate(-25deg);
-  }
-
-  .hamster__tail {
-    animation: hamsterTail var(--dur) linear infinite;
-    background: hsl(0,90%,85%);
-    border-radius: 0.25em 50% 50% 0.25em;
-    box-shadow: 0 -0.2em 0 hsl(0,90%,75%) inset;
-    top: 1.5em;
-    right: -0.5em;
-    width: 1em;
-    height: 0.5em;
-    transform: rotate(30deg) translateZ(-1px);
-    transform-origin: 0.25em 0.25em;
-  }
-
-  .spoke {
-    animation: spoke var(--dur) linear infinite;
-    background: radial-gradient(100% 100% at center,hsl(0,0%,60%) 4.8%,hsla(0,0%,60%,0) 5%),
-  		linear-gradient(hsla(0,0%,55%,0) 46.9%,hsl(0,0%,65%) 47% 52.9%,hsla(0,0%,65%,0) 53%) 50% 50% / 99% 99% no-repeat;
-  }
-
-  /* Animations */
-  @keyframes hamster {
-    from, to {
-      transform: rotate(4deg) translate(-0.8em,1.85em);
+  @keyframes wave {
+    0% {
+      stroke-width: 0;
+      transform: scale(1) translateX(0px) translateY(0px);
+      opacity: 0;
     }
-
-    50% {
-      transform: rotate(0) translate(-0.8em,1.85em);
+    10% {
+      stroke-width: 5;
+      transform: scale(1.05) translateX(-2.25px) translateY(-2.25px);
+      opacity: 0.3;
+    }
+    30% {
+      stroke-width: 10;
+      transform: scale(1.1) translateX(-4.5px) translateY(-4.5px);
+      opacity: 0;
+    }
+    100% {
+      stroke-width: 0;
+      transform: scale(1) translateX(0px) translateY(0px);
+      opacity: 0;
     }
   }
 
-  @keyframes hamsterHead {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(0);
+  @keyframes morph {
+    0% {
+      d: path(
+        "M10,20 C10,17.24 11.12,14.74 12.93,12.93 L12.93,12.93 C14.74,11.12 17.24,10 20,10 L80,10 C82.76,10 85.26,11.12 87.07,12.93 L87.07,12.93 C88.88,14.74 90,17.24 90,20 L90,80 C90,82.76 88.88,85.26 87.07,87.07 L87.07,87.07 C85.26,88.88 82.76,90 80,90 L20,90 C17.24,90 14.74,88.88 12.93,87.07 L12.93,87.07 C11.12,85.26 10,82.76 10,80Z M68,50 C68,45.02 65.98,40.52 62.72,37.27 L62.72,37.27 C59.47,34.01 54.97,32 50,32 L50,32 C45.02,32 40.52,34.01 37.27,37.27 L37.27,37.27 C34.01,40.52 32,45.02 32,50 L32,50 C32,54.97 34.01,59.47 37.27,62.72 L37.27,62.72 C40.52,65.98 45.02,68 50,68 L50,68 C54.97,68 59.47,65.98 62.72,62.72 L62.72,62.72 C65.98,59.47 68,54.97 68,50Z"
+      );
     }
-
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(8deg);
+    10% {
+      d: path(
+        "M10,20 C10,17.24 11.12,14.74 12.93,12.93 L12.93,12.93 C14.74,11.12 17.24,10 20,10 L80,10 C82.76,10 85.26,11.12 87.07,12.93 L87.07,12.93 C88.88,14.74 90,17.24 90,20 L90,80 C90,82.76 88.88,85.26 87.07,87.07 L87.07,87.07 C85.26,88.88 82.76,90 80,90 L20,90 C17.24,90 14.74,88.88 12.93,87.07 L12.93,87.07 C11.12,85.26 10,82.76 10,80Z M68,50 C68,45.02 65.98,40.52 62.72,37.27 L62.72,37.27 C59.47,34.01 54.97,32 50,32 L50,32 C45.02,32 40.52,34.01 37.27,37.27 L37.27,37.27 C34.01,40.52 32,45.02 32,50 L32,50 C32,54.97 34.01,59.47 37.27,62.72 L37.27,62.72 C40.52,65.98 45.02,68 50,68 L50,68 C54.97,68 59.47,65.98 62.72,62.72 L62.72,62.72 C65.98,59.47 68,54.97 68,50Z"
+      );
     }
-  }
-
-  @keyframes hamsterEye {
-    from, 90%, to {
-      transform: scaleY(1);
+    33% {
+      d: path(
+        "M10,37.57 C10,34.92 11.05,32.37 12.92,30.5 L30.5,12.92 C32.37,11.05 34.92,10 37.57,10 L62.42,10 C65.07,10 67.62,11.05 69.49,12.92 L87.07,30.5 C88.94,32.37 90,34.92 90,37.57 L90,62.42 C90,65.07 88.94,67.62 87.07,69.49 L69.49,87.07 C67.62,88.94 65.07,90 62.42,90 L37.57,90 C34.92,90 32.37,88.94 30.5,87.07 L12.92,69.49 C11.05,67.62 10,65.07 10,62.42Z M68,50 C68,49.12 67.66,48.24 66.99,47.57 L52.42,33 C51.75,32.33 50.87,32 50,32 L50,32 C49.12,32 48.24,32.33 47.57,33 L33,47.57 C32.33,48.24 32,49.12 32,50 L32,50 C32,50.87 32.33,51.75 33,52.42 L47.57,66.99 C48.24,67.66 49.12,68 50,68 L50,68 C50.87,68 51.75,67.66 52.42,66.99 L66.99,52.42 C67.66,51.75 68,50.87 68,50Z"
+      );
     }
-
-    95% {
-      transform: scaleY(0);
+    43% {
+      d: path(
+        "M10,37.57 C10,34.92 11.05,32.37 12.92,30.5 L30.5,12.92 C32.37,11.05 34.92,10 37.57,10 L62.42,10 C65.07,10 67.62,11.05 69.49,12.92 L87.07,30.5 C88.94,32.37 90,34.92 90,37.57 L90,62.42 C90,65.07 88.94,67.62 87.07,69.49 L69.49,87.07 C67.62,88.94 65.07,90 62.42,90 L37.57,90 C34.92,90 32.37,88.94 30.5,87.07 L12.92,69.49 C11.05,67.62 10,65.07 10,62.42Z M68,50 C68,49.12 67.66,48.24 66.99,47.57 L52.42,33 C51.75,32.33 50.87,32 50,32 L50,32 C49.12,32 48.24,32.33 47.57,33 L33,47.57 C32.33,48.24 32,49.12 32,50 L32,50 C32,50.87 32.33,51.75 33,52.42 L47.57,66.99 C48.24,67.66 49.12,68 50,68 L50,68 C50.87,68 51.75,67.66 52.42,66.99 L66.99,52.42 C67.66,51.75 68,50.87 68,50Z"
+      );
     }
-  }
-
-  @keyframes hamsterEar {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(0);
+    66% {
+      d: path(
+        "M10,50 C10,38.95 14.48,28.95 21.72,21.72 L21.72,21.72 C28.95,14.48 38.95,10 50,10 L50,10 C61.05,10 71.05,14.48 78.28,21.72 L78.28,21.72 C85.52,28.95 90,38.95 90,50 L90,50 C90,61.05 85.52,71.05 78.28,78.28 L78.28,78.28 C71.05,85.52 61.05,90 50,90 L50,90 C38.95,90 28.95,85.52 21.72,78.28 L21.72,78.28 C14.48,71.05 10,61.05 10,50Z M63.72,39.7 C63.72,38.75 63.34,37.9 62.71,37.28 L62.71,37.28 C62.09,36.65 61.24,36.27 60.29,36.27 L39.7,36.27 C38.75,36.27 37.9,36.65 37.28,37.28 L37.28,37.28 C36.65,37.9 36.27,38.75 36.27,39.7 L36.27,60.29 C36.27,61.24 36.65,62.09 37.28,62.71 L37.28,62.71 C37.9,63.34 38.75,63.72 39.7,63.72 L60.29,63.72 C61.24,63.72 62.09,63.34 62.71,62.71 L62.71,62.71 C63.34,62.09 63.72,61.24 63.72,60.29Z"
+      );
     }
-
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(12deg);
+    76% {
+      d: path(
+        "M10,50 C10,38.95 14.48,28.95 21.72,21.72 L21.72,21.72 C28.95,14.48 38.95,10 50,10 L50,10 C61.05,10 71.05,14.48 78.28,21.72 L78.28,21.72 C85.52,28.95 90,38.95 90,50 L90,50 C90,61.05 85.52,71.05 78.28,78.28 L78.28,78.28 C71.05,85.52 61.05,90 50,90 L50,90 C38.95,90 28.95,85.52 21.72,78.28 L21.72,78.28 C14.48,71.05 10,61.05 10,50Z M63.72,39.7 C63.72,38.75 63.34,37.9 62.71,37.28 L62.71,37.28 C62.09,36.65 61.24,36.27 60.29,36.27 L39.7,36.27 C38.75,36.27 37.9,36.65 37.28,37.28 L37.28,37.28 C36.65,37.9 36.27,38.75 36.27,39.7 L36.27,60.29 C36.27,61.24 36.65,62.09 37.28,62.71 L37.28,62.71 C37.9,63.34 38.75,63.72 39.7,63.72 L60.29,63.72 C61.24,63.72 62.09,63.34 62.71,62.71 L62.71,62.71 C63.34,62.09 63.72,61.24 63.72,60.29Z"
+      );
     }
-  }
-
-  @keyframes hamsterBody {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(0);
-    }
-
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(-2deg);
-    }
-  }
-
-  @keyframes hamsterFRLimb {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(50deg) translateZ(-1px);
-    }
-
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(-30deg) translateZ(-1px);
-    }
-  }
-
-  @keyframes hamsterFLLimb {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(-30deg);
-    }
-
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(50deg);
-    }
-  }
-
-  @keyframes hamsterBRLimb {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(-60deg) translateZ(-1px);
-    }
-
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(20deg) translateZ(-1px);
-    }
-  }
-
-  @keyframes hamsterBLLimb {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(20deg);
-    }
-
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(-60deg);
-    }
-  }
-
-  @keyframes hamsterTail {
-    from, 25%, 50%, 75%, to {
-      transform: rotate(30deg) translateZ(-1px);
-    }
-
-    12.5%, 37.5%, 62.5%, 87.5% {
-      transform: rotate(10deg) translateZ(-1px);
-    }
-  }
-
-  @keyframes spoke {
-    from {
-      transform: rotate(0);
-    }
-
-    to {
-      transform: rotate(-1turn);
+    100% {
+      d: path(
+        "M10,20 C10,17.24 11.12,14.74 12.93,12.93 L12.93,12.93 C14.74,11.12 17.24,10 20,10 L80,10 C82.76,10 85.26,11.12 87.07,12.93 L87.07,12.93 C88.88,14.74 90,17.24 90,20 L90,80 C90,82.76 88.88,85.26 87.07,87.07 L87.07,87.07 C85.26,88.88 82.76,90 80,90 L20,90 C17.24,90 14.74,88.88 12.93,87.07 L12.93,87.07 C11.12,85.26 10,82.76 10,80Z M68,50 C68,45.02 65.98,40.52 62.72,37.27 L62.72,37.27 C59.47,34.01 54.97,32 50,32 L50,32 C45.02,32 40.52,34.01 37.27,37.27 L37.27,37.27 C34.01,40.52 32,45.02 32,50 L32,50 C32,54.97 34.01,59.47 37.27,62.72 L37.27,62.72 C40.52,65.98 45.02,68 50,68 L50,68 C54.97,68 59.47,65.98 62.72,62.72 L62.72,62.72 C65.98,59.47 68,54.97 68,50Z"
+      );
     }
   }
 `;

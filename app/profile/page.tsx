@@ -148,10 +148,10 @@ const StyledWrapper = styled.div`
     font-size: 16px;
     font-weight: 900;
     text-transform: uppercase;
-    background: #fff;
-    color: #000;
+    background: #4387f4;
+    color: #ffffff;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #58A0C8;
+    box-shadow: 4px 4px 0 #2c5aa0;
     cursor: pointer;
     transition: all 0.2s;
   }
@@ -162,7 +162,7 @@ const StyledWrapper = styled.div`
 
   .back-button:hover, .edit-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #58A0C8;
+    box-shadow: 6px 6px 0 #4387f4;
   }
 
   .back-button:active, .edit-button:active {
@@ -175,7 +175,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -1.5px;
-    color: #113F67;
+    color: #ffffff;
   }
 
   .content-wrapper {
@@ -187,10 +187,10 @@ const StyledWrapper = styled.div`
   }
 
   .hero-card {
-    background: #fff;
+    background: #2d2d2d;
     border: 3px solid #000;
     padding: 25px 20px;
-    box-shadow: 6px 6px 0 #58A0C8;
+    box-shadow: 6px 6px 0 #4387f4;
     width: 100%;
   }
 
@@ -220,8 +220,8 @@ const StyledWrapper = styled.div`
     width: 80px;
     height: 80px;
     border: 3px solid #000;
-    box-shadow: 3px 3px 0 #58A0C8;
-    background: #58A0C8;
+    box-shadow: 3px 3px 0 #4387f4;
+    background: #4387f4;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -243,7 +243,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -2px;
-    color: #113F67;
+    color: #ffffff;
     margin-bottom: 8px;
     line-height: 1;
   }
@@ -252,14 +252,14 @@ const StyledWrapper = styled.div`
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #666;
+    color: #999;
     margin-bottom: 15px;
   }
 
   .hero-bio {
     font-size: 14px;
     font-weight: 600;
-    color: #000;
+    color: #ffffff;
     line-height: 1.4;
   }
 
@@ -276,24 +276,24 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     text-align: center;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #58A0C8;
+    box-shadow: 4px 4px 0 #4387f4;
   }
 
   .domain-badge {
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
   }
 
   .looking-badge {
-    background: #fff;
-    color: #113F67;
+    background: #1a1a1a;
+    color: #ffffff;
   }
 
   .section-card {
-    background: #fff;
+    background: #2d2d2d;
     border: 3px solid #000;
     padding: 20px;
-    box-shadow: 4px 4px 0 #58A0C8;
+    box-shadow: 4px 4px 0 #4387f4;
   }
 
   .section-title {
@@ -301,7 +301,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #113F67;
+    color: #ffffff;
     margin-bottom: 12px;
     padding-bottom: 8px;
     border-bottom: 2px solid #000;
@@ -319,23 +319,24 @@ const StyledWrapper = styled.div`
     font-weight: 700;
     text-transform: uppercase;
     border: 2px solid #000;
-    background: #e5e5f7;
-    color: #000;
-    box-shadow: 2px 2px 0 #000;
+    background: #4387f4;
+    color: #ffffff;
+    box-shadow: 2px 2px 0 #2c5aa0;
   }
 
   .interest-tag {
-    background: #fff;
+    background: #1a1a1a;
   }
 
   .availability-card {
-    background: #e5e5f7;
+    background: #4387f4;
     border: 3px solid #000;
     padding: 15px;
     font-size: 13px;
     font-weight: 700;
     text-align: center;
-    box-shadow: 4px 4px 0 #000;
+    color: #ffffff;
+    box-shadow: 4px 4px 0 #2c5aa0;
   }
 
   .swipe-button {
@@ -345,10 +346,10 @@ const StyledWrapper = styled.div`
     font-size: 22px;
     font-weight: 900;
     text-transform: uppercase;
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
     border: 4px solid #000;
-    box-shadow: 6px 6px 0 #113F67;
+    box-shadow: 6px 6px 0 #2c5aa0;
     cursor: pointer;
     transition: all 0.2s;
     letter-spacing: -1px;
@@ -356,7 +357,7 @@ const StyledWrapper = styled.div`
 
   .swipe-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 8px 8px 0 #113F67;
+    box-shadow: 8px 8px 0 #2c5aa0;
   }
 
   .swipe-button:active {
@@ -366,7 +367,7 @@ const StyledWrapper = styled.div`
 
   .empty-state {
     font-size: 12px;
-    color: #666;
+    color: #999;
     font-style: italic;
   }
 `;

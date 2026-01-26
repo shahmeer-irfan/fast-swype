@@ -1,21 +1,8 @@
 import type { Metadata } from "next";
-import { Montserrat, Karla } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import StyledComponentsRegistry from "@/lib/registry";
 import MusicPlayer from "@/components/MusicPlayer";
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800", "900"],
-});
-
-const karla = Karla({
-  variable: "--font-karla",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
 
 export const metadata: Metadata = {
   title: "FastSwype - Find Your FYP Partner for Just 250 PKR",
@@ -25,7 +12,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${karla.variable} antialiased`}>
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Changa+One:ital@0;1&family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet" />
+      </head>
+      <body className="antialiased">
         <StyledComponentsRegistry>
           <AuthProvider>
             {children}

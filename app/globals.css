@@ -1,13 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FDF5AA;
-  --foreground: #113F67;
-  --primary: #113F67;
-  --primary-medium: #34699A;
-  --primary-light: #58A0C8;
-  --accent: #FDF5AA;
-  --border-color: #113F67;
+  --background: #1a1a1a;
+  --foreground: #ffffff;
+  --primary: #4387f4;
+  --primary-medium: #2c5aa0;
+  --primary-light: #6ba3ff;
+  --accent: #4387f4;
+  --border-color: #4387f4;
+  --dark-grey: #2d2d2d;
+  --darker-grey: #1a1a1a;
 }
 
 @theme inline {
@@ -15,8 +17,6 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-primary-light: var(--primary-light);
-  --font-montserrat: var(--font-montserrat);
-  --font-karla: var(--font-karla);
 }
 
 * {
@@ -26,30 +26,27 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Arial", "Helvetica", sans-serif;
-  font-weight: 600;
-  line-height: 1.5;
+  font-family: "Lexend Deca", sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
   margin: 0;
   padding: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Arial", "Helvetica", sans-serif;
-  font-weight: 900;
+  font-family: "Archivo Black", "Changa One", sans-serif;
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: -2px;
-  line-height: 0.9;
+  line-height: 1.1;
   margin: 0;
-  color: var(--foreground);
+  color: #ffffff;
+
 }
 
 h1 {
   font-size: 50px;
 }
 
-h2 {
-  font-size: 60px;
-}
 
 h3 {
   font-size: 32px;
@@ -68,8 +65,8 @@ h6 {
 }
 
 button {
-  font-family: "Arial", "Helvetica", sans-serif;
-  font-weight: 900;
+  font-family: "Archivo Black", "Changa One", sans-serif;
+  font-weight: 400;
   text-transform: uppercase;
 }
 
@@ -79,5 +76,6 @@ a {
 }
 
 input, textarea {
-  font-family: "Arial", "Helvetica", sans-serif;
+  font-family: "Lexend Deca", sans-serif;
+  font-weight: 400;
 }

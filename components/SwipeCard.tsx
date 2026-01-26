@@ -16,7 +16,7 @@ interface SwipeCardProps {
 
 export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
   const { user } = useAuth();
-  const { playClick, playDismiss, playConfirm } = useClickSound();
+  const { playClick, playDismiss, playConfirm, playWoosh } = useClickSound();
   const [isFlipped, setIsFlipped] = useState(false);
   const [proposalText, setProposalText] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -69,6 +69,7 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
   };
 
   const handleReject = () => {
+    playWoosh();
     playDismiss();
     onSwipe("left");
     setIsFlipped(false);
@@ -92,16 +93,13 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
 
   const handleDragEnd = (event: any, info: PanInfo) => {
     if (info.offset.x > 100) {
-      // Swipe right - show proposal form
-      setExitX(200);
+      // Swipe right - just flip card (no swipe animation)
       playClick();
-      setTimeout(() => {
-        setIsFlipped(true);
-        setExitX(0);
-      }, 200);
+      setIsFlipped(true);
     } else if (info.offset.x < -100) {
-      // Swipe left - reject
+      // Swipe left - reject with animation
       setExitX(-200);
+      playWoosh();
       playDismiss();
       setTimeout(() => {
         onSwipe("left");
@@ -232,7 +230,7 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
             <div className="brutalist-card__header">
               <div className="brutalist-card__name">{profile.name}</div>
               <div className="brutalist-card__meta">
-                <span className="meta-tag">{profile.department} • {profile.batch}</span>
+                <span className="meta-tag">{profile.department} • {profile.batch} • {profile.campus}</span>
               </div>
             </div>
             
@@ -245,11 +243,6 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
               <div className="content-section">
                 <div className="section-title">LOOKING FOR</div>
                 <div className="looking-badge">{profile.looking_for || 'Not specified'}</div>
-              </div>
-
-              <div className="content-section">
-                <div className="section-title">STATUS</div>
-                <div className="availability-badge">{profile.availability || 'Not specified'}</div>
               </div>
             </div>
 
@@ -291,21 +284,21 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
                 <textarea
                   className="proposal-textarea"
                   placeholder="Keep it short and funny..."
-                  maxLength={100}
+                  maxLength={250}
                   value={proposalText}
                   onChange={(e) => setProposalText(e.target.value)}
                   required
                 />
-                <div className="char-count">{proposalText.length}/100</div>
+                <div className="char-count">{proposalText.length}/250</div>
               </div>
 
               {/* Tips Section */}
               <div className="tips-section">
-                <div className="tips-title">✨ psst... little tips</div>
+                <div className="tips-title">Some cute tips writing perfect proposal</div>
                 <div className="tips-list">
-                  <div className="tip-item">Share WhatsApp/Calendar links to meet IRL ☕</div>
-                  <div className="tip-item">Be genuine, people can smell fake vibes 👃</div>
-                  <div className="tip-item">Show what makes you a great teammate 🤝</div>
+                  <div className="tip-item">Share WhatsApp/Calendar links to meet IRL☕</div>
+                  <div className="tip-item">Mention what you need and what you can offer👃</div>
+                  <div className="tip-item">Show what makes you a great teammate🤝</div>
                 </div>
               </div>
 
@@ -373,9 +366,9 @@ const StyledWrapper = styled.div`
     height: 100%;
     backface-visibility: hidden;
     border: 3px solid #000;
-    background-color: #fff;
+    background-color: #2d2d2d;
     padding: 20px;
-    box-shadow: 8px 8px 0 #000;
+    box-shadow: 8px 8px 0 #4387f4;
     font-family: "Arial", sans-serif;
     display: flex;
     flex-direction: column;
@@ -406,8 +399,8 @@ const StyledWrapper = styled.div`
     height: 120px;
     margin: 0 auto 20px;
     border: 4px solid #000;
-    box-shadow: 4px 4px 0 #58A0C8;
-    background: #58A0C8;
+    box-shadow: 4px 4px 0 #4387f4;
+    background: #4387f4;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -427,7 +420,7 @@ const StyledWrapper = styled.div`
 
   .brutalist-card__name {
     font-weight: 900;
-    color: #113F67;
+    color: #ffffff;
     font-size: 32px;
     text-transform: uppercase;
     line-height: 1;
@@ -442,7 +435,7 @@ const StyledWrapper = styled.div`
   }
 
   .meta-tag {
-    background-color: #58A0C8;
+    background-color: #4387f4;
     color: #fff;
     padding: 4px 10px;
     font-size: 11px;
@@ -468,14 +461,14 @@ const StyledWrapper = styled.div`
   .section-title {
     font-size: 11px;
     font-weight: 900;
-    color: #113F67;
+    color: #ffffff;
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
   .bio-text {
-    color: #000;
+    color: #ffffff;
     font-size: 14px;
     line-height: 1.5;
     font-weight: 600;
@@ -488,7 +481,7 @@ const StyledWrapper = styled.div`
   }
 
   .domain-badge, .looking-badge {
-    background-color: #58A0C8;
+    background-color: #4387f4;
     color: #fff;
     padding: 8px 12px;
     font-size: 12px;
@@ -496,14 +489,14 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     display: inline-block;
     border: 2px solid #000;
-    box-shadow: 3px 3px 0 #113F67;
+    box-shadow: 3px 3px 0 #2c5aa0;
   }
 
   .looking-badge {
-    background-color: #fff;
-    color: #113F67;
+    background-color: #4387f4;
+    color: #ffffff;
     border: 3px solid #000;
-    box-shadow: 3px 3px 0 #58A0C8;
+    box-shadow: 3px 3px 0 #2c5aa0;
   }
 
   .tags-container {
@@ -513,22 +506,22 @@ const StyledWrapper = styled.div`
   }
 
   .tag {
-    background-color: #fff;
+    background-color: #4387f4;
     border: 2px solid #000;
     padding: 5px 10px;
     font-size: 11px;
     font-weight: 700;
-    color: #000;
+    color: #ffffff;
     text-transform: uppercase;
     box-shadow: 2px 2px 0 #000;
   }
 
   .skill-tag {
-    background-color: #e5e5f7;
+    background-color: #1a1a1a;
   }
 
   .availability-badge {
-    background-color: #58A0C8;
+    background-color: #4387f4;
     color: #fff;
     border: 2px solid #000;
     padding: 8px 12px;
@@ -536,27 +529,36 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     display: inline-block;
-    box-shadow: 3px 3px 0 #113F67;
+    box-shadow: 3px 3px 0 #2c5aa0;
   }
 
   .swipe-hint {
     display: flex;
     justify-content: space-between;
+    gap: 8px;
     padding: 10px 0;
     margin-top: auto;
-    border-top: 2px solid #000;
-    font-size: 9px;
+    border-top: 2px solid #4387f4;
+    font-size: 8px;
     font-weight: 700;
-    color: #666;
+    color: #999;
     text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   .hint-left {
     color: #ff0000;
+    flex-shrink: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .hint-right {
     color: #00ff00;
+    flex-shrink: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .brutalist-card__actions {
@@ -572,22 +574,22 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     border: 3px solid #000;
-    background-color: #fff;
-    color: #000;
+    background-color: #1a1a1a;
+    color: #ffffff;
     position: relative;
     transition: all 0.2s ease;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #4387f4;
     cursor: pointer;
     letter-spacing: -0.5px;
   }
 
   .brutalist-card__button--send {
-    background-color: #58A0C8;
+    background-color: #4387f4;
     color: #fff;
   }
 
   .brutalist-card__button--confirm {
-    background-color: #58A0C8;
+    background-color: #4387f4;
     color: #fff;
   }
 
@@ -603,13 +605,13 @@ const StyledWrapper = styled.div`
   }
 
   .brutalist-card__button--send:hover {
-    background-color: #113F67;
-    color: #fff;
+    background-color: #00ff00;
+    color: #000;
   }
 
   .brutalist-card__button--confirm:hover {
-    background-color: #113F67;
-    color: #fff;
+    background-color: #00ff00;
+    color: #000;
   }
 
   .brutalist-card__button--back:hover {
@@ -655,11 +657,11 @@ const StyledWrapper = styled.div`
     width: 100%;
     min-height: 80px;
     border: 3px solid #000;
-    background-color: #fff;
-    box-shadow: 4px 4px 0 #000;
+    background-color: #1a1a1a;
+    box-shadow: 4px 4px 0 #4387f4;
     font-size: 14px;
     font-weight: 600;
-    color: #000;
+    color: #ffffff;
     padding: 12px;
     outline: none;
     resize: none;
@@ -676,37 +678,37 @@ const StyledWrapper = styled.div`
     text-align: right;
     font-size: 10px;
     font-weight: 700;
-    color: #666;
+    color: #999;
     margin-top: 6px;
   }
 
   .tips-section {
-    margin: 8px 0 12px 0;
-    padding: 10px;
-    background: #f5f5f5;
-    border: 2px solid #000;
+    margin: 3px 0 12px 0;
+    padding: 16px;
+    background: #1a1a1a;
+    border: 2px solid #4387f4;
   }
 
   .tips-title {
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 900;
     text-transform: lowercase;
     letter-spacing: 0.5px;
-    color: #666;
-    margin-bottom: 6px;
+    color: #999;
+    margin-bottom: 8px;
   }
 
   .tips-list {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 5px;
   }
 
   .tip-item {
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 600;
-    line-height: 1.3;
-    color: #000;
+    line-height: 1.4;
+    color: #ffffff;
   }
 
   .proposal-form .content-section {
@@ -738,9 +740,9 @@ const StyledWrapper = styled.div`
   }
 
   .profile-modal-card {
-    background: #fff;
+    background: #2d2d2d;
     border: 4px solid #000;
-    box-shadow: 12px 12px 0 #000;
+    box-shadow: 12px 12px 0 #4387f4;
     max-width: 500px;
     width: 100%;
     max-height: 90vh;
@@ -766,9 +768,9 @@ const StyledWrapper = styled.div`
     right: 15px;
     width: 40px;
     height: 40px;
-    background: #fff;
+    background: #4387f4;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #2c5aa0;
     font-size: 28px;
     font-weight: 900;
     cursor: pointer;
@@ -787,7 +789,7 @@ const StyledWrapper = styled.div`
   }
 
   .modal-header {
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
     padding: 30px;
     display: flex;
@@ -799,9 +801,9 @@ const StyledWrapper = styled.div`
   .modal-avatar {
     width: 80px;
     height: 80px;
-    background: #fff;
-    color: #113F67;
-    border: 4px solid #fff;
+    background: #4387f4;
+    color: #ffffff;
+    border: 4px solid #000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -847,7 +849,7 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 12px;
-    color: #113F67;
+    color: #ffffff;
     padding-bottom: 8px;
     border-bottom: 3px solid #000;
   }
@@ -855,7 +857,7 @@ const StyledWrapper = styled.div`
   .modal-bio {
     font-size: 15px;
     line-height: 1.6;
-    color: #000;
+    color: #ffffff;
     font-weight: 600;
     margin: 0;
   }
@@ -863,7 +865,7 @@ const StyledWrapper = styled.div`
   .modal-domain,
   .modal-looking,
   .modal-availability {
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
     padding: 10px 15px;
     font-size: 13px;
@@ -871,7 +873,7 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     display: inline-block;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #113F67;
+    box-shadow: 4px 4px 0 #2c5aa0;
   }
 
   .modal-tags {
@@ -881,12 +883,12 @@ const StyledWrapper = styled.div`
   }
 
   .modal-tag {
-    background: #e5e5f7;
+    background: #4387f4;
     border: 2px solid #000;
     padding: 8px 12px;
     font-size: 12px;
     font-weight: 700;
-    color: #000;
+    color: #ffffff;
     text-transform: uppercase;
     box-shadow: 2px 2px 0 #000;
   }
@@ -910,8 +912,8 @@ const StyledWrapper = styled.div`
   }
 
   .modal-action-button.reject-button {
-    background: #fff;
-    color: #000;
+    background: #1a1a1a;
+    color: #ffffff;
     border-right: 4px solid #000;
   }
 
@@ -921,12 +923,12 @@ const StyledWrapper = styled.div`
   }
 
   .modal-action-button.send-button {
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
   }
 
   .modal-action-button.send-button:hover {
-    background: #113F67;
+    background: #2c5aa0;
     color: #fff;
   }
 
@@ -936,12 +938,12 @@ const StyledWrapper = styled.div`
 
   /* View Profile button style */
   .brutalist-card__button--view {
-    background-color: #fff;
-    color: #000;
+    background-color: #1a1a1a;
+    color: #ffffff;
   }
 
   .brutalist-card__button--view:hover {
-    background-color: #e5e5f7;
-    color: #000;
+    background-color: #4387f4;
+    color: #ffffff;
   }
 `;

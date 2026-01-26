@@ -39,7 +39,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        // Profile doesn't exist, might be new confirmed user
+        if (error.code === 'PGRST116') {
+          console.log('Profile not found for user:', userId);
+          // Try to create profile from user metadata
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user?.user_metadata) {
+            const { name, campus, batch, department } = user.user_metadata;
+            if (name && campus && batch && department) {
+              const { error: insertError } = await supabase
+                .from('profiles')
+                .insert({
+                  id: userId,
+                  email: user.email!,
+                  name,
+                  campus,
+                  batch,
+                  department,
+                });
+              
+              if (!insertError) {
+                // Reload profile after creation
+                await loadProfile(userId);
+                return;
+              }
+            }
+          }
+        }
+        throw error;
+      }
       setProfile(data as Profile);
     } catch (error) {
       console.error('Error loading profile:', error);

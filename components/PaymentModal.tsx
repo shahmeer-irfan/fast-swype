@@ -193,9 +193,9 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalCard = styled.div`
-  background: #fff;
+  background: #2d2d2d;
   border: 4px solid #000;
-  box-shadow: 12px 12px 0 #58A0C8;
+  box-shadow: 12px 12px 0 #4387f4;
   max-width: 500px;
   width: 100%;
   max-height: 90vh;
@@ -208,7 +208,7 @@ const ModalHeader = styled.div`
   align-items: center;
   padding: 20px;
   border-bottom: 3px solid #000;
-  background: #58A0C8;
+  background: #4387f4;
 `;
 
 const ModalTitle = styled.h2`
@@ -220,12 +220,13 @@ const ModalTitle = styled.h2`
 `;
 
 const CloseButton = styled.button`
-  background: #fff;
+  background: #1a1a1a;
   border: 2px solid #000;
   width: 36px;
   height: 36px;
   font-size: 28px;
   font-weight: 900;
+  color: #ffffff;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -243,8 +244,8 @@ const ModalContent = styled.div`
 `;
 
 const InfoSection = styled.div`
-  background: #f5f5f5;
-  border: 3px solid #000;
+  background: #1a1a1a;
+  border: 3px solid #4387f4;
   padding: 16px;
   margin-bottom: 20px;
 `;
@@ -253,7 +254,7 @@ const InfoTitle = styled.div`
   font-size: 14px;
   font-weight: 900;
   text-transform: uppercase;
-  color: #000;
+  color: #ffffff;
   margin-bottom: 8px;
 `;
 
@@ -261,7 +262,7 @@ const InfoText = styled.p`
   font-size: 13px;
   font-weight: 600;
   line-height: 1.5;
-  color: #000;
+  color: #999;
   margin: 0;
 `;
 
@@ -279,7 +280,7 @@ const Step = styled.div`
 const StepNumber = styled.div`
   width: 28px;
   height: 28px;
-  background: #58A0C8;
+  background: #4387f4;
   color: #fff;
   border: 2px solid #000;
   display: flex;
@@ -294,13 +295,13 @@ const StepText = styled.div`
   font-size: 13px;
   font-weight: 600;
   line-height: 1.5;
-  color: #000;
+  color: #ffffff;
   padding-top: 4px;
 `;
 
 const IBANBox = styled.div`
-  background: #fff;
-  border: 3px solid #000;
+  background: #1a1a1a;
+  border: 3px solid #4387f4;
   padding: 12px;
   margin: 12px 0 16px 40px;
   display: flex;
@@ -313,12 +314,12 @@ const IBANText = styled.div`
   font-size: 12px;
   font-weight: 900;
   font-family: monospace;
-  color: #000;
+  color: #ffffff;
   flex: 1;
 `;
 
 const CopyButton = styled.button`
-  background: #58A0C8;
+  background: #4387f4;
   color: #fff;
   border: 2px solid #000;
   padding: 6px 12px;
@@ -329,8 +330,8 @@ const CopyButton = styled.button`
   transition: all 0.2s;
 
   &:hover {
-    background: #fff;
-    color: #000;
+    background: #1a1a1a;
+    color: #ffffff;
   }
 `;
 
@@ -350,7 +351,7 @@ const Label = styled.label`
   font-size: 12px;
   font-weight: 900;
   text-transform: uppercase;
-  color: #000;
+  color: #ffffff;
 `;
 
 const FileInput = styled.div`
@@ -366,26 +367,28 @@ const FileInput = styled.div`
 `;
 
 const FileLabel = styled.div`
-  background: #fff;
-  border: 3px solid #000;
+  background: #1a1a1a;
+  border: 3px solid #4387f4;
   padding: 12px;
   font-size: 13px;
   font-weight: 700;
+  color: #ffffff;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: #f5f5f5;
+    background: #4387f4;
   }
 `;
 
 const TextArea = styled.textarea`
-  background: #fff;
-  border: 3px solid #000;
+  background: #1a1a1a;
+  border: 3px solid #4387f4;
   padding: 12px;
   font-size: 13px;
   font-weight: 600;
+  color: #ffffff;
   font-family: Arial, sans-serif;
   resize: vertical;
   min-height: 80px;
@@ -399,7 +402,7 @@ const TextArea = styled.textarea`
 const CharCount = styled.div`
   font-size: 10px;
   font-weight: 700;
-  color: #666;
+  color: #999;
   text-align: right;
 `;
 
@@ -428,12 +431,12 @@ const WhatsAppButton = styled.button`
   font-weight: 900;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 4px 4px 0 #58A0C8;
+  box-shadow: 4px 4px 0 #4387f4;
   transition: all 0.2s;
 
   &:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #58A0C8;
+    box-shadow: 6px 6px 0 #4387f4;
   }
 
   &:active {
@@ -443,7 +446,7 @@ const WhatsAppButton = styled.button`
 `;
 
 const SubmitButton = styled.button`
-  background: #58A0C8;
+  background: #4387f4;
   color: #fff;
   border: 3px solid #000;
   padding: 14px;
@@ -451,12 +454,12 @@ const SubmitButton = styled.button`
   font-weight: 900;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 4px 4px 0 #58A0C8;
+  box-shadow: 4px 4px 0 #4387f4;
   transition: all 0.2s;
 
   &:hover:not(:disabled) {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #58A0C8;
+    box-shadow: 6px 6px 0 #4387f4;
   }
 
   &:active:not(:disabled) {
@@ -473,8 +476,8 @@ const SubmitButton = styled.button`
 const Note = styled.div`
   margin-top: 16px;
   padding: 12px;
-  background: #fffbea;
-  border: 2px solid #000;
+  background: #1a1a1a;
+  border: 2px solid #4387f4;
   font-size: 11px;
   font-weight: 700;
   text-align: center;

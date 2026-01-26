@@ -407,7 +407,7 @@ const StyledWrapper = styled.div`
     padding: 12px;
     background: #ff6b6b;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #58A0C8;
+    box-shadow: 4px 4px 0 #4387f4;
     color: #fff;
     font-weight: 700;
     text-align: center;
@@ -426,17 +426,17 @@ const StyledWrapper = styled.div`
     padding: 10px 16px;
     font-size: 24px;
     font-weight: 900;
-    background: #fff;
-    color: #000;
+    background: #4387f4;
+    color: #ffffff;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #58A0C8;
+    box-shadow: 4px 4px 0 #2c5aa0;
     cursor: pointer;
     transition: all 0.2s;
   }
 
   .back-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #58A0C8;
+    box-shadow: 6px 6px 0 #4387f4;
   }
 
   .back-button:active {
@@ -449,7 +449,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -1.5px;
-    color: #000;
+    color: #ffffff;
   }
 
   .spacer {
@@ -465,10 +465,10 @@ const StyledWrapper = styled.div`
   }
 
   .form-section {
-    background: #fff;
+    background: #2d2d2d;
     border: 3px solid #000;
     padding: 20px;
-    box-shadow: 4px 4px 0 #58A0C8;
+    box-shadow: 4px 4px 0 #4387f4;
   }
 
   .section-title {
@@ -476,16 +476,16 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -0.5px;
-    color: #000;
+    color: #ffffff;
     margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #000;
+    border-bottom: 2px solid #4387f4;
   }
 
   .hint {
     font-size: 10px;
     font-weight: 600;
-    color: #666;
+    color: #999;
     text-transform: none;
     letter-spacing: 0;
   }
@@ -505,7 +505,7 @@ const StyledWrapper = styled.div`
     font-size: 11px;
     font-weight: 900;
     text-transform: uppercase;
-    color: #000;
+    color: #ffffff;
     margin-bottom: 8px;
     letter-spacing: 0.5px;
   }
@@ -520,9 +520,9 @@ const StyledWrapper = styled.div`
     width: 120px;
     height: 120px;
     border: 4px solid #000;
-    box-shadow: 4px 4px 0 #58A0C8;
+    box-shadow: 4px 4px 0 #4387f4;
     overflow: hidden;
-    background: #f0f0f0;
+    background: #1a1a1a;
   }
 
   .preview-image {
@@ -538,7 +538,7 @@ const StyledWrapper = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #e5e5f7;
+    background: #4387f4;
   }
 
   .placeholder-icon {
@@ -550,7 +550,7 @@ const StyledWrapper = styled.div`
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #666;
+    color: #ffffff;
   }
 
   .picture-actions {
@@ -566,9 +566,9 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     border: 3px solid #000;
-    background: #fff;
-    color: #000;
-    box-shadow: 3px 3px 0 #58A0C8;
+    background: #4387f4;
+    color: #ffffff;
+    box-shadow: 3px 3px 0 #2c5aa0;
     cursor: pointer;
     transition: all 0.2s;
     text-align: center;
@@ -577,7 +577,7 @@ const StyledWrapper = styled.div`
   .upload-button:hover,
   .remove-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0 #58A0C8;
+    box-shadow: 5px 5px 0 #4387f4;
   }
 
   .upload-button:active,
@@ -597,9 +597,9 @@ const StyledWrapper = styled.div`
     font-size: 14px;
     font-weight: 600;
     border: 3px solid #000;
-    background: #fff;
-    color: #000;
-    box-shadow: 3px 3px 0 #58A0C8;
+    background: #1a1a1a;
+    color: #ffffff;
+    box-shadow: 3px 3px 0 #4387f4;
     transition: all 0.2s;
     font-family: "Arial", "Helvetica", sans-serif;
   }
@@ -607,7 +607,7 @@ const StyledWrapper = styled.div`
   .form-input:focus, .form-textarea:focus, .form-select:focus {
     outline: none;
     transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0 #58A0C8;
+    box-shadow: 5px 5px 0 #4387f4;
   }
 
   .form-textarea {
@@ -626,22 +626,22 @@ const StyledWrapper = styled.div`
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    background: #fff;
+    background: #1a1a1a;
     border: 2px solid #000;
-    color: #000;
+    color: #ffffff;
     cursor: pointer;
     transition: all 0.2s;
   }
 
   .tag-select:hover {
     transform: translate(-1px, -1px);
-    box-shadow: 3px 3px 0 #58A0C8;
+    box-shadow: 3px 3px 0 #4387f4;
   }
 
   .tag-select.selected {
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
-    box-shadow: 2px 2px 0 #58A0C8;
+    box-shadow: 2px 2px 0 #4387f4;
   }
 
   .submit-button {
@@ -650,10 +650,10 @@ const StyledWrapper = styled.div`
     font-size: 20px;
     font-weight: 900;
     text-transform: uppercase;
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
     border: 3px solid #000;
-    box-shadow: 6px 6px 0 #58A0C8;
+    box-shadow: 6px 6px 0 #2c5aa0;
     cursor: pointer;
     transition: all 0.2s;
     letter-spacing: -1px;
@@ -661,7 +661,7 @@ const StyledWrapper = styled.div`
 
   .submit-button:hover:not(:disabled) {
     transform: translate(-2px, -2px);
-    box-shadow: 8px 8px 0 #58A0C8;
+    box-shadow: 8px 8px 0 #2c5aa0;
     background: #00ff00;
     color: #000;
   }

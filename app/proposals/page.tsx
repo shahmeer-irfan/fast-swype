@@ -216,12 +216,12 @@ const StyledWrapper = styled.div`
   .back-button {
     width: 48px;
     height: 48px;
-    background: #fff;
+    background: #4387f4;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #58A0C8;
+    box-shadow: 4px 4px 0 #2c5aa0;
     font-size: 24px;
     font-weight: 900;
-    color: #000;
+    color: #ffffff;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
@@ -231,7 +231,7 @@ const StyledWrapper = styled.div`
 
   .back-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #58A0C8;
+    box-shadow: 6px 6px 0 #4387f4;
   }
 
   .back-button:active {
@@ -244,7 +244,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -1px;
-    color: #000;
+    color: #ffffff;
   }
 
   .spacer {
@@ -260,27 +260,27 @@ const StyledWrapper = styled.div`
 
   .filter-tab {
     padding: 8px 16px;
-    background: #fff;
+    background: #2d2d2d;
     border: 3px solid #000;
-    box-shadow: 3px 3px 0 #58A0C8;
+    box-shadow: 3px 3px 0 #4387f4;
     font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
-    color: #000;
+    color: #ffffff;
     cursor: pointer;
     transition: all 0.2s;
   }
 
   .filter-tab:hover {
     transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0 #58A0C8;
+    box-shadow: 4px 4px 0 #4387f4;
   }
 
   .filter-tab:active,
   .filter-tab.active {
     transform: translate(3px, 3px);
     box-shadow: none;
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
   }
 
@@ -291,9 +291,9 @@ const StyledWrapper = styled.div`
   }
 
   .proposal-card {
-    background: #fff;
+    background: #2d2d2d;
     border: 3px solid #000;
-    box-shadow: 6px 6px 0 #58A0C8;
+    box-shadow: 6px 6px 0 #4387f4;
     padding: 20px;
     cursor: pointer;
     transition: all 0.2s;
@@ -301,7 +301,7 @@ const StyledWrapper = styled.div`
 
   .proposal-card:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 8px 8px 0 #58A0C8;
+    box-shadow: 8px 8px 0 #4387f4;
   }
 
   .proposal-card:active {
@@ -327,7 +327,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -0.5px;
-    color: #000;
+    color: #ffffff;
     margin-bottom: 4px;
   }
 
@@ -335,20 +335,20 @@ const StyledWrapper = styled.div`
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #666;
+    color: #999;
   }
 
   .proposal-time {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #666;
+    color: #999;
   }
 
   .proposal-message {
     font-size: 14px;
     line-height: 1.5;
-    color: #000;
+    color: #ffffff;
     margin-bottom: 12px;
   }
 
@@ -370,7 +370,7 @@ const StyledWrapper = styled.div`
   .arrow {
     font-size: 20px;
     font-weight: 900;
-    color: #000;
+    color: #4387f4;
   }
 
   .empty-state {
@@ -379,9 +379,9 @@ const StyledWrapper = styled.div`
     align-items: center;
     justify-content: center;
     padding: 60px 20px;
-    background: #fff;
+    background: #2d2d2d;
     border: 3px solid #000;
-    box-shadow: 6px 6px 0 #58A0C8;
+    box-shadow: 6px 6px 0 #4387f4;
   }
 
   .empty-icon {
@@ -393,6 +393,6 @@ const StyledWrapper = styled.div`
     font-size: 16px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #666;
+    color: #999;
   }
 `;

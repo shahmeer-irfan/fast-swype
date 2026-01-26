@@ -158,7 +158,7 @@ export default function SwipePage() {
 
         {/* Cards Container */}
         <div className="cards-wrapper">
-          <div className="card-container">
+          <div className="card-container" key={currentIndex}>
             <SwipeCard
               key={profiles[currentIndex].id}
               profile={profiles[currentIndex]}
@@ -201,7 +201,7 @@ const StyledWrapper = styled.div`
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -2px;
-    color: #113F67;
+    color: #ffffff;
     cursor: pointer;
     transition: all 0.2s;
   }
@@ -219,9 +219,9 @@ const StyledWrapper = styled.div`
   .proposals-button {
     width: 48px;
     height: 48px;
-    background: #fff;
+    background: #4387f4;
     border: 3px solid #000;
-    box-shadow: 4px 4px 0 #58A0C8;
+    box-shadow: 4px 4px 0 #2c5aa0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -237,7 +237,7 @@ const StyledWrapper = styled.div`
     bottom: -40px;
     left: 50%;
     transform: translateX(-50%);
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
     padding: 6px 12px;
     font-size: 11px;
@@ -245,7 +245,7 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     white-space: nowrap;
     border: 2px solid #000;
-    box-shadow: 3px 3px 0 #113F67;
+    box-shadow: 3px 3px 0 #2c5aa0;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s;
@@ -260,7 +260,7 @@ const StyledWrapper = styled.div`
   .profile-button:hover,
   .proposals-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #58A0C8;
+    box-shadow: 6px 6px 0 #4387f4;
   }
 
   .profile-button:active,
@@ -272,6 +272,7 @@ const StyledWrapper = styled.div`
   .profile-icon,
   .button-icon {
     font-size: 24px;
+    color: #ffffff;
   }
 
   .cards-wrapper {
@@ -287,20 +288,32 @@ const StyledWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    animation: slideInFromRight 0.4s ease-out;
+  }
+
+  @keyframes slideInFromRight {
+    from {
+      opacity: 0;
+      transform: translateX(100px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
   }
 
   .counter {
-    background: #fff;
+    background: #2d2d2d;
     border: 3px solid #000;
     padding: 8px 20px;
-    box-shadow: 4px 4px 0 #000;
+    box-shadow: 4px 4px 0 #4387f4;
   }
 
   .counter-text {
     font-size: 14px;
     font-weight: 900;
     text-transform: uppercase;
-    color: #000;
+    color: #ffffff;
   }
 
   .completion-container {
@@ -313,10 +326,10 @@ const StyledWrapper = styled.div`
   }
 
   .completion-card {
-    background: #fff;
+    background: #2d2d2d;
     border: 4px solid #000;
     padding: 60px 40px;
-    box-shadow: 10px 10px 0 #58A0C8;
+    box-shadow: 10px 10px 0 #4387f4;
     text-align: center;
     max-width: 500px;
     width: 100%;
@@ -333,13 +346,13 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     letter-spacing: -2px;
     margin-bottom: 15px;
-    color: #113F67;
+    color: #ffffff;
   }
 
   .completion-text {
     font-size: 14px;
     font-weight: 600;
-    color: #666;
+    color: #999;
     margin-bottom: 30px;
     line-height: 1.4;
   }
@@ -357,30 +370,30 @@ const StyledWrapper = styled.div`
     font-size: 22px;
     font-weight: 900;
     text-transform: uppercase;
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
     border: 4px solid #000;
-    box-shadow: 6px 6px 0 #113F67;
+    box-shadow: 6px 6px 0 #2c5aa0;
     cursor: pointer;
     transition: all 0.2s;
     letter-spacing: -1px;
   }
 
   .completion-button.secondary {
-    background: #fff;
-    color: #113F67;
-    box-shadow: 6px 6px 0 #58A0C8;
+    background: #1a1a1a;
+    color: #ffffff;
+    box-shadow: 6px 6px 0 #4387f4;
   }
 
   .completion-button:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 8px 8px 0 #113F67;
+    box-shadow: 8px 8px 0 #2c5aa0;
   }
 
   .completion-button.secondary:hover {
-    background: #58A0C8;
+    background: #4387f4;
     color: #fff;
-    box-shadow: 8px 8px 0 #113F67;
+    box-shadow: 8px 8px 0 #2c5aa0;
   }
 
   .completion-button:active {

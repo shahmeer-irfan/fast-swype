@@ -119,7 +119,7 @@ const EmailVerification = ({ email, onClose }: EmailVerificationProps) => {
 
         {/* Warning */}
         <div className="bg-[#4387f4] bg-opacity-10 border-2 border-[#4387f4] p-3 mb-6">
-          <p className="text-xs font-semibold text-[#4387f4] text-center">
+          <p className="text-xs font-semibold text-white text-center">
             ⚠️ Check your spam folder if you don't see it in a few minutes
           </p>
         </div>

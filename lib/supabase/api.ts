@@ -21,7 +21,7 @@ export async function signUp(data: {
       email,
       password,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/login`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/profile/edit?welcome=true`,
         data: {
           name,
           campus,
@@ -32,9 +32,17 @@ export async function signUp(data: {
     });
 
     if (authError) {
+      // Check for specific error messages
+      if (authError.message?.toLowerCase().includes('already') || 
+          authError.message?.toLowerCase().includes('registered')) {
+        return { 
+          data: null, 
+          error: { message: 'This email is already registered. Please log in instead.' } 
+        };
+      }
       return { 
         data: null, 
-        error: { message: 'Email already registered or invalid' } 
+        error: { message: authError.message || 'Email already registered or invalid' } 
       };
     }
     
@@ -45,9 +53,22 @@ export async function signUp(data: {
       };
     }
 
-    // 2. Check if email confirmation is required
-    // If session is null, email verification is required
-    if (!authData.session) {
+    // 2. Check if this is a repeated signup (user already exists but not confirmed)
+    // When a user exists, Supabase returns the user but with no session
+    // We need to check if they're already confirmed
+    if (authData.user && !authData.session) {
+      // Check if user already exists and is confirmed
+      const { data: existingUser } = await supabase.auth.admin.getUserById(authData.user.id);
+      
+      if (existingUser?.user?.email_confirmed_at) {
+        // User is already confirmed, they should log in
+        return { 
+          data: null, 
+          error: { message: 'This email is already registered. Please log in instead.' } 
+        };
+      }
+      
+      // Email confirmation required for new signup
       console.log('Email confirmation required for:', email);
       return { 
         data: authData, 
@@ -112,6 +133,9 @@ export async function resendVerificationEmail(email: string) {
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email: email,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/profile/edit?welcome=true`,
+      }
     });
 
     if (error) {

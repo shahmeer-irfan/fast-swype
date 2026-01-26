@@ -92,7 +92,19 @@ const LoginSignupForm = () => {
 
       if (signUpError || !data) {
         playDismiss();
-        setError(signUpError?.message || 'Signup failed');
+        // Check if error is about email already registered
+        if (signUpError?.message?.toLowerCase().includes('already registered')) {
+          setError('This email is already registered. Switching to login...');
+          // Switch to login mode after 2 seconds
+          setTimeout(() => {
+            setIsSignUp(false);
+            setError('');
+            setLoginData({ email: signupData.email, password: '' });
+            setSignupData({ name: '', email: '', password: '', confirmPassword: '' });
+          }, 2000);
+        } else {
+          setError(signUpError?.message || 'Signup failed');
+        }
         setLoading(false);
         return;
       }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import BrutalistPattern from "@/components/BrutalistPattern";
 import { departments, domains, lookingForOptions, availabilityOptions, campuses, skillsList, interestsList } from "@/lib/data";
 import { useClickSound } from "@/hooks/useClickSound";
@@ -15,12 +15,15 @@ import Tooltip from "@/components/Tooltip";
 
 export default function EditProfilePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const showWelcome = searchParams.get('welcome') === 'true';
   const { profile, user, loading, refreshProfile } = useAuth();
   const { playClick, playConfirm, playHover, playDismiss } = useClickSound();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
+  const [welcomeVisible, setWelcomeVisible] = useState(showWelcome);
   const [formData, setFormData] = useState({
     name: '',
     department: 'CS',
@@ -174,6 +177,22 @@ export default function EditProfilePage() {
         storageKey="edit_profile_tips"
         delay={1000}
       />
+      
+      {welcomeVisible && (
+        <WelcomeMessage>
+          <div className="welcome-content">
+            <h2>🎉 Welcome to Fast-Swype!</h2>
+            <p>Your email is verified! Complete your profile to start finding your perfect team match.</p>
+            <button onClick={() => {
+              playClick();
+              setWelcomeVisible(false);
+            }}>
+              Got it!
+            </button>
+          </div>
+        </WelcomeMessage>
+      )}
+
       <div className="edit-container">
         <div className="header">
           <Link href="/profile">
@@ -674,5 +693,85 @@ const StyledWrapper = styled.div`
   .submit-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+`;
+
+const WelcomeMessage = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .welcome-content {
+    background: #1a1a1a;
+    border: 4px solid #000;
+    box-shadow: 8px 8px 0 #4387f4;
+    padding: 40px;
+    max-width: 500px;
+    text-align: center;
+    animation: slideUp 0.4s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  h2 {
+    font-size: 28px;
+    font-weight: 900;
+    color: #4387f4;
+    margin: 0 0 20px 0;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+  }
+
+  p {
+    font-size: 16px;
+    color: #ffffff;
+    margin: 0 0 30px 0;
+    line-height: 1.6;
+  }
+
+  button {
+    padding: 14px 36px;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    background: #4387f4;
+    color: #fff;
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 #2c5aa0;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: -0.5px;
+  }
+
+  button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #2c5aa0;
+  }
+
+  button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #2c5aa0;
   }
 `;

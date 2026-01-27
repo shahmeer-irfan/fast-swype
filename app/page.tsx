@@ -22,7 +22,7 @@ export default function Home() {
           {/* Logo/Brand */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-3">
-              <div className="w-12 h-12">
+              <div className="w-10 h-10">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                   <path opacity="0.3" d="M9 6C9 7.65685 7.65685 9 6 9C4.34315 9 3 7.65685 3 6C3 4.34315 4.34315 3 6 3C7.65685 3 9 4.34315 9 6Z" fill="#4387f4"></path>
                   <path opacity="0.3" d="M21 18C21 19.6569 19.6569 21 18 21C16.3431 21 15 19.6569 15 18C15 16.3431 16.3431 15 18 15C19.6569 15 21 16.3431 21 18Z" fill="#4387f4"></path>
@@ -34,7 +34,7 @@ export default function Home() {
                   <path d="M12 18C9.17157 18 7.75736 18 6.87868 17.1213C6 16.2426 6 14.8284 6 12L6 9" stroke="#4387f4" strokeWidth="2"></path>
                 </svg>
               </div>
-              <h1 className="font-black uppercase tracking-[-3px] leading-none text-white">
+              <h1 className="uppercase tracking-[-2px] leading-none text-white">
                 FastSwype
               </h1>
             </div>
@@ -111,7 +111,7 @@ export default function Home() {
 
           {/* Footer */}
           <div className="w-full text-center">
-            <p className="text-[9px] font-black uppercase text-[#999] tracking-wide mb-2">
+            <p className="text-[10px] font-black uppercase text-[#999] tracking-wide mb-2">
               FAST STUDENTS ONLY • 250PKR TO UNLOCK FULL ACCESS
             </p>
             <a 
@@ -119,7 +119,7 @@ export default function Home() {
               target="_blank" 
               rel="noopener noreferrer"
               onMouseEnter={playHover}
-              className="inline-flex items-center gap-2 px-3 py-1.5 text-[9px] font-black uppercase bg-[#2d2d2d] text-white border-2 border-[#4387f4] shadow-[3px_3px_0_#4387f4] hover:shadow-[4px_4px_0_#4387f4] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
+              className="inline-flex items-center gap-2 px-3 py-3 text-[10px] font-black uppercase bg-[#2d2d2d] text-white border-2 border-[#4387f4] shadow-[3px_3px_0_#4387f4] hover:shadow-[4px_4px_0_#4387f4] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
             >
               <HeartIcon className="w-4 h-4" /> Connect with Creator
             </a>

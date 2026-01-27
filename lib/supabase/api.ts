@@ -57,18 +57,7 @@ export async function signUp(data: {
     // When a user exists, Supabase returns the user but with no session
     // We need to check if they're already confirmed
     if (authData.user && !authData.session) {
-      // Check if user already exists and is confirmed
-      const { data: existingUser } = await supabase.auth.admin.getUserById(authData.user.id);
-      
-      if (existingUser?.user?.email_confirmed_at) {
-        // User is already confirmed, they should log in
-        return { 
-          data: null, 
-          error: { message: 'This email is already registered. Please log in instead.' } 
-        };
-      }
-      
-      // Email confirmation required for new signup
+      // Email confirmation required - profile will be created by database trigger after verification
       console.log('Email confirmation required for:', email);
       return { 
         data: authData, 
@@ -76,24 +65,8 @@ export async function signUp(data: {
       };
     }
 
-    // 3. Create profile if session exists (auto-confirmed)
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert({
-        id: authData.user.id,
-        email,
-        name,
-        department,
-        batch,
-        campus,
-      });
-
-    if (profileError) {
-      console.error('Profile creation error:', profileError);
-      // Profile failed but user exists, they can complete it later
-      return { data: authData, error: null };
-    }
-
+    // 3. If session exists (auto-confirmed), profile will be created by trigger
+    // No need to manually create it here
     return { data: authData, error: null };
   } catch (err) {
     console.error('Signup error:', err);

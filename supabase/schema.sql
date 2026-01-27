@@ -153,11 +153,49 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Trigger for new users
+-- Function to create profile on email confirmation
+CREATE OR REPLACE FUNCTION public.handle_email_confirmation()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Only proceed if email is being confirmed (was null, now has value)
+  IF OLD.email_confirmed_at IS NULL AND NEW.email_confirmed_at IS NOT NULL THEN
+    -- Check if profile doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = NEW.id) THEN
+      -- Create profile from user metadata
+      INSERT INTO public.profiles (
+        id, 
+        email, 
+        name, 
+        department, 
+        batch, 
+        campus
+      )
+      VALUES (
+        NEW.id,
+        NEW.email,
+        COALESCE(NEW.raw_user_meta_data->>'name', 'User'),
+        COALESCE(NEW.raw_user_meta_data->>'department', 'CS'),
+        COALESCE(NEW.raw_user_meta_data->>'batch', '2024'),
+        COALESCE(NEW.raw_user_meta_data->>'campus', 'Islamabad')
+      );
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger for new users (create user_limits)
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON public.profiles
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_new_user();
+
+-- Trigger for email confirmation (create profile)
+DROP TRIGGER IF EXISTS on_auth_user_email_confirmed ON auth.users;
+CREATE TRIGGER on_auth_user_email_confirmed
+  AFTER UPDATE ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_email_confirmation();
 
 -- Function to update user_limits when proposal is sent
 CREATE OR REPLACE FUNCTION public.update_proposal_count()

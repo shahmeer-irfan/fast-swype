@@ -78,17 +78,17 @@ export default function PaymentModal({ onClose, onPaymentSubmitted }: PaymentMod
     <ModalOverlay onClick={onClose}>
       <ModalCard onClick={(e) => e.stopPropagation()}>
         <ModalHeader>
-          <ModalTitle>💰 UNLOCK UNLIMITED</ModalTitle>
+          <ModalTitle>💰UNLOCK FULL ACCESS</ModalTitle>
           <CloseButton onClick={onClose} onMouseEnter={playHover}>×</CloseButton>
         </ModalHeader>
 
         <ModalContent>
           <InfoSection>
-            <InfoTitle>💻 Help Me Get a New Laptop!</InfoTitle>
+            <InfoTitle>💻Help Creator Get a New Laptop!</InfoTitle>
             <InfoText>
-              You've used your 2 FREE proposals! I'm a broke student who built this tool instead of studying 😅
+              You've used your 2 FREE proposals!
               <br/><br/>
-              Just PKR 250 (~$1) helps me afford a laptop that doesn't crash during exams. Plus you get UNLIMITED proposals forever! Win-win? 🙏
+              Pay PKR 250 to help the creator afford a new laptop. Plus you get UNLIMITED proposals forever! Win-win?🙏
             </InfoText>
           </InfoSection>
 
@@ -96,7 +96,7 @@ export default function PaymentModal({ onClose, onPaymentSubmitted }: PaymentMod
             <Step>
               <StepNumber>1</StepNumber>
               <StepText>
-                <strong>Send PKR 250</strong> to this account:
+                <strong>Send PKR 250</strong> to this account (Jazzcash):
               </StepText>
             </Step>
 
@@ -170,7 +170,7 @@ export default function PaymentModal({ onClose, onPaymentSubmitted }: PaymentMod
           </Form>
 
           <Note>
-            ⏱️ Verification usually takes 2-24 hours. You'll get access once verified!
+            ⏱️ Verification usually takes 2-3 hours. You'll get access once verified!
           </Note>
         </ModalContent>
       </ModalCard>

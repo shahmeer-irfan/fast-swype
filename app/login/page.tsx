@@ -32,7 +32,7 @@ export default function LoginPage() {
   }, [searchParams, playConfirm]);
 
   return (
-    <div className="relative min-h-screen">\n      <BrutalistPattern />
+    <div className="relative min-h-screen"><BrutalistPattern />
       <Tooltip 
         message="Use your FAST university email (e.g., k230123@nu.edu.pk) to sign up or log in. Your campus and batch will be auto-detected!"
         storageKey="login_instructions"
@@ -40,7 +40,7 @@ export default function LoginPage() {
       />
       
       <main className="min-h-screen flex items-center justify-center p-5 relative z-10">
-        <div className="w-full max-w-[450px] flex flex-col items-center gap-6 relative pt-16">\n          {/* Verification Success Message */}
+        <div className="w-full max-w-[450px] flex flex-col items-center gap-6 relative pt-16">  {/* Verification Success Message */}
           {verificationMessage && (
             <div className={`w-full px-4 py-3 border-2 text-sm font-bold text-center ${
               verificationMessage.includes("✓")

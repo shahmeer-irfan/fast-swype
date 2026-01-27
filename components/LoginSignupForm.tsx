@@ -6,6 +6,7 @@ import { useClickSound } from '@/hooks/useClickSound';
 import { signIn, signUp } from '@/lib/supabase/api';
 import { validateFastEmail, getCampusFromEmail, getBatchFromEmail } from '@/lib/validation';
 import EmailVerification from '@/components/EmailVerification';
+import styled from 'styled-components';
 
 const LoginSignupForm = () => {
   const router = useRouter();
@@ -145,6 +146,18 @@ const LoginSignupForm = () => {
         />
       )}
 
+      {/* Small Loader Component */}
+      <StyledWrapper>
+        <div className="mini-loader" style={{ display: loading ? 'block' : 'none' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+            <path d="M10,20 C10,17.24 11.12,14.74 12.93,12.93 L12.93,12.93 C14.74,11.12 17.24,10 20,10 L80,10 C82.76,10 85.26,11.12 87.07,12.93 L87.07,12.93 C88.88,14.74 90,17.24 90,20 L90,80 C90,82.76 88.88,85.26 87.07,87.07 L87.07,87.07 C85.26,88.88 82.76,90 80,90 L20,90 C17.24,90 14.74,88.88 12.93,87.07 L12.93,87.07 C11.12,85.26 10,82.76 10,80Z M68,50 C68,45.02 65.98,40.52 62.72,37.27 L62.72,37.27 C59.47,34.01 54.97,32 50,32 L50,32 C45.02,32 40.52,34.01 37.27,37.27 L37.27,37.27 C34.01,40.52 32,45.02 32,50 L32,50 C32,54.97 34.01,59.47 37.27,62.72 L37.27,62.72 C40.52,65.98 45.02,68 50,68 L50,68 C54.97,68 59.47,65.98 62.72,62.72 L62.72,62.72 C65.98,59.47 68,54.97 68,50Z" />
+            <path d="M10,20 C10,17.24 11.12,14.74 12.93,12.93 L12.93,12.93 C14.74,11.12 17.24,10 20,10 L80,10 C82.76,10 85.26,11.12 87.07,12.93 L87.07,12.93 C88.88,14.74 90,17.24 90,20 L90,80 C90,82.76 88.88,85.26 87.07,87.07 L87.07,87.07 C85.26,88.88 82.76,90 80,90 L20,90 C17.24,90 14.74,88.88 12.93,87.07 L12.93,87.07 C11.12,85.26 10,82.76 10,80Z" />
+            <path d="M10,37.57 C10,34.92 11.05,32.37 12.92,30.5 L30.5,12.92 C32.37,11.05 34.92,10 37.57,10 L62.42,10 C65.07,10 67.62,11.05 69.49,12.92 L87.07,30.5 C88.94,32.37 90,34.92 90,37.57 L90,62.42 C90,65.07 88.94,67.62 87.07,69.49 L69.49,87.07 C67.62,88.94 65.07,90 62.42,90 L37.57,90 C34.92,90 32.37,88.94 30.5,87.07 L12.92,69.49 C11.05,67.62 10,65.07 10,62.42Z" />
+            <path d="M10,50 C10,38.95 14.48,28.95 21.72,21.72 L21.72,21.72 C28.95,14.48 38.95,10 50,10 L50,10 C61.05,10 71.05,14.48 78.28,21.72 L78.28,21.72 C85.52,28.95 90,38.95 90,50 L90,50 C90,61.05 85.52,71.05 78.28,78.28 L78.28,78.28 C71.05,85.52 61.05,90 50,90 L50,90 C38.95,90 28.95,85.52 21.72,78.28 L21.72,78.28 C14.48,71.05 10,61.05 10,50Z" />
+          </svg>
+        </div>
+      </StyledWrapper>
+
       {/* Error Message */}
       {error && (
         <div className="w-[320px] px-4 py-3 bg-[#ff4444] border border-[#cc0000] rounded-lg text-sm font-semibold text-white text-center">
@@ -238,7 +251,7 @@ const LoginSignupForm = () => {
                   disabled={loading}
                   className="w-full h-10 bg-[#4387f4] hover:bg-[#1a3a7d] text-white border-2 border-black rounded-lg font-black text-sm uppercase transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                 >
-                  {loading ? 'WAIT...' : "LET'S GO!"}
+                  LET'S GO!
                 </button>
               </form>
             </div>
@@ -300,7 +313,7 @@ const LoginSignupForm = () => {
                   disabled={loading}
                   className="w-full h-10 bg-[#4387f4] hover:bg-[#1a3a7d] text-white border-2 border-black rounded-lg font-black text-sm uppercase transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                 >
-                  {loading ? 'WAIT...' : 'CONFIRM!'}
+                  CONFIRM!
                 </button>
               </form>
             </div>
@@ -310,5 +323,118 @@ const LoginSignupForm = () => {
     </div>
   );
 };
+
+const StyledWrapper = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  pointer-events: none;
+
+  .mini-loader {
+    --main-color: #4387f4;
+  }
+
+  .mini-loader svg {
+    width: 60px;
+    height: 60px;
+    filter: drop-shadow(0 0 10px rgba(67, 135, 244, 0.5));
+  }
+
+  .mini-loader svg path:first-child {
+    will-change: d;
+    fill: var(--main-color);
+    animation: morph 2s ease-in-out infinite;
+  }
+
+  .mini-loader svg path:not(:first-child) {
+    fill: none;
+    stroke: var(--main-color);
+    stroke-width: 0;
+  }
+
+  .mini-loader svg path:nth-child(2) {
+    stroke-width: 2;
+    stroke-dasharray: 400;
+    animation: snake-1 2s ease-in-out infinite;
+  }
+
+  .mini-loader svg path:nth-child(3) {
+    stroke-width: 2;
+    stroke-dasharray: 400;
+    animation: snake-2 2s ease-in-out infinite;
+  }
+
+  .mini-loader svg path:nth-child(4) {
+    stroke-width: 2;
+    stroke-dasharray: 400;
+    animation: snake-3 2s ease-in-out infinite;
+  }
+
+  @keyframes morph {
+    0%,
+    100% {
+      d: path("M10,20 C10,17.24 11.12,14.74 12.93,12.93 L12.93,12.93 C14.74,11.12 17.24,10 20,10 L80,10 C82.76,10 85.26,11.12 87.07,12.93 L87.07,12.93 C88.88,14.74 90,17.24 90,20 L90,80 C90,82.76 88.88,85.26 87.07,87.07 L87.07,87.07 C85.26,88.88 82.76,90 80,90 L20,90 C17.24,90 14.74,88.88 12.93,87.07 L12.93,87.07 C11.12,85.26 10,82.76 10,80Z M68,50 C68,45.02 65.98,40.52 62.72,37.27 L62.72,37.27 C59.47,34.01 54.97,32 50,32 L50,32 C45.02,32 40.52,34.01 37.27,37.27 L37.27,37.27 C34.01,40.52 32,45.02 32,50 L32,50 C32,54.97 34.01,59.47 37.27,62.72 L37.27,62.72 C40.52,65.98 45.02,68 50,68 L50,68 C54.97,68 59.47,65.98 62.72,62.72 L62.72,62.72 C65.98,59.47 68,54.97 68,50Z");
+    }
+    25% {
+      d: path("M10,37.57 C10,34.92 11.05,32.37 12.92,30.5 L30.5,12.92 C32.37,11.05 34.92,10 37.57,10 L62.42,10 C65.07,10 67.62,11.05 69.49,12.92 L87.07,30.5 C88.94,32.37 90,34.92 90,37.57 L90,62.42 C90,65.07 88.94,67.62 87.07,69.49 L69.49,87.07 C67.62,88.94 65.07,90 62.42,90 L37.57,90 C34.92,90 32.37,88.94 30.5,87.07 L12.92,69.49 C11.05,67.62 10,65.07 10,62.42Z M68,50 C68,45.02 65.98,40.52 62.72,37.27 L62.72,37.27 C59.47,34.01 54.97,32 50,32 L50,32 C45.02,32 40.52,34.01 37.27,37.27 L37.27,37.27 C34.01,40.52 32,45.02 32,50 L32,50 C32,54.97 34.01,59.47 37.27,62.72 L37.27,62.72 C40.52,65.98 45.02,68 50,68 L50,68 C54.97,68 59.47,65.98 62.72,62.72 L62.72,62.72 C65.98,59.47 68,54.97 68,50Z");
+    }
+    50% {
+      d: path("M10,50 C10,38.95 14.48,28.95 21.72,21.72 L21.72,21.72 C28.95,14.48 38.95,10 50,10 L50,10 C61.05,10 71.05,14.48 78.28,21.72 L78.28,21.72 C85.52,28.95 90,38.95 90,50 L90,50 C90,61.05 85.52,71.05 78.28,78.28 L78.28,78.28 C71.05,85.52 61.05,90 50,90 L50,90 C38.95,90 28.95,85.52 21.72,78.28 L21.72,78.28 C14.48,71.05 10,61.05 10,50Z M68,50 C68,45.02 65.98,40.52 62.72,37.27 L62.72,37.27 C59.47,34.01 54.97,32 50,32 L50,32 C45.02,32 40.52,34.01 37.27,37.27 L37.27,37.27 C34.01,40.52 32,45.02 32,50 L32,50 C32,54.97 34.01,59.47 37.27,62.72 L37.27,62.72 C40.52,65.98 45.02,68 50,68 L50,68 C54.97,68 59.47,65.98 62.72,62.72 L62.72,62.72 C65.98,59.47 68,54.97 68,50Z");
+    }
+    75% {
+      d: path("M10,37.57 C10,34.92 11.05,32.37 12.92,30.5 L30.5,12.92 C32.37,11.05 34.92,10 37.57,10 L62.42,10 C65.07,10 67.62,11.05 69.49,12.92 L87.07,30.5 C88.94,32.37 90,34.92 90,37.57 L90,62.42 C90,65.07 88.94,67.62 87.07,69.49 L69.49,87.07 C67.62,88.94 65.07,90 62.42,90 L37.57,90 C34.92,90 32.37,88.94 30.5,87.07 L12.92,69.49 C11.05,67.62 10,65.07 10,62.42Z M68,50 C68,45.02 65.98,40.52 62.72,37.27 L62.72,37.27 C59.47,34.01 54.97,32 50,32 L50,32 C45.02,32 40.52,34.01 37.27,37.27 L37.27,37.27 C34.01,40.52 32,45.02 32,50 L32,50 C32,54.97 34.01,59.47 37.27,62.72 L37.27,62.72 C40.52,65.98 45.02,68 50,68 L50,68 C54.97,68 59.47,65.98 62.72,62.72 L62.72,62.72 C65.98,59.47 68,54.97 68,50Z");
+    }
+  }
+
+  @keyframes snake-1 {
+    0%,
+    10%,
+    100% {
+      stroke-dashoffset: 800;
+    }
+    20%,
+    70% {
+      stroke-dashoffset: 0;
+    }
+    80%,
+    90% {
+      stroke-dashoffset: -800;
+    }
+  }
+
+  @keyframes snake-2 {
+    0%,
+    20%,
+    100% {
+      stroke-dashoffset: 800;
+    }
+    30%,
+    60% {
+      stroke-dashoffset: 0;
+    }
+    70%,
+    90% {
+      stroke-dashoffset: -800;
+    }
+  }
+
+  @keyframes snake-3 {
+    0%,
+    30%,
+    100% {
+      stroke-dashoffset: 800;
+    }
+    40%,
+    50% {
+      stroke-dashoffset: 0;
+    }
+    60%,
+    90% {
+      stroke-dashoffset: -800;
+    }
+  }
+`;
 
 export default LoginSignupForm;

@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@supabase/supabase-js';
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
-  const token_hash = requestUrl.searchParams.get('token_hash');
-  const type = requestUrl.searchParams.get('type');
-  const next = requestUrl.searchParams.get('next') ?? '/login?verified=true';
+  const code = requestUrl.searchParams.get('code');
 
-  if (token_hash && type) {
-    const { error } = await supabase.auth.verifyOtp({
-      type: type as any,
-      token_hash,
-    });
+  if (code) {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
       // Redirect to login page with success message

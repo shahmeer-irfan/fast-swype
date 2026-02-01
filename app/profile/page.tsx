@@ -22,13 +22,14 @@ export default function ProfilePage() {
     return null;
   }
 
-  if (loading || pageLoading || !profile) {
+  // Show loader while loading
+  if (loading || pageLoading) {
     return <Loader />;
   }
 
-  // Redirect to edit if profile is incomplete (first-time user)
-  if (profile && (!profile.bio || !profile.domain || !profile.looking_for || 
-      (profile.skills && profile.skills.length === 0))) {
+  // Redirect to edit if profile is incomplete (first-time user) or doesn't exist
+  if (!profile || !profile.bio || !profile.domain || !profile.looking_for || 
+      (profile.skills && profile.skills.length === 0)) {
     router.push('/profile/edit');
     return <Loader />;
   }

@@ -65,11 +65,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 // Reload profile after creation
                 await loadProfile(userId);
                 return;
+              } else {
+                console.error('Error creating profile:', insertError);
+                setProfile(null);
+                return;
               }
             }
           }
+          // If we can't create profile, set to null and continue
+          console.log('Cannot create profile - missing metadata');
+          setProfile(null);
+          return;
         }
-        throw error;
+        console.error('Error loading profile:', error);
+        setProfile(null);
+        return;
       }
       setProfile(data as Profile);
     } catch (error) {

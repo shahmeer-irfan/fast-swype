@@ -43,7 +43,7 @@ const LoginSignupForm = () => {
       }
 
       playConfirm();
-      router.push('/swipe');
+      router.push('/profile/edit');
     } catch (err: any) {
       playDismiss();
       setError(err.message || 'Login failed');

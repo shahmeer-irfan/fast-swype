@@ -156,11 +156,19 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Function to create profile on email confirmation
 CREATE OR REPLACE FUNCTION public.handle_email_confirmation()
 RETURNS TRIGGER AS $$
+DECLARE
+  user_name TEXT;
 BEGIN
   -- Only proceed if email is being confirmed (was null, now has value)
   IF OLD.email_confirmed_at IS NULL AND NEW.email_confirmed_at IS NOT NULL THEN
     -- Check if profile doesn't exist
     IF NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = NEW.id) THEN
+      -- Get name from metadata, ensure it's not an email
+      user_name := COALESCE(NEW.raw_user_meta_data->>'name', 'New User');
+      IF user_name LIKE '%@%' THEN
+        user_name := 'New User';
+      END IF;
+      
       -- Create profile from user metadata
       INSERT INTO public.profiles (
         id, 
@@ -173,7 +181,7 @@ BEGIN
       VALUES (
         NEW.id,
         NEW.email,
-        COALESCE(NEW.raw_user_meta_data->>'name', 'User'),
+        user_name,
         COALESCE(NEW.raw_user_meta_data->>'department', 'CS'),
         COALESCE(NEW.raw_user_meta_data->>'batch', '2024'),
         COALESCE(NEW.raw_user_meta_data->>'campus', 'Islamabad')

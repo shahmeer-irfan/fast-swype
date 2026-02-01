@@ -47,13 +47,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const { data: { user } } = await supabase.auth.getUser();
           if (user?.user_metadata) {
             const { name, campus, batch, department } = user.user_metadata;
-            if (name && campus && batch && department) {
+            // Ensure name is never email - use "New User" as fallback
+            const safeName = (name && !name.includes('@')) ? name : 'New User';
+            if (campus && batch && department) {
               const { error: insertError } = await supabase
                 .from('profiles')
                 .insert({
                   id: userId,
                   email: user.email!,
-                  name,
+                  name: safeName,
                   campus,
                   batch,
                   department,

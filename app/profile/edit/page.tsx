@@ -10,6 +10,7 @@ import { useClickSound } from "@/hooks/useClickSound";
 import { useAuth } from "@/lib/auth-context";
 import { updateProfile, updateSkills, updateInterests, uploadProfilePicture, deleteProfilePicture } from "@/lib/supabase/api";
 import Loader from "@/components/Loader";
+import ProfileLoader from "@/components/ProfileLoader";
 import Tooltip from "@/components/Tooltip";
 
 
@@ -64,9 +65,9 @@ export default function EditProfilePage() {
     return null;
   }
 
-  // Show loader while loading, retrying, OR if no profile (keep trying)
+  // Show profile loader while loading, retrying, OR if no profile (keep trying)
   if (loading || isRetrying || !profile) {
-    return <Loader />;
+    return <ProfileLoader />;
   }
 
   const addSkill = (skill: string) => {

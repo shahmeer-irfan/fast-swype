@@ -17,7 +17,7 @@ export default function EditProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const showWelcome = searchParams.get('welcome') === 'true';
-  const { profile, user, loading, refreshProfile } = useAuth();
+  const { profile, user, loading, isRetrying, refreshProfile } = useAuth();
   const { playClick, playConfirm, playHover, playDismiss } = useClickSound();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -64,12 +64,23 @@ export default function EditProfilePage() {
     return null;
   }
 
-  // Show loader only while loading, not when profile is null
-  if (loading) {
-    return <Loader />;
+  // Show loader while loading OR retrying profile creation
+  if (loading || isRetrying) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] p-6">
+        <div className="text-center">
+          <Loader />
+          {isRetrying && (
+            <p className="text-[#999] mt-4 text-sm">
+              Setting up your profile...
+            </p>
+          )}
+        </div>
+      </div>
+    );
   }
 
-  // If no profile exists after loading, show error
+  // If no profile exists after loading and retries, show error
   if (!profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] p-6">

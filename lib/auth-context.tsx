@@ -10,6 +10,7 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  isRetrying: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   profile: null,
   loading: true,
+  isRetrying: false,
   signOut: async () => {},
   refreshProfile: async () => {},
 });
@@ -26,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isRetrying, setIsRetrying] = useState(false);
 
   const loadProfile = async (userId: string, retryCount = 0) => {
     try {
@@ -46,12 +49,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Exponential backoff: 500ms, 1s, 2s, 4s, 8s (max 5 retries for high concurrency)
           if (retryCount < 5) {
+            setIsRetrying(true);
             const delay = Math.min(500 * Math.pow(2, retryCount), 8000);
             console.log(`Retrying profile load (${retryCount + 1}/5) after ${delay}ms...`);
             await new Promise(resolve => setTimeout(resolve, delay));
             await loadProfile(userId, retryCount + 1);
             return;
           }
+          
+          setIsRetrying(false);
           
           // Try to create profile from user metadata
           const { data: { user } } = await supabase.auth.getUser();
@@ -78,10 +84,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               
               if (!insertError && newProfile) {
                 console.log('Profile created successfully');
+                setIsRetrying(false);
                 setProfile(newProfile as Profile);
                 return;
               } else {
                 console.error('Error creating profile:', insertError);
+                setIsRetrying(false);
                 setProfile(null);
                 return;
               }
@@ -93,10 +101,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
           // If we can't create profile, set to null and continue
           console.log('Cannot create profile - missing metadata');
+          setIsRetrying(false);
           setProfile(null);
           return;
         }
         console.error('Error loading profile:', error);
+        setIsRetrying(false);
         setProfile(null);
         return;
       }
@@ -151,6 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         profile,
         loading,
+        isRetrying,
         signOut: handleSignOut,
         refreshProfile,
       }}

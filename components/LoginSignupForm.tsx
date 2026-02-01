@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useClickSound } from '@/hooks/useClickSound';
 import { signIn, signUp } from '@/lib/supabase/api';
-import { validateFastEmail, getCampusFromEmail, getBatchFromEmail } from '@/lib/validation';
+import { validateFastEmail, getCampusFromEmail, getBatchFromEmail, validatePassword } from '@/lib/validation';
 import EmailVerification from '@/components/EmailVerification';
 import styled from 'styled-components';
 
@@ -17,6 +17,7 @@ const LoginSignupForm = () => {
   const [loading, setLoading] = useState(false);
   const [showEmailVerification, setShowEmailVerification] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const { playClick, playConfirm, playHover, playDismiss } = useClickSound();
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -54,6 +55,7 @@ const LoginSignupForm = () => {
   const handleSignupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setPasswordErrors([]);
     setLoading(true);
 
     try {
@@ -65,16 +67,18 @@ const LoginSignupForm = () => {
         return;
       }
 
-      if (signupData.password !== signupData.confirmPassword) {
+      const passwordValidation = validatePassword(signupData.password);
+      if (!passwordValidation.isValid) {
         playDismiss();
-        setError('Passwords do not match');
+        setPasswordErrors(passwordValidation.errors);
+        setError('Password does not meet requirements');
         setLoading(false);
         return;
       }
 
-      if (signupData.password.length < 6) {
+      if (signupData.password !== signupData.confirmPassword) {
         playDismiss();
-        setError('Password must be at least 6 characters');
+        setError('Passwords do not match');
         setLoading(false);
         return;
       }
@@ -162,6 +166,46 @@ const LoginSignupForm = () => {
       {error && (
         <div className="w-[320px] px-4 py-3 bg-[#ff4444] border border-[#cc0000] rounded-lg text-sm font-semibold text-white text-center">
           {error}
+        </div>
+      )}
+
+      {/* Password Requirements */}
+      {passwordErrors.length > 0 && (
+        <div className="w-[320px] px-4 py-3 bg-[#2d2d2d] border-2 border-[#ff4444] rounded-lg">
+          <p className="text-xs font-bold text-[#ff4444] mb-2">PASSWORD REQUIREMENTS:</p>
+          <ul className="text-xs text-[#999] space-y-1">
+            {passwordErrors.map((err, idx) => (
+              <li key={idx} className="flex items-start gap-2">
+                <span className="text-[#ff4444]">✗</span>
+                <span>{err}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Password Strength Hint (always show on signup) */}
+      {isSignUp && passwordErrors.length === 0 && (
+        <div className="w-[320px] px-4 py-3 bg-[#2d2d2d] border-2 border-[#4387f4] rounded-lg">
+          <p className="text-xs font-bold text-[#4387f4] mb-2">PASSWORD MUST HAVE:</p>
+          <ul className="text-xs text-[#999] space-y-1">
+            <li className="flex items-start gap-2">
+              <span className="text-[#4387f4]">•</span>
+              <span>At least 8 characters</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#4387f4]">•</span>
+              <span>One uppercase & one lowercase letter</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#4387f4]">•</span>
+              <span>One number</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#4387f4]">•</span>
+              <span>One special character (!@#$%^&*)</span>
+            </li>
+          </ul>
         </div>
       )}
 

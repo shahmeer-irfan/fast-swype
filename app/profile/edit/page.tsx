@@ -64,37 +64,9 @@ export default function EditProfilePage() {
     return null;
   }
 
-  // Show loader while loading OR retrying profile creation
-  if (loading || isRetrying) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] p-6">
-        <div className="text-center">
-          <Loader />
-          {isRetrying && (
-            <p className="text-[#999] mt-4 text-sm">
-              Setting up your profile...
-            </p>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // If no profile exists after loading and retries, show error
-  if (!profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] p-6">
-        <div className="text-center">
-          <h2 className="text-2xl font-black text-white mb-4">Profile Not Found</h2>
-          <p className="text-[#999] mb-6">Unable to load your profile. Please try logging out and back in.</p>
-          <Link href="/login">
-            <button className="px-6 py-3 bg-[#4387f4] text-white font-bold rounded-lg">
-              Back to Login
-            </button>
-          </Link>
-        </div>
-      </div>
-    );
+  // Show loader while loading, retrying, OR if no profile (keep trying)
+  if (loading || isRetrying || !profile) {
+    return <Loader />;
   }
 
   const addSkill = (skill: string) => {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import StyledComponentsRegistry from "@/lib/registry";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "FastSwype - Find Your FYP Partner for Just 250 PKR",
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </AuthProvider>
         </StyledComponentsRegistry>
+        <Analytics />
       </body>
     </html>
   );

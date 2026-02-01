@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadProfile = async (userId: string) => {
+  const loadProfile = async (userId: string, retryCount = 0) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -43,14 +43,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Profile doesn't exist, might be new confirmed user
         if (error.code === 'PGRST116') {
           console.log('Profile not found for user:', userId);
+          
+          // Exponential backoff: 500ms, 1s, 2s, 4s, 8s (max 5 retries for high concurrency)
+          if (retryCount < 5) {
+            const delay = Math.min(500 * Math.pow(2, retryCount), 8000);
+            console.log(`Retrying profile load (${retryCount + 1}/5) after ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            await loadProfile(userId, retryCount + 1);
+            return;
+          }
+          
           // Try to create profile from user metadata
           const { data: { user } } = await supabase.auth.getUser();
           if (user?.user_metadata) {
             const { name, campus, batch, department } = user.user_metadata;
             // Ensure name is never email - use "New User" as fallback
             const safeName = (name && !name.includes('@')) ? name : 'New User';
+            
+            console.log('Creating profile with metadata:', { name: safeName, campus, batch, department });
+            
             if (campus && batch && department) {
-              const { error: insertError } = await supabase
+              const { data: newProfile, error: insertError } = await supabase
                 .from('profiles')
                 .insert({
                   id: userId,
@@ -59,18 +72,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   campus,
                   batch,
                   department,
-                });
+                })
+                .select()
+                .single();
               
-              if (!insertError) {
-                // Reload profile after creation
-                await loadProfile(userId);
+              if (!insertError && newProfile) {
+                console.log('Profile created successfully');
+                setProfile(newProfile as Profile);
                 return;
               } else {
                 console.error('Error creating profile:', insertError);
                 setProfile(null);
                 return;
               }
+            } else {
+              console.error('Missing required metadata:', { name, campus, batch, department });
             }
+          } else {
+            console.error('No user metadata found');
           }
           // If we can't create profile, set to null and continue
           console.log('Cannot create profile - missing metadata');

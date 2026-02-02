@@ -245,17 +245,34 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
             </div>
           )}
 
-          {/* For sent proposals, just show status */}
+          {/* For sent proposals, show status and contact if accepted */}
           {proposal.from_user_id === user.id && (
-            <div className="sent-status-info">
-              <div className="info-text">
-                {status === "pending" && "⏳ Waiting for their response..."}
-                {status === "accepted" && "✓ They accepted! Reach out to them."}
-                {status === "rejected" && "✗ Not this time. Keep trying!"}
+            <>
+              <div className="sent-status-info">
+                <div className="info-text">
+                  {status === "pending" && "⏳ Waiting for their response..."}
+                  {status === "accepted" && "✓ They accepted! Reach out to them."}
+                  {status === "rejected" && "✗ Not this time. Keep trying!"}
+                </div>
               </div>
-            </div>
+              
+              {status === "accepted" && (
+                <div className="contact-section">
+                  <div className="section-title">CONTACT INFO</div>
+                  <div className="contact-info">
+                    <div className="contact-item">
+                      📧 {proposal.to_profile?.email}
+                    </div>
+                    <div className="contact-item">
+                      💬 Share your WhatsApp or meeting link
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
+          {/* For received proposals, show contact if accepted */}
           {status === "accepted" && proposal.to_user_id === user.id && (
             <div className="contact-section">
               <div className="section-title">CONTACT INFO</div>

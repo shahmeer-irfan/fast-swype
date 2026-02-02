@@ -30,7 +30,7 @@ export default function EditProfilePage() {
     department: 'CS',
     batch: '',
     campus: 'Islamabad',
-    domain: 'Full Stack',
+    domains: [] as string[],
     lookingFor: 'Product Development',
     availability: 'Looking actively',
     bio: '',
@@ -46,7 +46,7 @@ export default function EditProfilePage() {
         department: profile.department || 'CS',
         batch: profile.batch || '',
         campus: profile.campus || 'Islamabad',
-        domain: profile.domain || 'Full Stack',
+        domains: profile.domain ? profile.domain.split(',').map(d => d.trim()) : [],
         lookingFor: profile.looking_for || 'Product Development',
         availability: profile.availability || 'Looking actively',
         bio: profile.bio || '',
@@ -92,6 +92,18 @@ export default function EditProfilePage() {
   const removeInterest = (interest: string) => {
     playClick();
     setFormData({ ...formData, interests: formData.interests.filter((i) => i !== interest) });
+  };
+
+  const addDomain = (domain: string) => {
+    if (!formData.domains.includes(domain)) {
+      playClick();
+      setFormData({ ...formData, domains: [...formData.domains, domain] });
+    }
+  };
+
+  const removeDomain = (domain: string) => {
+    playClick();
+    setFormData({ ...formData, domains: formData.domains.filter((d) => d !== domain) });
   };
 
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,7 +156,7 @@ export default function EditProfilePage() {
         department: formData.department,
         batch: formData.batch,
         campus: formData.campus,
-        domain: formData.domain,
+        domain: formData.domains.join(', '),
         looking_for: formData.lookingFor,
         availability: formData.availability,
         bio: formData.bio,
@@ -323,18 +335,20 @@ export default function EditProfilePage() {
               </select>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">DOMAIN</label>
-              <select
-                className="form-select"
-                value={formData.domain}
-                onChange={(e) => setFormData({ ...formData, domain: e.target.value })}
-                required
-              >
-                {domains.map((domain) => (
-                  <option key={domain} value={domain}>{domain}</option>
+            <div className="form-section">
+              <h2 className="section-title">DOMAINS <span className="hint">(Pick your areas of interest)</span></h2>
+              <div className="tags-select-container">
+                {domains.map((domain, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    className={`tag-select ${formData.domains.includes(domain) ? 'selected' : ''}`}
+                    onClick={() => formData.domains.includes(domain) ? removeDomain(domain) : addDomain(domain)}
+                  >
+                    {domain}
+                  </button>
                 ))}
-              </select>
+              </div>
             </div>
 
             <div className="form-row">

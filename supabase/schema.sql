@@ -98,7 +98,7 @@ CREATE INDEX idx_payments_status ON public.payments(status);
 CREATE TABLE public.user_limits (
   user_id UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
   proposals_sent INT DEFAULT 0,
-  proposals_limit INT DEFAULT 2, -- Free limit
+  proposals_limit INT DEFAULT 3, -- Free limit
   has_paid BOOLEAN DEFAULT FALSE,
   last_proposal_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -139,7 +139,7 @@ BEGIN
   FROM public.proposals
   WHERE from_user_id = user_uuid;
   
-  RETURN proposal_count < 2;
+  RETURN proposal_count < 3;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 

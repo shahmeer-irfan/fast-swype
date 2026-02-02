@@ -18,6 +18,9 @@ const LoginSignupForm = () => {
   const [showEmailVerification, setShowEmailVerification] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { playClick, playConfirm, playHover, playDismiss } = useClickSound();
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -44,7 +47,7 @@ const LoginSignupForm = () => {
       }
 
       playConfirm();
-      router.push('/profile/edit');
+      router.push('/swipe');
     } catch (err: any) {
       playDismiss();
       setError(err.message || 'Login failed');
@@ -279,16 +282,35 @@ const LoginSignupForm = () => {
                   disabled={loading}
                   className="w-full h-12 px-4 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
                 />
-                <input
-                  type="password"
-                  placeholder="Your Password"
-                  value={loginData.password}
-                  onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                  required
-                  minLength={6}
-                  disabled={loading}
-                  className="w-full h-12 px-4 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
-                />
+                <div className="relative">
+                  <input
+                    type={showLoginPassword ? "text" : "password"}
+                    placeholder="Your Password"
+                    value={loginData.password}
+                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                    required
+                    minLength={6}
+                    disabled={loading}
+                    className="w-full h-12 px-4 pr-12 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] hover:text-white transition-colors"
+                  >
+                    {showLoginPassword ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 <button
                   type="submit"
                   onMouseEnter={playHover}
@@ -331,26 +353,64 @@ const LoginSignupForm = () => {
                   disabled={loading}
                   className="w-full h-12 px-4 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
                 />
-                <input
-                  type="password"
-                  placeholder="Password (min 6 characters)"
-                  value={signupData.password}
-                  onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                  required
-                  minLength={6}
-                  disabled={loading}
-                  className="w-full h-12 px-4 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
-                />
-                <input
-                  type="password"
-                  placeholder="Confirm Password"
-                  value={signupData.confirmPassword}
-                  onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
-                  required
-                  minLength={6}
-                  disabled={loading}
-                  className="w-full h-12 px-4 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
-                />
+                <div className="relative">
+                  <input
+                    type={showSignupPassword ? "text" : "password"}
+                    placeholder="Password (min 6 characters)"
+                    value={signupData.password}
+                    onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                    required
+                    minLength={6}
+                    disabled={loading}
+                    className="w-full h-12 px-4 pr-12 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSignupPassword(!showSignupPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] hover:text-white transition-colors"
+                  >
+                    {showSignupPassword ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm Password"
+                    value={signupData.confirmPassword}
+                    onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
+                    required
+                    minLength={6}
+                    disabled={loading}
+                    className="w-full h-12 px-4 pr-12 bg-[#1a1a1a] border-2 border-[#4387f4] rounded-lg text-white placeholder-[#666] text-sm font-semibold outline-none focus:border-[#5a9fff] transition-all disabled:opacity-50"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] hover:text-white transition-colors"
+                  >
+                    {showConfirmPassword ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 <button
                   type="submit"
                   onMouseEnter={playHover}

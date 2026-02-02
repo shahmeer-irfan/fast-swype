@@ -122,21 +122,36 @@ export const dummyProfiles: Profile[] = [
 ];
 
 export const departments = [
-  "CS", "SE", "AI", "DS", "CY"
+  "CS", "SE", "AI", "DS", "CY", "EE", "CE", "Fintech"
 ];
 
 export const domains = [
   "Full Stack Development",
+  "Frontend Development",
+  "Backend Development",
   "Mobile Development",
+  "iOS Development",
+  "Android Development",
   "Machine Learning",
   "Data Science",
-  "Blockchain",
+  "Artificial Intelligence",
+  "Deep Learning",
+  "Computer Vision",
+  "NLP & Language Models",
+  "Game Development",
+  "Unity Development",
+  "Unreal Engine",
+  "Blockchain & Web3",
   "Cybersecurity",
+  "Cloud Computing",
+  "DevOps & CI/CD",
+  "UI/UX Design",
   "Product Design",
-  "Backend Development",
-  "Frontend Development",
-  "iOS Development",
-  "Android Development"
+  "AR/VR Development",
+  "IoT & Embedded Systems",
+  "Robotics",
+  "Quantum Computing",
+  "Database Engineering"
 ];
 
 export const lookingForOptions = [

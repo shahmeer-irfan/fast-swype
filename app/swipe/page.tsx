@@ -16,7 +16,7 @@ import { Profile } from "@/lib/supabase/client";
 
 export default function SwipePage() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadingProfiles, setLoadingProfiles] = useState(true);
@@ -29,6 +29,16 @@ export default function SwipePage() {
       router.push('/login');
     }
   }, [loading, user, router]);
+
+  // Redirect to edit if profile is incomplete
+  useEffect(() => {
+    if (!loading && user && profile) {
+      if (!profile.bio || !profile.domain || !profile.looking_for || 
+          (profile.skills && profile.skills.length === 0)) {
+        router.push('/profile/edit');
+      }
+    }
+  }, [loading, user, profile, router]);
 
   // Load profiles
   useEffect(() => {

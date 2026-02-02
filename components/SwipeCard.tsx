@@ -28,6 +28,8 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 0, 200], [-25, 0, 25]);
   const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0, 1, 1, 1, 0]);
+  const leftIndicatorOpacity = useTransform(x, [-100, -50, 0], [1, 0.5, 0]);
+  const rightIndicatorOpacity = useTransform(x, [0, 50, 100], [0, 0.5, 1]);
 
   const handleSendProposal = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -213,6 +215,31 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
         animate={exitX !== 0 ? { x: exitX, opacity: 0 } : {}}
         transition={{ duration: 0.3 }}
       >
+        {/* Swipe Indicators */}
+        {!isFlipped && (
+          <>
+            <div className="swipe-indicator left-indicator">
+              <div className="indicator-content">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>PASS</span>
+              </div>
+            </div>
+            
+            <div className="swipe-indicator right-indicator">
+              <div className="indicator-content">
+                <span>PROPOSE</span>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </div>
+            </div>
+          </>
+        )}
+        
         <div className="card-inner">
           {/* Front of card */}
           <div className="card-front">
@@ -244,11 +271,6 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
                 <div className="section-title">LOOKING FOR</div>
                 <div className="looking-badge">{profile.looking_for || 'Not specified'}</div>
               </div>
-            </div>
-
-            <div className="swipe-hint">
-              <span className="hint-left">← Swipe left to pass</span>
-              <span className="hint-right">Swipe right to propose →</span>
             </div>
 
             <div className="brutalist-card__actions">
@@ -490,6 +512,9 @@ const StyledWrapper = styled.div`
     display: inline-block;
     border: 2px solid #000;
     box-shadow: 3px 3px 0 #2c5aa0;
+    word-wrap: break-word;
+    max-width: 100%;
+    line-height: 1.3;
   }
 
   .looking-badge {
@@ -497,6 +522,9 @@ const StyledWrapper = styled.div`
     color: #ffffff;
     border: 3px solid #000;
     box-shadow: 3px 3px 0 #2c5aa0;
+    word-wrap: break-word;
+    max-width: 100%;
+    line-height: 1.3;
   }
 
   .tags-container {
@@ -532,33 +560,79 @@ const StyledWrapper = styled.div`
     box-shadow: 3px 3px 0 #2c5aa0;
   }
 
-  .swipe-hint {
+  .swipe-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 10;
+    padding: 20px;
+  }
+
+  .left-indicator {
+    left: -80px;
+  }
+
+  .right-indicator {
+    right: -80px;
+  }
+
+  .indicator-content {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
     gap: 8px;
-    padding: 10px 0;
-    margin-top: auto;
-    border-top: 2px solid #4387f4;
-    font-size: 8px;
-    font-weight: 700;
-    color: #999;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
+    animation: bounce 0.6s ease-in-out infinite;
   }
 
-  .hint-left {
-    color: #ff0000;
-    flex-shrink: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .left-indicator .indicator-content {
+    color: #ff4444;
   }
 
-  .hint-right {
-    color: #00ff00;
-    flex-shrink: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .right-indicator .indicator-content {
+    color: #00ff88;
+  }
+
+  .indicator-content span {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(${props => props.className?.includes('left') ? '-10px' : '10px'});
+    }
+  }
+
+  .left-indicator .indicator-content {
+    animation: bounceLeft 0.6s ease-in-out infinite;
+  }
+
+  .right-indicator .indicator-content {
+    animation: bounceRight 0.6s ease-in-out infinite;
+  }
+
+  @keyframes bounceLeft {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(-10px);
+    }
+  }
+
+  @keyframes bounceRight {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(10px);
+    }
   }
 
   .brutalist-card__actions {

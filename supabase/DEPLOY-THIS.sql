@@ -122,7 +122,7 @@ BEGIN
   VALUES (
     NEW.id,
     0,
-    2,
+    3,
     FALSE,
     NOW(),
     NOW()

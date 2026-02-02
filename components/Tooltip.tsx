@@ -79,41 +79,42 @@ const TooltipWrapper = styled.div`
 const TooltipBox = styled.div`
   background: #2d2d2d;
   border: 3px solid #4387f4;
-  box-shadow: 6px 6px 0 #4387f4;
-  padding: 16px 20px;
+  box-shadow: 8px 8px 0 #4387f4;
+  padding: 20px 24px;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  max-width: 350px;
+  gap: 16px;
+  max-width: 420px;
   border-radius: 0;
 
   @media (max-width: 640px) {
     max-width: 100%;
+    padding: 18px 20px;
   }
 `;
 
 const TooltipIcon = styled.div`
-  font-size: 24px;
+  font-size: 32px;
   flex-shrink: 0;
 `;
 
 const TooltipText = styled.p`
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: #ffffff;
-  line-height: 1.5;
+  line-height: 1.6;
   flex: 1;
   margin: 0;
   word-wrap: break-word;
 `;
 
 const CloseButton = styled.button`
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border: 2px solid #4387f4;
   background: #2d2d2d;
   color: #ffffff;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 900;
   display: flex;
   align-items: center;

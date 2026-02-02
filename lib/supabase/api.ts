@@ -353,7 +353,7 @@ export async function sendProposal(toUserId: string, message: string) {
   if (!user) throw new Error('Not authenticated');
 
   // Check if can send
-  const canSend = await canSendProposal(user.id);
+  const { canSend } = await canSendProposal(user.id);
   if (!canSend) {
     throw new Error('PROPOSAL_LIMIT_REACHED');
   }

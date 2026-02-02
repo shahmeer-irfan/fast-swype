@@ -24,6 +24,7 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [exitX, setExitX] = useState(0);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 0, 200], [-25, 0, 25]);
@@ -57,11 +58,18 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
         throw proposalError;
       }
 
-      // Success - swipe right
+      // Success - show success message then swipe right
       playConfirm();
-      onSwipe("right");
-      setProposalText("");
-      setIsFlipped(false);
+      setShowSuccess(true);
+      setSending(false);
+      
+      // Wait 1.5 seconds before swiping to next card
+      setTimeout(() => {
+        setShowSuccess(false);
+        onSwipe("right");
+        setProposalText("");
+        setIsFlipped(false);
+      }, 1500);
     } catch (err: any) {
       console.error('Error sending proposal:', err);
       setError(err.message || 'Failed to send proposal');
@@ -111,6 +119,20 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
 
   return (
     <StyledWrapper>
+      {showSuccess && (
+        <div className="success-toast">
+          <div className="success-toast-content">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <div>
+              <div className="success-title">Proposal Sent!</div>
+              <div className="success-subtitle">Moving to next profile...</div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {showPaymentModal && (
         <PaymentModal onClose={() => setShowPaymentModal(false)} />
       )}
@@ -1008,6 +1030,59 @@ const StyledWrapper = styled.div`
 
   .modal-action-button:active {
     transform: scale(0.98);
+  }
+
+  /* Success Toast */
+  .success-toast {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  .success-toast-content {
+    background: #10b981;
+    border: 4px solid #000;
+    box-shadow: 6px 6px 0 #000;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 320px;
+  }
+
+  .success-toast-content svg {
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  .success-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .success-subtitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    opacity: 0.9;
   }
 
   /* View Profile button style */

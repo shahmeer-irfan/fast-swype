@@ -15,6 +15,7 @@ export default function PaymentModal({ onClose, onPaymentSubmitted }: PaymentMod
   const [transactionDetails, setTransactionDetails] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
   const { playClick, playConfirm, playHover } = useClickSound();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,28 +33,18 @@ export default function PaymentModal({ onClose, onPaymentSubmitted }: PaymentMod
       return;
     }
 
-    if (!transactionDetails.trim()) {
-      setError("Please provide transaction details");
-      return;
-    }
-
     setIsSubmitting(true);
     setError("");
 
     try {
-      // Create payment record
-      const payment = await createPayment(transactionDetails);
+      // Create payment record (transaction details are optional)
+      const payment = await createPayment(transactionDetails.trim() || "No details provided");
       
       // Upload screenshot
       await uploadPaymentScreenshot(screenshot, payment.id);
 
       playConfirm();
-      
-      // Close modal immediately
-      onClose();
-      
-      // Show success notification
-      alert("✅ Payment Submitted Successfully!\n\nYour payment has been submitted and will be verified within 24 hours. You'll get unlimited proposals once verified!");
+      setShowSuccess(true);
       
       if (onPaymentSubmitted) {
         onPaymentSubmitted();
@@ -75,12 +66,13 @@ export default function PaymentModal({ onClose, onPaymentSubmitted }: PaymentMod
   };
 
   return (
-    <ModalOverlay onClick={onClose}>
-      <ModalCard onClick={(e) => e.stopPropagation()}>
-        <ModalHeader>
-          <ModalTitle>💰UNLOCK FULL ACCESS</ModalTitle>
-          <CloseButton onClick={onClose} onMouseEnter={playHover}>×</CloseButton>
-        </ModalHeader>
+    <ModalOverlay onClick={!showSuccess ? onClose : undefined}>
+      {!showSuccess ? (
+        <ModalCard onClick={(e) => e.stopPropagation()}>
+          <ModalHeader>
+            <ModalTitle>💰UNLOCK FULL ACCESS</ModalTitle>
+            <CloseButton onClick={onClose} onMouseEnter={playHover}>×</CloseButton>
+          </ModalHeader>
 
         <ModalContent>
           <InfoSection>
@@ -174,6 +166,19 @@ export default function PaymentModal({ onClose, onPaymentSubmitted }: PaymentMod
           </Note>
         </ModalContent>
       </ModalCard>
+      ) : (
+        <SuccessCard onClick={(e) => e.stopPropagation()}>
+          <SuccessIcon>✅</SuccessIcon>
+          <SuccessTitle>Payment Submitted Successfully!</SuccessTitle>
+          <SuccessMessage>
+            Your payment has been submitted and will be verified within 24 hours.
+            You'll get unlimited proposals once verified!
+          </SuccessMessage>
+          <SuccessButton onClick={onClose} onMouseEnter={playHover}>
+            Got it!
+          </SuccessButton>
+        </SuccessCard>
+      )}
     </ModalOverlay>
   );
 }
@@ -470,6 +475,79 @@ const SubmitButton = styled.button`
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+`;
+
+const SuccessCard = styled.div`
+  background: #2d2d2d;
+  border: 4px solid #00ff88;
+  box-shadow: 12px 12px 0 #00ff88;
+  max-width: 450px;
+  width: 100%;
+  padding: 40px 30px;
+  text-align: center;
+  animation: scaleIn 0.3s ease-out;
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+`;
+
+const SuccessIcon = styled.div`
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: bounce 0.6s ease-in-out;
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+`;
+
+const SuccessTitle = styled.h2`
+  font-size: 28px;
+  font-weight: 900;
+  color: #00ff88;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+`;
+
+const SuccessMessage = styled.p`
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.6;
+  margin: 0 0 30px 0;
+`;
+
+const SuccessButton = styled.button`
+  background: #00ff88;
+  color: #000;
+  border: 3px solid #000;
+  padding: 14px 40px;
+  font-size: 16px;
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 #000;
+  transition: all 0.2s;
+
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #000;
+  }
+
+  &:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
   }
 `;
 

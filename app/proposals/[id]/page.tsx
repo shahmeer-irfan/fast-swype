@@ -47,8 +47,8 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
         .from('proposals')
         .select(`
           *,
-          from_profile:from_user_id(id, name, department, batch, campus, bio, domain, looking_for),
-          to_profile:to_user_id(id, name, department, batch, campus, bio, domain, looking_for)
+          from_profile:from_user_id(id, name, email, department, batch, campus, bio, domain, looking_for),
+          to_profile:to_user_id(id, name, email, department, batch, campus, bio, domain, looking_for)
         `)
         .eq('id', resolvedParams.id)
         .single();
@@ -261,7 +261,7 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
               <div className="section-title">CONTACT INFO</div>
               <div className="contact-info">
                 <div className="contact-item">
-                  📧 {proposal.from_profile?.email || `${proposal.from_profile?.name?.toLowerCase().replace(" ", ".")}@nu.edu.pk`}
+                  📧 {proposal.from_profile?.email}
                 </div>
                 <div className="contact-item">
                   💬 Share your WhatsApp or meeting link

@@ -47,8 +47,8 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
         .from('proposals')
         .select(`
           *,
-          from_profile:from_user_id(id, name, email, department, batch, campus, bio, domain, looking_for),
-          to_profile:to_user_id(id, name, email, department, batch, campus, bio, domain, looking_for)
+          from_profile:from_user_id(id, name, email, department, batch, campus, bio, domain, looking_for, profile_picture_url),
+          to_profile:to_user_id(id, name, email, department, batch, campus, bio, domain, looking_for, profile_picture_url)
         `)
         .eq('id', resolvedParams.id)
         .single();
@@ -175,7 +175,14 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
           {/* User Info */}
           <div className="user-section">
             <div className="user-avatar">
-              {proposal.from_profile?.name?.charAt(0).toUpperCase() || '?'}
+              {proposal.from_profile?.profile_picture_url ? (
+                <img 
+                  src={proposal.from_profile.profile_picture_url} 
+                  alt={proposal.from_profile.name || 'User'}
+                />
+              ) : (
+                proposal.from_profile?.name?.charAt(0).toUpperCase() || '?'
+              )}
             </div>
             <div className="user-details">
               <div className="user-name">{proposal.from_profile?.name || 'Unknown User'}</div>
@@ -417,6 +424,13 @@ const StyledWrapper = styled.div`
     justify-content: center;
     font-size: 32px;
     font-weight: 900;
+    overflow: hidden;
+  }
+
+  .user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .user-details {

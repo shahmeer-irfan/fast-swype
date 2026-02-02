@@ -56,12 +56,11 @@ export default function Home() {
                 <h3 className="font-black uppercase text-white mb-0.5 tracking-tight">
                   BUILD PROFILE
                 </h3>
-                <p className="text-[9px] font-semibold text-[#999] leading-tight">
+                <p className="text-[14px] font-semibold text-[#999] leading-tight">
                   Show what you can offer and what you need
                 </p>
               </div>
             </div>
-
             <div 
               onMouseEnter={playHover}
               className="flex items-center gap-3 bg-[#2d2d2d] border-3 border-[#4387f4] p-3 shadow-[4px_4px_0_#4387f4] hover:shadow-[6px_6px_0_#4387f4] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all"
@@ -73,7 +72,7 @@ export default function Home() {
                 <h3 className="font-black uppercase text-white mb-0.5 tracking-tight">
                   FIND YOUR MATCH
                 </h3>
-                <p className="text-[9px] font-semibold text-[#999] leading-tight">
+                <p className="text-[14px] font-semibold text-[#999] leading-tight">
                   Swipe left or right to your fyp partner
                 </p>
               </div>
@@ -89,8 +88,8 @@ export default function Home() {
                 <h3 className="font-black uppercase text-white mb-0.5 tracking-tight">
                   Send proposals
                 </h3>
-                <p className="text-[9px] font-semibold text-[#999] leading-tight">
-                 Send two proposals for free.
+                <p className="text-[14px] font-semibold text-[#999] leading-tight">
+                 Send three proposals for free.
                 </p>
               </div>
             </div>
@@ -111,7 +110,7 @@ export default function Home() {
 
           {/* Footer */}
           <div className="w-full text-center">
-            <p className="text-[10px] font-black uppercase text-[#999] tracking-wide mb-2">
+            <p className="text-[14px] font-black uppercase text-white tracking-wide mb-2">
               FAST STUDENTS ONLY • 250PKR TO UNLOCK FULL ACCESS
             </p>
             <a 
@@ -119,7 +118,7 @@ export default function Home() {
               target="_blank" 
               rel="noopener noreferrer"
               onMouseEnter={playHover}
-              className="inline-flex items-center gap-2 px-3 py-3 text-[10px] font-black uppercase bg-[#2d2d2d] text-white border-2 border-[#4387f4] shadow-[3px_3px_0_#4387f4] hover:shadow-[4px_4px_0_#4387f4] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
+              className="inline-flex items-center gap-2 px-3 py-3 text-[12px] font-black uppercase bg-[#2d2d2d] text-white border-2 border-[#4387f4] shadow-[3px_3px_0_#4387f4] hover:shadow-[4px_4px_0_#4387f4] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
             >
               <HeartIcon className="w-4 h-4" /> Connect with Creator
             </a>

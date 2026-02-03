@@ -335,7 +335,7 @@ export default function EditProfilePage() {
               </select>
             </div>
 
-            <div className="form-section">
+            <div className="form-section mb-4">
               <h2 className="section-title">DOMAINS <span className="hint">(Pick your areas of interest)</span></h2>
               <div className="tags-select-container">
                 {domains.map((domain, idx) => (
@@ -383,7 +383,7 @@ export default function EditProfilePage() {
           </div>
 
           <div className="form-section">
-            <h2 className="section-title">SKILLS <span className="hint">(Pick what you know)</span></h2>
+            <h2 className="section-title ">SKILLS <span className="hint">(Pick what you know)</span></h2>
             <div className="tags-select-container">
               {skillsList.map((skill, idx) => (
                 <button
@@ -653,11 +653,12 @@ const StyledWrapper = styled.div`
   .tags-select-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 12px;
+    margin-top: 8px;
   }
 
   .tag-select {
-    padding: 8px 12px;
+    padding: 10px 16px;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -666,6 +667,7 @@ const StyledWrapper = styled.div`
     color: #ffffff;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
   }
 
   .tag-select:hover {
@@ -676,7 +678,7 @@ const StyledWrapper = styled.div`
   .tag-select.selected {
     background: #4387f4;
     color: #fff;
-    box-shadow: 2px 2px 0 #4387f4;
+    box-shadow: 2px 2px 0 #2c5aa0;
   }
 
   .submit-button {

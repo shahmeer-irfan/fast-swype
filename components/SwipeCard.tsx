@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { Profile } from "@/lib/supabase/client";
-import { sendProposal, canSendProposal } from "@/lib/supabase/api";
+import { sendProposal, canSendProposal, getUserLimits } from "@/lib/supabase/api";
 import { useAuth } from "@/lib/auth-context";
 import PaymentModal from "@/components/PaymentModal";
 import { useClickSound } from "@/hooks/useClickSound";
@@ -25,6 +25,8 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
   const [error, setError] = useState("");
   const [exitX, setExitX] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showProposalsLeft, setShowProposalsLeft] = useState(false);
+  const [proposalsRemaining, setProposalsRemaining] = useState(0);
 
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 0, 200], [-25, 0, 25]);
@@ -56,6 +58,25 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
       
       if (proposalError) {
         throw proposalError;
+      }
+
+      // Get updated limits to show remaining proposals
+      try {
+        const limits = await getUserLimits(user.id);
+        const remaining = limits.proposals_limit - limits.proposals_sent;
+        
+        // Only show "proposals left" toast if user hasn't paid
+        if (!limits.has_paid && remaining >= 0) {
+          setProposalsRemaining(remaining);
+          setShowProposalsLeft(true);
+          
+          // Hide the proposals left toast after 3 seconds
+          setTimeout(() => {
+            setShowProposalsLeft(false);
+          }, 3000);
+        }
+      } catch (err) {
+        console.error('Error getting user limits:', err);
       }
 
       // Success - show success message then swipe right
@@ -128,6 +149,26 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
             <div>
               <div className="success-title">Proposal Sent!</div>
               <div className="success-subtitle">Moving to next profile...</div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {showProposalsLeft && (
+        <div className="proposals-left-toast">
+          <div className="proposals-left-content">
+            <div className="proposals-left-icon">{proposalsRemaining > 0 ? '🎯' : '🔒'}</div>
+            <div>
+              <div className="proposals-left-title">
+                {proposalsRemaining > 0 
+                  ? `${proposalsRemaining} Free Proposal${proposalsRemaining !== 1 ? 's' : ''} Left!` 
+                  : 'Free Proposals Used!'}
+              </div>
+              <div className="proposals-left-subtitle">
+                {proposalsRemaining > 0 
+                  ? 'Make them count!' 
+                  : 'Unlock unlimited for just 250 PKR'}
+              </div>
             </div>
           </div>
         </div>
@@ -1079,6 +1120,58 @@ const StyledWrapper = styled.div`
   }
 
   .success-subtitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    opacity: 0.9;
+  }
+
+  /* Proposals Left Toast */
+  .proposals-left-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 10000;
+    animation: slideInRight 0.3s ease-out;
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .proposals-left-content {
+    background: #4387f4;
+    border: 4px solid #000;
+    box-shadow: 6px 6px 0 #000;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 320px;
+  }
+
+  .proposals-left-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+
+  .proposals-left-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .proposals-left-subtitle {
     font-size: 13px;
     font-weight: 700;
     color: #fff;

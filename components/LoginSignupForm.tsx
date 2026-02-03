@@ -356,7 +356,7 @@ const LoginSignupForm = () => {
                 <div className="relative">
                   <input
                     type={showSignupPassword ? "text" : "password"}
-                    placeholder="Password (min 6 characters)"
+                    placeholder="Password"
                     value={signupData.password}
                     onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
                     required

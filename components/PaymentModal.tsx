@@ -76,11 +76,11 @@ export default function PaymentModal({ onClose, onPaymentSubmitted }: PaymentMod
 
         <ModalContent>
           <InfoSection>
-            <InfoTitle>💻Help Creator Get a New Laptop!</InfoTitle>
+            <InfoTitle>� UPGRADE TO UNLIMITED</InfoTitle>
             <InfoText>
-              You've used your 2 FREE proposals!
+              You've used your <strong>3 FREE proposals</strong>!
               <br/><br/>
-              Pay PKR 250 to help the creator afford a new laptop. Plus you get UNLIMITED proposals forever! Win-win?🙏
+              Unlock <strong>UNLIMITED proposals</strong> for just PKR 250 and connect with as many partners as you want. One-time payment, lifetime access! 🔥
             </InfoText>
           </InfoSection>
 
@@ -162,7 +162,7 @@ export default function PaymentModal({ onClose, onPaymentSubmitted }: PaymentMod
           </Form>
 
           <Note>
-            ⏱️ Verification usually takes 2-3 hours. You'll get access once verified!
+            ⚡ Verification usually takes 2-4 hours. You'll get unlimited access once approved!
           </Note>
         </ModalContent>
       </ModalCard>

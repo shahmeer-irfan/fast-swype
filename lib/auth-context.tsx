@@ -86,11 +86,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 console.log('Profile created successfully');
                 setIsRetrying(false);
                 setProfile(newProfile as Profile);
+                setLoading(false);
                 return;
               } else {
                 console.error('Error creating profile:', insertError);
                 setIsRetrying(false);
                 setProfile(null);
+                setLoading(false);
                 return;
               }
             } else {
@@ -103,17 +105,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.log('Cannot create profile - missing metadata');
           setIsRetrying(false);
           setProfile(null);
+          setLoading(false);
           return;
         }
         console.error('Error loading profile:', error);
         setIsRetrying(false);
         setProfile(null);
+        setLoading(false);
         return;
       }
+      
+      setIsRetrying(false);
       setProfile(data as Profile);
+      setLoading(false);
     } catch (error) {
       console.error('Error loading profile:', error);
+      setIsRetrying(false);
       setProfile(null);
+      setLoading(false);
     }
   };
 

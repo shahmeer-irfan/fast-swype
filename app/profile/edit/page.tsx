@@ -282,7 +282,7 @@ export default function EditProfilePage() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">BIO <span className="hint">(Keep it short and funny)</span></label>
+              <label className="form-label">BIO <span className="hint">(Keep it short and represent your worth)</span></label>
               <textarea
                 className="form-textarea"
                 value={formData.bio}

@@ -102,7 +102,21 @@ export default function SwipePage() {
             <p className="completion-text">
               You've seen all available profiles. Check back later for more potential partners!
             </p>
+            <div className="refresh-notice">
+              <span className="refresh-icon">🔄</span>
+              <span className="refresh-text">Refresh the page to load new profiles</span>
+            </div>
             <div className="completion-buttons">
+              <button 
+                onClick={() => {
+                  playClick();
+                  window.location.reload();
+                }}
+                onMouseEnter={playHover}
+                className="completion-button refresh-button"
+              >
+                Refresh Now
+              </button>
               <Link href="/profile">
                 <button 
                   onClick={playClick}
@@ -363,8 +377,53 @@ const StyledWrapper = styled.div`
     font-size: 14px;
     font-weight: 600;
     color: #999;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     line-height: 1.4;
+  }
+
+  .refresh-notice {
+    background: #4387f4;
+    border: 3px solid #000;
+    padding: 16px 24px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 4px 4px 0 #2c5aa0;
+    }
+    50% {
+      transform: scale(1.02);
+      box-shadow: 6px 6px 0 #2c5aa0;
+    }
+  }
+
+  .refresh-icon {
+    font-size: 24px;
+    animation: rotate 3s linear infinite;
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .refresh-text {
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #ffffff;
+    letter-spacing: 0.5px;
   }
 
   .completion-buttons {
@@ -387,6 +446,16 @@ const StyledWrapper = styled.div`
     cursor: pointer;
     transition: all 0.2s;
     letter-spacing: -1px;
+  }
+
+  .completion-button.refresh-button {
+    background: #10b981;
+    box-shadow: 6px 6px 0 #059669;
+  }
+
+  .completion-button.refresh-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 #059669;
   }
 
   .completion-button.secondary {

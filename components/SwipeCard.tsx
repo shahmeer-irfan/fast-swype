@@ -369,12 +369,12 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
                 <textarea
                   className="proposal-textarea"
                   placeholder="Keep it short and funny..."
-                  maxLength={250}
+                  maxLength={100}
                   value={proposalText}
                   onChange={(e) => setProposalText(e.target.value)}
                   required
                 />
-                <div className="char-count">{proposalText.length}/250</div>
+                <div className="char-count">{proposalText.length}/100</div>
               </div>
 
               {/* Tips Section */}

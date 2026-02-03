@@ -47,6 +47,15 @@ export default function SwipePage() {
     }
   }, [user]);
 
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   const loadProfiles = async () => {
     if (!user) return;
 
@@ -56,7 +65,9 @@ export default function SwipePage() {
         console.error('Error loading profiles:', error);
         setProfiles([]);
       } else {
-        setProfiles(data || []);
+        // Randomize the order of profiles
+        const shuffledProfiles = shuffleArray(data || []);
+        setProfiles(shuffledProfiles);
       }
     } catch (error) {
       console.error('Error loading profiles:', error);

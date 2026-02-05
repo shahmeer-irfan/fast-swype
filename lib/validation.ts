@@ -13,14 +13,14 @@ export const CAMPUS_CODES = {
 } as const;
 
 // Domain mappings for different campus email formats
-export const CAMPUS_DOMAINS = {
+export const CAMPUS_DOMAINS: Record<CampusCode, string[]> = {
   k: ['khi', 'karachi'],
   i: ['isb', 'islamabad'],
   l: ['lhr', 'lahore'],
   p: ['pwr', 'peshawar'],
   m: ['mtn', 'multan'],
   f: ['fsd', 'faisalabad']
-} as const;
+};
 
 export type CampusCode = keyof typeof CAMPUS_CODES;
 

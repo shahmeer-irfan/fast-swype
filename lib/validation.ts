@@ -1,5 +1,6 @@
 // Email validation for FAST University emails
-// Format: [campus-code][batch-2digits][rollno-4digits]@nu.edu.pk
+// Format 1: [campus-code][batch-2digits][rollno-4digits]@nu.edu.pk (e.g., k230832@nu.edu.pk)
+// Format 2: [campus-code][batch-2digits][rollno-4digits]@[campus-code].nu.edu.pk (e.g., l230556@lhr.nu.edu.pk)
 // Campus codes: k=Karachi, i=Islamabad, l=Lahore, p=Peshawar, m=Multan, f=Faisalabad
 
 export const CAMPUS_CODES = {
@@ -9,6 +10,16 @@ export const CAMPUS_CODES = {
   p: 'Peshawar',
   m: 'Multan',
   f: 'Faisalabad'
+} as const;
+
+// Domain mappings for different campus email formats
+export const CAMPUS_DOMAINS = {
+  k: ['khi', 'karachi'],
+  i: ['isb', 'islamabad'],
+  l: ['lhr', 'lahore'],
+  p: ['pwr', 'peshawar'],
+  m: ['mtn', 'multan'],
+  f: ['fsd', 'faisalabad']
 } as const;
 
 export type CampusCode = keyof typeof CAMPUS_CODES;
@@ -28,13 +39,30 @@ export function validateFastEmail(email: string): ParsedEmail {
     return { isValid: false, error: 'Email is required' };
   }
 
-  // Must end with @nu.edu.pk
-  if (!email.endsWith('@nu.edu.pk')) {
-    return { isValid: false, error: 'Must be a FAST university email (@nu.edu.pk)' };
+  // Check if it ends with @nu.edu.pk or @[campus].nu.edu.pk
+  const emailLower = email.toLowerCase();
+  const atIndex = emailLower.indexOf('@');
+  
+  if (atIndex === -1) {
+    return { isValid: false, error: 'Invalid email format' };
   }
 
-  // Extract the part before @
-  const localPart = email.split('@')[0];
+  const localPart = email.substring(0, atIndex);
+  const domainPart = emailLower.substring(atIndex + 1);
+
+  // Check if domain is nu.edu.pk or [campus].nu.edu.pk
+  const isBasicFormat = domainPart === 'nu.edu.pk';
+  const isCampusFormat = domainPart.endsWith('.nu.edu.pk');
+
+  if (!isBasicFormat && !isCampusFormat) {
+    return { isValid: false, error: 'Must be a FAST university email (@nu.edu.pk or @[campus].nu.edu.pk)' };
+  }
+
+  // Extract campus subdomain if present (e.g., "lhr" from "lhr.nu.edu.pk")
+  let campusSubdomain: string | null = null;
+  if (isCampusFormat && !isBasicFormat) {
+    campusSubdomain = domainPart.split('.')[0];
+  }
 
   // Must match pattern: [letter][2digits][4digits]
   const regex = /^([kiLpmf])(\d{2})(\d{4})$/i;
@@ -43,7 +71,7 @@ export function validateFastEmail(email: string): ParsedEmail {
   if (!match) {
     return { 
       isValid: false, 
-      error: 'Invalid format. Should be: [campus][batch][rollno]@nu.edu.pk (e.g., k230832@nu.edu.pk)' 
+      error: 'Invalid format. Should be: [campus][batch][rollno]@nu.edu.pk (e.g., k230832@nu.edu.pk or l230556@lhr.nu.edu.pk)' 
     };
   }
 
@@ -56,6 +84,17 @@ export function validateFastEmail(email: string): ParsedEmail {
       isValid: false, 
       error: `Invalid campus code '${campusCode}'. Valid codes: k, i, l, p, m, f` 
     };
+  }
+
+  // If campus subdomain exists, validate it matches the campus code
+  if (campusSubdomain) {
+    const validDomains = CAMPUS_DOMAINS[lowerCampusCode];
+    if (!validDomains.includes(campusSubdomain)) {
+      return {
+        isValid: false,
+        error: `Campus code '${campusCode}' doesn't match domain '${campusSubdomain}'`
+      };
+    }
   }
 
   // Validate batch (should be reasonable, e.g., 15-35 for years 2015-2035)

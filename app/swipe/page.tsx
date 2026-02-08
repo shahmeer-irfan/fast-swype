@@ -24,7 +24,6 @@ export default function SwipePage() {
   const [loadingProfiles, setLoadingProfiles] = useState(true);
   const [selectedCampus, setSelectedCampus] = useState<string>("All");
   const [selectedLookingFor, setSelectedLookingFor] = useState<string>("All");
-  const [showFilters, setShowFilters] = useState(false);
   const { playClick, playHover, playDismiss } = useClickSound();
   const pageLoading = usePageLoader(1500);
 
@@ -224,74 +223,48 @@ export default function SwipePage() {
           </div>
         </div>
 
-        {/* Filters Section */}
-        <div className="filters-container">
-          <button 
-            className="filters-toggle"
-            onClick={() => {
+        {/* Compact Inline Filters */}
+        <div className="filters-bar">
+          <select
+            className="filter-select-inline"
+            value={selectedCampus}
+            onChange={(e) => {
               playClick();
-              setShowFilters(!showFilters);
+              setSelectedCampus(e.target.value);
             }}
-            onMouseEnter={playHover}
           >
-            <span className="filter-icon">🛠️</span>
-            <span className="filter-text">FILTERS</span>
-            <span className="filter-arrow">{showFilters ? '▲' : '▼'}</span>
-          </button>
+            <option value="All">All Campuses</option>
+            {campuses.map((campus) => (
+              <option key={campus} value={campus}>{campus}</option>
+            ))}
+          </select>
 
-          {showFilters && (
-            <div className="filters-panel">
-              <div className="filter-group">
-                <label className="filter-label">CAMPUS</label>
-                <select
-                  className="filter-select"
-                  value={selectedCampus}
-                  onChange={(e) => {
-                    playClick();
-                    setSelectedCampus(e.target.value);
-                  }}
-                  onMouseEnter={playHover}
-                >
-                  <option value="All">All Campuses</option>
-                  {campuses.map((campus) => (
-                    <option key={campus} value={campus}>{campus}</option>
-                  ))}
-                </select>
-              </div>
+          <select
+            className="filter-select-inline"
+            value={selectedLookingFor}
+            onChange={(e) => {
+              playClick();
+              setSelectedLookingFor(e.target.value);
+            }}
+          >
+            <option value="All">All Types</option>
+            {lookingForOptions.map((option) => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
 
-              <div className="filter-group">
-                <label className="filter-label">LOOKING FOR</label>
-                <select
-                  className="filter-select"
-                  value={selectedLookingFor}
-                  onChange={(e) => {
-                    playClick();
-                    setSelectedLookingFor(e.target.value);
-                  }}
-                  onMouseEnter={playHover}
-                >
-                  <option value="All">All Types</option>
-                  {lookingForOptions.map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
-              </div>
-
-              {(selectedCampus !== "All" || selectedLookingFor !== "All") && (
-                <button 
-                  className="clear-filters-button"
-                  onClick={handleClearFilters}
-                  onMouseEnter={playHover}
-                >
-                  ✖ CLEAR FILTERS
-                </button>
-              )}
-
-              <div className="filter-results">
-                🎯 {filteredProfiles.length} profile{filteredProfiles.length !== 1 ? 's' : ''} found
-              </div>
-            </div>
+          {(selectedCampus !== "All" || selectedLookingFor !== "All") && (
+            <button 
+              className="clear-btn"
+              onClick={handleClearFilters}
+            >
+              ✖
+            </button>
           )}
+
+          <span className="filter-count">
+            {filteredProfiles.length}
+          </span>
         </div>
 
         {/* Cards Container */}
@@ -413,154 +386,81 @@ const StyledWrapper = styled.div`
     color: #ffffff;
   }
 
-  /* Filters Section */
-  .filters-container {
+  /* Compact Inline Filters */
+  .filters-bar {
     max-width: 500px;
-    margin: 0 auto 30px;
+    margin: 0 auto 20px;
     width: 100%;
-  }
-
-  .filters-toggle {
-    width: 100%;
-    background: #4387f4;
-    border: 3px solid #000;
-    box-shadow: 4px 4px 0 #2c5aa0;
-    padding: 14px 20px;
-    cursor: pointer;
-    transition: all 0.2s;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-size: 14px;
-    font-weight: 900;
-    text-transform: uppercase;
-    color: #ffffff;
-  }
-
-  .filters-toggle:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #2c5aa0;
-  }
-
-  .filters-toggle:active {
-    transform: translate(4px, 4px);
-    box-shadow: none;
-  }
-
-  .filter-icon {
-    font-size: 18px;
-  }
-
-  .filter-arrow {
-    margin-left: auto;
-    font-size: 12px;
-  }
-
-  .filters-panel {
-    background: #2d2d2d;
-    border: 3px solid #000;
-    border-top: none;
-    box-shadow: 4px 4px 0 #2c5aa0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    animation: slideDown 0.3s ease-out;
-  }
-
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .filter-group {
-    display: flex;
-    flex-direction: column;
     gap: 8px;
   }
 
-  .filter-label {
-    font-size: 11px;
-    font-weight: 900;
-    text-transform: uppercase;
-    color: #4387f4;
-    letter-spacing: 1px;
-  }
-
-  .filter-select {
-    background: #1a1a1a;
-    border: 3px solid #000;
-    box-shadow: 3px 3px 0 #4387f4;
-    padding: 12px 16px;
-    font-size: 14px;
-    font-weight: 700;
+  .filter-select-inline {
+    flex: 1;
+    background: #2d2d2d;
+    border: 2px solid #333;
+    padding: 10px 12px;
+    font-size: 12px;
+    font-weight: 800;
     text-transform: uppercase;
     color: #ffffff;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
+    min-width: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234387f4' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
   }
 
-  .filter-select:hover {
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0 #4387f4;
-  }
-
-  .filter-select:focus {
+  .filter-select-inline:focus {
     outline: none;
     border-color: #4387f4;
-    box-shadow: 0 0 0 3px rgba(67, 135, 244, 0.3);
   }
 
-  .filter-select option {
+  .filter-select-inline option {
     background: #1a1a1a;
     color: #ffffff;
     font-weight: 700;
   }
 
-  .clear-filters-button {
+  .clear-btn {
+    width: 36px;
+    height: 36px;
     background: #ff4444;
-    border: 3px solid #000;
-    box-shadow: 3px 3px 0 #cc0000;
-    padding: 10px 20px;
+    border: 2px solid #000;
+    color: #fff;
     font-size: 12px;
     font-weight: 900;
-    text-transform: uppercase;
-    color: #ffffff;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    flex-shrink: 0;
   }
 
-  .clear-filters-button:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0 #cc0000;
+  .clear-btn:hover {
+    background: #ff6666;
+    transform: scale(1.05);
   }
 
-  .clear-filters-button:active {
-    transform: translate(3px, 3px);
-    box-shadow: none;
-  }
-
-  .filter-results {
+  .filter-count {
+    width: 36px;
+    height: 36px;
     background: #4387f4;
-    border: 3px solid #000;
-    padding: 10px 16px;
+    border: 2px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 13px;
     font-weight: 900;
-    text-transform: uppercase;
-    color: #ffffff;
-    text-align: center;
-    box-shadow: 3px 3px 0 #2c5aa0;
+    color: #fff;
+    flex-shrink: 0;
+    font-family: "Archivo Black", sans-serif;
   }
 
   .cards-wrapper {

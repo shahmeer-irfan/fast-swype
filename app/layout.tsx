@@ -7,8 +7,8 @@ import NotificationHandler from "@/components/NotificationHandler";
 import PWAUpdater from "@/components/PWAUpdater";
 
 export const metadata: Metadata = {
-  title: "FastSwype - Find Your FYP Partner for Just 250 PKR",
-  description: "Swipe to find the perfect Final Year Project partner at FAST. Get 2 FREE proposals, then unlock unlimited for just PKR 250 (~$1)!",
+  title: "FastSwype — Find Your FYP Partner | FAST Students",
+  description: "Swipe to find the perfect Final Year Project partner at FAST. Completely free, unlimited proposals, no AI BS. Built for FAST students only.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

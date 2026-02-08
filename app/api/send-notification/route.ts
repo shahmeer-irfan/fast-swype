@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Sends push notifications via Firebase Cloud Messaging HTTP v1 API.
 // Uses service account credentials for OAuth2 authentication.
-// This delivers native Android push notifications to the Capacitor APK.
+// This delivers web push notifications to PWA users via FCM web push.
+// Background messages are handled by the firebase-messaging-sw.js service worker.
 
 interface SendNotificationPayload {
   token: string;
@@ -127,12 +128,15 @@ async function sendPushNotification(payload: SendNotificationPayload): Promise<b
               link: payload.link || "/proposals",
               tag: payload.tag || "fastswype",
             },
-            android: {
-              priority: "high",
+            webpush: {
+              fcm_options: {
+                link: payload.link || "/proposals",
+              },
               notification: {
-                click_action: "FCM_PLUGIN_ACTIVITY",
-                icon: "ic_launcher",
-                channel_id: "default",
+                icon: "/icons/icon-192x192.png",
+                badge: "/icons/icon-72x72.png",
+                vibrate: [200, 100, 200],
+                require_interaction: "true",
               },
             },
           },

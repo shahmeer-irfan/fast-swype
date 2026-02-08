@@ -5,29 +5,40 @@ import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import { useAuth } from "@/lib/auth-context";
 import {
-  isCapacitorNative,
-  registerCapacitorPush,
-  setupCapacitorPushListeners,
-} from "@/lib/capacitor-push";
+  isWebPushSupported,
+  registerWebPush,
+  setupWebPushListeners,
+} from "@/lib/web-push";
 
 /**
- * NotificationHandler — Native Android push notifications ONLY.
- * This component does nothing on web. Notifications are delivered
- * via Capacitor + FCM to the Android APK only.
+ * NotificationHandler — Web push notifications via Firebase Cloud Messaging.
+ * 
+ * Uses FCM web SDK + service worker. When the PWA is installed
+ * (Add to Home Screen), notifications appear in the Android notification shade
+ * even when the browser is closed, just like a native app.
  */
 export default function NotificationHandler() {
   const { user } = useAuth();
   const router = useRouter();
   const [showPrompt, setShowPrompt] = useState(false);
   const [toast, setToast] = useState<{ title: string; body: string; link?: string } | null>(null);
-  const [isNative, setIsNative] = useState(false);
+  const [supported, setSupported] = useState(false);
 
-  // Only activate on native (Capacitor APK)
   useEffect(() => {
-    const native = isCapacitorNative();
-    setIsNative(native);
+    setSupported(isWebPushSupported());
+  }, []);
 
-    if (!user || !native) return;
+  useEffect(() => {
+    if (!user || !supported) return;
+
+    const showToastNotification = (notification: { title: string; body: string; data?: any }) => {
+      setToast({
+        title: notification.title,
+        body: notification.body,
+        link: notification.data?.link || "/proposals",
+      });
+      setTimeout(() => setToast(null), 5000);
+    };
 
     // Check if user already has a token (previously enabled notifications)
     const checkExistingToken = async () => {
@@ -39,20 +50,8 @@ export default function NotificationHandler() {
           .single();
 
         if (data?.fcm_token) {
-          // Already registered — set up foreground/tap listeners
-          setupCapacitorPushListeners(
-            (notification) => {
-              setToast({
-                title: notification.title,
-                body: notification.body,
-                link: notification.data?.link || "/proposals",
-              });
-              setTimeout(() => setToast(null), 5000);
-            },
-            (actionData) => {
-              if (actionData?.link) router.push(actionData.link);
-            }
-          );
+          // Already registered — set up foreground listeners
+          setupWebPushListeners(showToastNotification);
         } else {
           // No token yet — show prompt so user can opt-in
           const dismissed = sessionStorage.getItem("notification_prompt_dismissed");
@@ -69,36 +68,31 @@ export default function NotificationHandler() {
       }
     };
     checkExistingToken();
-  }, [user]);
+  }, [user, supported]);
 
-  // On web, render nothing
-  if (!isNative) return null;
+  // Nothing to render on unsupported browsers
+  if (!supported) return null;
 
   const handleEnable = async () => {
     setShowPrompt(false);
-
     if (!user) return;
 
     try {
-      const token = await registerCapacitorPush(user.id);
+      const token = await registerWebPush(user.id);
       if (token) {
-        // Set up listeners after successful registration
-        setupCapacitorPushListeners(
-          (notification) => {
-            setToast({
-              title: notification.title,
-              body: notification.body,
-              link: notification.data?.link || "/proposals",
-            });
-            setTimeout(() => setToast(null), 5000);
-          },
-          (actionData) => {
-            if (actionData?.link) router.push(actionData.link);
-          }
-        );
+        setupWebPushListeners((notification) => {
+          setToast({
+            title: notification.title,
+            body: notification.body,
+            link: notification.data?.link || "/proposals",
+          });
+          setTimeout(() => setToast(null), 5000);
+        });
+      } else {
+        console.warn("Failed to get push notification token");
       }
     } catch (error) {
-      console.error("Failed to register native push:", error);
+      console.error("Failed to register push:", error);
     }
   };
 

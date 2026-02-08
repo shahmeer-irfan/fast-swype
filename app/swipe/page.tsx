@@ -13,13 +13,18 @@ import Tooltip from "@/components/Tooltip";
 import { useAuth } from "@/lib/auth-context";
 import { getUnswipedProfiles, recordSwipe } from "@/lib/supabase/api";
 import { Profile } from "@/lib/supabase/client";
+import { campuses, lookingForOptions } from "@/lib/data";
 
 export default function SwipePage() {
   const router = useRouter();
   const { user, profile, loading } = useAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [filteredProfiles, setFilteredProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadingProfiles, setLoadingProfiles] = useState(true);
+  const [selectedCampus, setSelectedCampus] = useState<string>("All");
+  const [selectedLookingFor, setSelectedLookingFor] = useState<string>("All");
+  const [showFilters, setShowFilters] = useState(false);
   const { playClick, playHover, playDismiss } = useClickSound();
   const pageLoading = usePageLoader(1500);
 
@@ -47,6 +52,11 @@ export default function SwipePage() {
     }
   }, [user]);
 
+  // Apply filters when profiles or filter selections change
+  useEffect(() => {
+    applyFilters();
+  }, [profiles, selectedCampus, selectedLookingFor]);
+
   const shuffleArray = <T,>(array: T[]): T[] => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -54,6 +64,29 @@ export default function SwipePage() {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
+  };
+
+  const applyFilters = () => {
+    let filtered = [...profiles];
+
+    // Apply campus filter
+    if (selectedCampus !== "All") {
+      filtered = filtered.filter(p => p.campus === selectedCampus);
+    }
+
+    // Apply looking_for filter
+    if (selectedLookingFor !== "All") {
+      filtered = filtered.filter(p => p.looking_for === selectedLookingFor);
+    }
+
+    setFilteredProfiles(filtered);
+    setCurrentIndex(0); // Reset to first card when filters change
+  };
+
+  const handleClearFilters = () => {
+    playClick();
+    setSelectedCampus("All");
+    setSelectedLookingFor("All");
   };
 
   const loadProfiles = async () => {
@@ -86,7 +119,7 @@ export default function SwipePage() {
   }
 
   const handleSwipe = async (direction: "left" | "right") => {
-    const currentProfile = profiles[currentIndex];
+    const currentProfile = filteredProfiles[currentIndex];
     
     // Record swipe in database
     try {
@@ -102,7 +135,7 @@ export default function SwipePage() {
     }, 300);
   };
 
-  if (currentIndex >= profiles.length) {
+  if (currentIndex >= filteredProfiles.length) {
     return (
       <StyledWrapper>
         <BrutalistPattern />
@@ -191,12 +224,82 @@ export default function SwipePage() {
           </div>
         </div>
 
+        {/* Filters Section */}
+        <div className="filters-container">
+          <button 
+            className="filters-toggle"
+            onClick={() => {
+              playClick();
+              setShowFilters(!showFilters);
+            }}
+            onMouseEnter={playHover}
+          >
+            <span className="filter-icon">🛠️</span>
+            <span className="filter-text">FILTERS</span>
+            <span className="filter-arrow">{showFilters ? '▲' : '▼'}</span>
+          </button>
+
+          {showFilters && (
+            <div className="filters-panel">
+              <div className="filter-group">
+                <label className="filter-label">CAMPUS</label>
+                <select
+                  className="filter-select"
+                  value={selectedCampus}
+                  onChange={(e) => {
+                    playClick();
+                    setSelectedCampus(e.target.value);
+                  }}
+                  onMouseEnter={playHover}
+                >
+                  <option value="All">All Campuses</option>
+                  {campuses.map((campus) => (
+                    <option key={campus} value={campus}>{campus}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filter-group">
+                <label className="filter-label">LOOKING FOR</label>
+                <select
+                  className="filter-select"
+                  value={selectedLookingFor}
+                  onChange={(e) => {
+                    playClick();
+                    setSelectedLookingFor(e.target.value);
+                  }}
+                  onMouseEnter={playHover}
+                >
+                  <option value="All">All Types</option>
+                  {lookingForOptions.map((option) => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+              </div>
+
+              {(selectedCampus !== "All" || selectedLookingFor !== "All") && (
+                <button 
+                  className="clear-filters-button"
+                  onClick={handleClearFilters}
+                  onMouseEnter={playHover}
+                >
+                  ✖ CLEAR FILTERS
+                </button>
+              )}
+
+              <div className="filter-results">
+                🎯 {filteredProfiles.length} profile{filteredProfiles.length !== 1 ? 's' : ''} found
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Cards Container */}
         <div className="cards-wrapper">
           <div className="card-container" key={currentIndex}>
             <SwipeCard
-              key={profiles[currentIndex].id}
-              profile={profiles[currentIndex]}
+              key={filteredProfiles[currentIndex].id}
+              profile={filteredProfiles[currentIndex]}
               onSwipe={handleSwipe}
             />
           </div>
@@ -204,7 +307,7 @@ export default function SwipePage() {
           {/* Counter */}
           <div className="counter">
             <span className="counter-text">
-              {currentIndex + 1} / {profiles.length}
+              {currentIndex + 1} / {filteredProfiles.length}
             </span>
           </div>
         </div>
@@ -308,6 +411,156 @@ const StyledWrapper = styled.div`
   .button-icon {
     font-size: 24px;
     color: #ffffff;
+  }
+
+  /* Filters Section */
+  .filters-container {
+    max-width: 500px;
+    margin: 0 auto 30px;
+    width: 100%;
+  }
+
+  .filters-toggle {
+    width: 100%;
+    background: #4387f4;
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 #2c5aa0;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  .filters-toggle:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #2c5aa0;
+  }
+
+  .filters-toggle:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+  }
+
+  .filter-icon {
+    font-size: 18px;
+  }
+
+  .filter-arrow {
+    margin-left: auto;
+    font-size: 12px;
+  }
+
+  .filters-panel {
+    background: #2d2d2d;
+    border: 3px solid #000;
+    border-top: none;
+    box-shadow: 4px 4px 0 #2c5aa0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #4387f4;
+    letter-spacing: 1px;
+  }
+
+  .filter-select {
+    background: #1a1a1a;
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 #4387f4;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-select:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 #4387f4;
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: #4387f4;
+    box-shadow: 0 0 0 3px rgba(67, 135, 244, 0.3);
+  }
+
+  .filter-select option {
+    background: #1a1a1a;
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .clear-filters-button {
+    background: #ff4444;
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 #cc0000;
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .clear-filters-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #cc0000;
+  }
+
+  .clear-filters-button:active {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
+
+  .filter-results {
+    background: #4387f4;
+    border: 3px solid #000;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-align: center;
+    box-shadow: 3px 3px 0 #2c5aa0;
   }
 
   .cards-wrapper {

@@ -4,9 +4,8 @@ import { useState } from "react";
 import styled from "styled-components";
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { Profile } from "@/lib/supabase/client";
-import { sendProposal, canSendProposal, getUserLimits } from "@/lib/supabase/api";
+import { sendProposal } from "@/lib/supabase/api";
 import { useAuth } from "@/lib/auth-context";
-import PaymentModal from "@/components/PaymentModal";
 import { notifyNewProposal } from "@/lib/notify";
 import { useClickSound } from "@/hooks/useClickSound";
 
@@ -20,14 +19,11 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
   const { playClick, playDismiss, playConfirm, playWoosh } = useClickSound();
   const [isFlipped, setIsFlipped] = useState(false);
   const [proposalText, setProposalText] = useState("");
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [exitX, setExitX] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showProposalsLeft, setShowProposalsLeft] = useState(false);
-  const [proposalsRemaining, setProposalsRemaining] = useState(0);
 
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 0, 200], [-25, 0, 25]);
@@ -43,17 +39,6 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
     setSending(true);
 
     try {
-      // Check if user can send proposal
-      const { canSend } = await canSendProposal(user.id);
-      
-      if (!canSend) {
-        // Show payment modal
-        setShowPaymentModal(true);
-        setSending(false);
-        playDismiss();
-        return;
-      }
-
       // Send proposal
       const { error: proposalError } = await sendProposal(profile.id, proposalText);
       
@@ -63,25 +48,6 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
 
       // Send push notification to receiver (fire and forget)
       notifyNewProposal(profile.id, user.email || "Someone").catch(console.error);
-
-      // Get updated limits to show remaining proposals
-      try {
-        const limits = await getUserLimits(user.id);
-        const remaining = limits.proposals_limit - limits.proposals_sent;
-        
-        // Only show "proposals left" toast if user hasn't paid
-        if (!limits.has_paid && remaining >= 0) {
-          setProposalsRemaining(remaining);
-          setShowProposalsLeft(true);
-          
-          // Hide the proposals left toast after 3 seconds
-          setTimeout(() => {
-            setShowProposalsLeft(false);
-          }, 3000);
-        }
-      } catch (err) {
-        console.error('Error getting user limits:', err);
-      }
 
       // Success - show success message then swipe right
       playConfirm();
@@ -158,29 +124,7 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
         </div>
       )}
       
-      {showProposalsLeft && (
-        <div className="proposals-left-toast">
-          <div className="proposals-left-content">
-            <div className="proposals-left-icon">{proposalsRemaining > 0 ? '🎯' : '🔒'}</div>
-            <div>
-              <div className="proposals-left-title">
-                {proposalsRemaining > 0 
-                  ? `${proposalsRemaining} Free Proposal${proposalsRemaining !== 1 ? 's' : ''} Left!` 
-                  : 'Free Proposals Used!'}
-              </div>
-              <div className="proposals-left-subtitle">
-                {proposalsRemaining > 0 
-                  ? 'Make them count!' 
-                  : 'Unlock unlimited for just 250 PKR'}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {showPaymentModal && (
-        <PaymentModal onClose={() => setShowPaymentModal(false)} />
-      )}
+
       
       {showProfileModal && (
         <div className="profile-modal-overlay" onClick={handleCloseProfile}>

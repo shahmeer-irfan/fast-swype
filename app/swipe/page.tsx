@@ -190,7 +190,7 @@ export default function SwipePage() {
     <StyledWrapper>
       <BrutalistPattern />
       <Tooltip 
-        message="Swipe left to pass, right to send a proposal! You get 2 FREE tries before paying just 250 PKR."
+        message="Swipe left to pass, right to send a proposal! Unlimited proposals — go wild!"
         storageKey="swipe_intro"
         delay={1000}
       />

@@ -1,105 +1,105 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import { useAuth } from "@/lib/auth-context";
-import {
-  requestNotificationPermission,
-  saveFCMToken,
-  onForegroundMessage,
-  getNotificationStatus,
-} from "@/lib/notifications";
 import {
   isCapacitorNative,
   registerCapacitorPush,
   setupCapacitorPushListeners,
 } from "@/lib/capacitor-push";
 
+/**
+ * NotificationHandler — Native Android push notifications ONLY.
+ * This component does nothing on web. Notifications are delivered
+ * via Capacitor + FCM to the Android APK only.
+ */
 export default function NotificationHandler() {
   const { user } = useAuth();
   const router = useRouter();
   const [showPrompt, setShowPrompt] = useState(false);
   const [toast, setToast] = useState<{ title: string; body: string; link?: string } | null>(null);
-  const [permissionStatus, setPermissionStatus] = useState<string>("default");
+  const [isNative, setIsNative] = useState(false);
 
-  // Check permission status on mount
+  // Only activate on native (Capacitor APK)
   useEffect(() => {
-    const status = getNotificationStatus();
-    setPermissionStatus(status);
+    const native = isCapacitorNative();
+    setIsNative(native);
 
-    // If running in Capacitor native app, auto-register push
-    if (user && isCapacitorNative()) {
-      registerCapacitorPush(user.id).then((token) => {
-        if (token) setPermissionStatus("granted");
-      });
-      setupCapacitorPushListeners(
-        // On foreground notification
-        (notification) => {
-          setToast({
-            title: notification.title,
-            body: notification.body,
-            link: notification.data?.link || "/proposals",
-          });
-          setTimeout(() => setToast(null), 5000);
-        },
-        // On notification tapped
-        (data) => {
-          if (data?.link) router.push(data.link);
+    if (!user || !native) return;
+
+    // Check if user already has a token (previously enabled notifications)
+    const checkExistingToken = async () => {
+      try {
+        const { data } = await (await import("@/lib/supabase/client")).supabase
+          .from("profiles")
+          .select("fcm_token")
+          .eq("id", user.id)
+          .single();
+
+        if (data?.fcm_token) {
+          // Already registered — set up foreground/tap listeners
+          setupCapacitorPushListeners(
+            (notification) => {
+              setToast({
+                title: notification.title,
+                body: notification.body,
+                link: notification.data?.link || "/proposals",
+              });
+              setTimeout(() => setToast(null), 5000);
+            },
+            (actionData) => {
+              if (actionData?.link) router.push(actionData.link);
+            }
+          );
+        } else {
+          // No token yet — show prompt so user can opt-in
+          const dismissed = sessionStorage.getItem("notification_prompt_dismissed");
+          if (!dismissed) {
+            setTimeout(() => setShowPrompt(true), 3000);
+          }
         }
-      );
-      return; // Skip web notification flow
-    }
-
-    // Web flow: Show prompt if user is logged in and hasn't decided yet
-    if (user && status === "default") {
-      // Delay prompt by 3 seconds for better UX
-      const timer = setTimeout(() => {
-        // Only show if not dismissed before in this session
+      } catch {
+        // Show prompt as fallback
         const dismissed = sessionStorage.getItem("notification_prompt_dismissed");
         if (!dismissed) {
-          setShowPrompt(true);
+          setTimeout(() => setShowPrompt(true), 3000);
         }
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [user]);
-
-  // Auto-register token if permission already granted (web only)
-  useEffect(() => {
-    if (user && permissionStatus === "granted" && !isCapacitorNative()) {
-      registerToken();
-    }
-  }, [user, permissionStatus]);
-
-  // Listen for foreground messages (web only — Capacitor uses native listeners above)
-  useEffect(() => {
-    if (!user || isCapacitorNative()) return;
-
-    const cleanup = onForegroundMessage((payload) => {
-      setToast(payload);
-      // Auto-hide after 5 seconds
-      setTimeout(() => setToast(null), 5000);
-    });
-
-    return () => {
-      if (cleanup) cleanup();
+      }
     };
+    checkExistingToken();
   }, [user]);
 
-  const registerToken = useCallback(async () => {
-    if (!user) return;
-
-    const token = await requestNotificationPermission();
-    if (token) {
-      await saveFCMToken(user.id, token);
-      setPermissionStatus("granted");
-    }
-  }, [user]);
+  // On web, render nothing
+  if (!isNative) return null;
 
   const handleEnable = async () => {
     setShowPrompt(false);
-    await registerToken();
+
+    if (!user) return;
+
+    try {
+      const token = await registerCapacitorPush(user.id);
+      if (token) {
+        // Set up listeners after successful registration
+        setupCapacitorPushListeners(
+          (notification) => {
+            setToast({
+              title: notification.title,
+              body: notification.body,
+              link: notification.data?.link || "/proposals",
+            });
+            setTimeout(() => setToast(null), 5000);
+          },
+          (actionData) => {
+            if (actionData?.link) router.push(actionData.link);
+          }
+        );
+      }
+    } catch (error) {
+      console.error("Failed to register native push:", error);
+    }
   };
 
   const handleDismiss = () => {

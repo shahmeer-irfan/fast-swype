@@ -321,42 +321,9 @@ export async function deleteProfilePicture(userId: string, url: string) {
 // PROPOSAL FUNCTIONS
 // =====================================================
 
-export async function canSendProposal(userId: string) {
-  const { data, error } = await supabase.rpc('can_send_proposal', { user_uuid: userId });
-  if (error) return { canSend: false, error };
-  return { canSend: data as boolean, error: null };
-}
-
-export async function getUserLimits(userId: string) {
-  const { data, error } = await supabase
-    .from('user_limits')
-    .select('*')
-    .eq('user_id', userId)
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-export async function getProposalCount(userId: string): Promise<number> {
-  const { count, error } = await supabase
-    .from('proposals')
-    .select('*', { count: 'exact', head: true })
-    .eq('from_user_id', userId);
-
-  if (error) throw error;
-  return count || 0;
-}
-
 export async function sendProposal(toUserId: string, message: string) {
   const user = await getCurrentUser();
   if (!user) throw new Error('Not authenticated');
-
-  // Check if can send
-  const { canSend } = await canSendProposal(user.id);
-  if (!canSend) {
-    throw new Error('PROPOSAL_LIMIT_REACHED');
-  }
 
   const { data, error } = await supabase
     .from('proposals')
@@ -431,69 +398,3 @@ export async function recordSwipe(userId: string, swipedUserId: string, directio
   return { data, error: null };
 }
 
-// =====================================================
-// PAYMENT FUNCTIONS
-// =====================================================
-
-export async function createPayment(transactionDetails: string) {
-  const user = await getCurrentUser();
-  if (!user) throw new Error('Not authenticated');
-
-  console.log('Creating payment for user:', user.id);
-
-  const { data, error } = await supabase
-    .from('payments')
-    .insert({
-      user_id: user.id,
-      amount: 250,
-      transaction_details: transactionDetails,
-      status: 'pending',
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Payment creation error:', error);
-    throw new Error('Failed to submit payment. Please try again or contact support.');
-  }
-  return data;
-}
-
-export async function uploadPaymentScreenshot(file: File, paymentId: string) {
-  const user = await getCurrentUser();
-  if (!user) throw new Error('Not authenticated');
-
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${user.id}/${paymentId}.${fileExt}`;
-
-  const { data: uploadData, error: uploadError } = await supabase.storage
-    .from('payment-screenshots')
-    .upload(fileName, file);
-
-  if (uploadError) throw uploadError;
-
-  // Update payment record with screenshot URL
-  const { data, error } = await supabase
-    .from('payments')
-    .update({ screenshot_url: uploadData.path })
-    .eq('id', paymentId)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-export async function getPaymentStatus(userId: string) {
-  const { data, error } = await supabase
-    .from('payments')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('status', 'verified')
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single();
-
-  if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
-  return data;
-}

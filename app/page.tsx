@@ -13,7 +13,7 @@ export default function Home() {
     <div className="relative">
       <BrutalistPattern />
       <Tooltip 
-        message="Welcome to FastSwype! Find your perfect FYP partner from FAST students. Swipe, match, and collaborate for just 250 PKR!"
+        message="Welcome to FastSwype! Find your perfect FYP partner from FAST students. Swipe, match, and collaborate — completely free!"
         storageKey="home_welcome"
         delay={1000}
       />
@@ -89,7 +89,7 @@ export default function Home() {
                   Send proposals
                 </h3>
                 <p className="text-[14px] font-semibold text-[#999] leading-tight">
-                 Send three proposals for free.
+                 Send unlimited proposals for free!
                 </p>
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function Home() {
           {/* Footer */}
           <div className="w-full text-center">
             <p className="text-[14px] font-black uppercase text-white tracking-wide mb-2">
-              FAST STUDENTS ONLY • 250PKR TO UNLOCK FULL ACCESS
+              FAST STUDENTS ONLY • COMPLETELY FREE
             </p>
             <a 
               href="https://bento.me/shahmpooh" 

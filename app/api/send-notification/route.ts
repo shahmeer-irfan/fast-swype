@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Firebase Admin SDK - using REST API to avoid heavy dependency
-// This sends a push notification via Firebase Cloud Messaging HTTP v1 API
-
-const FIREBASE_PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-const FIREBASE_SERVER_KEY = process.env.FIREBASE_SERVER_KEY; // Legacy server key from Firebase Console
+// Sends push notifications via Firebase Cloud Messaging HTTP v1 API.
+// Uses service account credentials for OAuth2 authentication.
+// This delivers native Android push notifications to the Capacitor APK.
 
 interface SendNotificationPayload {
   token: string;
@@ -14,47 +12,148 @@ interface SendNotificationPayload {
   tag?: string;
 }
 
-async function sendPushNotification(payload: SendNotificationPayload): Promise<boolean> {
-  if (!FIREBASE_SERVER_KEY) {
-    console.error("FIREBASE_SERVER_KEY not set");
-    return false;
+/**
+ * Get an OAuth2 access token from the Firebase service account credentials.
+ * The service account JSON is stored as a base64-encoded env var.
+ */
+async function getAccessToken(): Promise<string> {
+  const serviceAccountB64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+  if (!serviceAccountB64) {
+    throw new Error("FIREBASE_SERVICE_ACCOUNT_BASE64 not set");
   }
 
+  const serviceAccount = JSON.parse(
+    Buffer.from(serviceAccountB64, "base64").toString("utf-8")
+  );
+
+  // Create JWT
+  const now = Math.floor(Date.now() / 1000);
+  const header = { alg: "RS256", typ: "JWT" };
+  const payload = {
+    iss: serviceAccount.client_email,
+    scope: "https://www.googleapis.com/auth/firebase.messaging",
+    aud: serviceAccount.token_uri,
+    iat: now,
+    exp: now + 3600,
+  };
+
+  const encode = (obj: object) =>
+    Buffer.from(JSON.stringify(obj)).toString("base64url");
+
+  const unsignedToken = `${encode(header)}.${encode(payload)}`;
+
+  // Sign with RS256 using Web Crypto API
+  const pemContents = serviceAccount.private_key
+    .replace(/-----BEGIN PRIVATE KEY-----/, "")
+    .replace(/-----END PRIVATE KEY-----/, "")
+    .replace(/\n/g, "");
+  const binaryKey = Buffer.from(pemContents, "base64");
+
+  const cryptoKey = await crypto.subtle.importKey(
+    "pkcs8",
+    binaryKey,
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+
+  const signature = await crypto.subtle.sign(
+    "RSASSA-PKCS1-v1_5",
+    cryptoKey,
+    new TextEncoder().encode(unsignedToken)
+  );
+
+  const jwt = `${unsignedToken}.${Buffer.from(signature).toString("base64url")}`;
+
+  // Exchange JWT for access token
+  const tokenResponse = await fetch(serviceAccount.token_uri, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
+  });
+
+  if (!tokenResponse.ok) {
+    const errText = await tokenResponse.text();
+    throw new Error(`Token exchange failed: ${errText}`);
+  }
+
+  const tokenData = await tokenResponse.json();
+  return tokenData.access_token;
+}
+
+// Cache the access token (valid for 1 hour, refresh at 50 min)
+let cachedToken: { token: string; expiresAt: number } | null = null;
+
+async function getCachedAccessToken(): Promise<string> {
+  if (cachedToken && Date.now() < cachedToken.expiresAt) {
+    return cachedToken.token;
+  }
+
+  const token = await getAccessToken();
+  cachedToken = { token, expiresAt: Date.now() + 50 * 60 * 1000 }; // 50 minutes
+  return token;
+}
+
+async function sendPushNotification(payload: SendNotificationPayload): Promise<boolean> {
   try {
-    const response = await fetch("https://fcm.googleapis.com/fcm/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `key=${FIREBASE_SERVER_KEY}`,
-      },
-      body: JSON.stringify({
-        to: payload.token,
-        notification: {
-          title: payload.title,
-          body: payload.body,
-          icon: "/icons/icon-192x192.png",
-          click_action: payload.link || "/proposals",
+    const accessToken = await getCachedAccessToken();
+
+    const serviceAccountB64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+    if (!serviceAccountB64) {
+      console.error("FIREBASE_SERVICE_ACCOUNT_BASE64 not set");
+      return false;
+    }
+    const serviceAccount = JSON.parse(
+      Buffer.from(serviceAccountB64, "base64").toString("utf-8")
+    );
+    const projectId = serviceAccount.project_id;
+
+    const response = await fetch(
+      `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
-        data: {
-          link: payload.link || "/proposals",
-          tag: payload.tag || "fastswype",
-        },
-        webpush: {
-          fcm_options: {
-            link: payload.link || "/proposals",
+        body: JSON.stringify({
+          message: {
+            token: payload.token,
+            notification: {
+              title: payload.title,
+              body: payload.body,
+            },
+            data: {
+              link: payload.link || "/proposals",
+              tag: payload.tag || "fastswype",
+            },
+            android: {
+              priority: "high",
+              notification: {
+                click_action: "FCM_PLUGIN_ACTIVITY",
+                icon: "ic_launcher",
+                channel_id: "default",
+              },
+            },
           },
-        },
-      }),
-    });
+        }),
+      }
+    );
 
-    const result = await response.json();
-
-    if (result.success === 1) {
-      console.log("Push notification sent successfully");
+    if (response.ok) {
+      console.log("Push notification sent successfully via FCM v1 API");
       return true;
     }
 
-    console.error("FCM send failed:", result);
+    const errorResult = await response.text();
+    console.error("FCM v1 send failed:", errorResult);
+
+    // If token expired, clear cache and retry once
+    if (response.status === 401 && cachedToken) {
+      cachedToken = null;
+      return sendPushNotification(payload);
+    }
+
     return false;
   } catch (error) {
     console.error("Error sending push notification:", error);

@@ -1,9 +1,11 @@
 /**
- * Capacitor Push Notifications bridge
+ * Capacitor Push Notifications — Native Android only.
  * 
- * When running inside a Capacitor native app, this uses the native push
- * notification system via @capacitor/push-notifications.
- * When running in a web browser, it falls back to Firebase web notifications.
+ * Uses @capacitor/push-notifications to register for FCM tokens
+ * and handle native push notifications in the Android APK.
+ * 
+ * IMPORTANT: google-services.json must be placed in android/app/ for native
+ * push notifications to work. Without it, FCM initialization crashes the app.
  */
 
 import { supabase } from "./supabase/client";
@@ -17,8 +19,26 @@ export function isCapacitorNative(): boolean {
 }
 
 /**
+ * Check if native push notifications are available (google-services.json present)
+ * This does a lightweight check before attempting full registration
+ */
+export async function isNativePushAvailable(): Promise<boolean> {
+  if (!isCapacitorNative()) return false;
+
+  try {
+    const { PushNotifications } = await import("@capacitor/push-notifications");
+    // checkPermissions() is a safe call that doesn't trigger FCM initialization
+    const permStatus = await PushNotifications.checkPermissions();
+    // If we get here without crashing, the plugin is available
+    return permStatus.receive !== undefined;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Register for native push notifications via Capacitor
- * Only works when running inside the Android APK
+ * Only works when running inside the Android APK with google-services.json configured
  */
 export async function registerCapacitorPush(userId: string): Promise<string | null> {
   if (!isCapacitorNative()) return null;
@@ -38,28 +58,43 @@ export async function registerCapacitorPush(userId: string): Promise<string | nu
       return null;
     }
 
-    // Register with native push service (FCM on Android)
-    await PushNotifications.register();
+    // Set up listeners BEFORE calling register() to avoid missing events
+    const tokenPromise = new Promise<string | null>((resolve) => {
+      // Set a timeout — if FCM fails to return a token within 10s, resolve null
+      const timeout = setTimeout(() => {
+        console.warn("FCM token registration timed out — is google-services.json configured?");
+        resolve(null);
+      }, 10000);
 
-    // Return a promise that resolves with the token
-    return new Promise((resolve) => {
       PushNotifications.addListener("registration", async (token) => {
+        clearTimeout(timeout);
         console.log("Native FCM token:", token.value);
         
         // Save token to Supabase
-        await supabase
-          .from("profiles")
-          .update({ fcm_token: token.value })
-          .eq("id", userId);
+        try {
+          await supabase
+            .from("profiles")
+            .update({ fcm_token: token.value })
+            .eq("id", userId);
+        } catch (e) {
+          console.error("Error saving FCM token to Supabase:", e);
+        }
 
         resolve(token.value);
       });
 
       PushNotifications.addListener("registrationError", (error) => {
+        clearTimeout(timeout);
         console.error("Native push registration error:", error);
         resolve(null);
       });
     });
+
+    // Register with native push service (FCM on Android)
+    // This is the call that can crash if google-services.json is missing
+    await PushNotifications.register();
+
+    return await tokenPromise;
   } catch (error) {
     console.error("Capacitor push error:", error);
     return null;
@@ -79,7 +114,7 @@ export async function setupCapacitorPushListeners(
     const { PushNotifications } = await import("@capacitor/push-notifications");
 
     // Notification received while app is in foreground
-    PushNotifications.addListener("pushNotificationReceived", (notification) => {
+    await PushNotifications.addListener("pushNotificationReceived", (notification) => {
       console.log("Push notification received:", notification);
       if (onNotification) {
         onNotification({
@@ -91,7 +126,7 @@ export async function setupCapacitorPushListeners(
     });
 
     // Notification tapped
-    PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
+    await PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
       console.log("Push notification action:", action);
       if (onAction) {
         onAction(action.notification.data);

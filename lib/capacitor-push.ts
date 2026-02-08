@@ -44,7 +44,17 @@ export async function registerCapacitorPush(userId: string): Promise<string | nu
   if (!isCapacitorNative()) return null;
 
   try {
+    // First check if push is even available (won't crash)
+    const available = await isNativePushAvailable();
+    if (!available) {
+      console.warn("Native push not available — plugin may be missing");
+      return null;
+    }
+
     const { PushNotifications } = await import("@capacitor/push-notifications");
+
+    // Remove any previous listeners to avoid duplicates
+    await PushNotifications.removeAllListeners();
 
     // Check permissions
     let permStatus = await PushNotifications.checkPermissions();
@@ -60,15 +70,15 @@ export async function registerCapacitorPush(userId: string): Promise<string | nu
 
     // Set up listeners BEFORE calling register() to avoid missing events
     const tokenPromise = new Promise<string | null>((resolve) => {
-      // Set a timeout — if FCM fails to return a token within 10s, resolve null
+      // Set a timeout — if FCM fails to return a token within 15s, resolve null
       const timeout = setTimeout(() => {
         console.warn("FCM token registration timed out — is google-services.json configured?");
         resolve(null);
-      }, 10000);
+      }, 15000);
 
       PushNotifications.addListener("registration", async (token) => {
         clearTimeout(timeout);
-        console.log("Native FCM token:", token.value);
+        console.log("Native FCM token obtained");
         
         // Save token to Supabase
         try {
@@ -91,8 +101,13 @@ export async function registerCapacitorPush(userId: string): Promise<string | nu
     });
 
     // Register with native push service (FCM on Android)
-    // This is the call that can crash if google-services.json is missing
-    await PushNotifications.register();
+    // Wrapped in try/catch — this can throw if google-services.json is misconfigured
+    try {
+      await PushNotifications.register();
+    } catch (regError) {
+      console.error("PushNotifications.register() threw:", regError);
+      return null;
+    }
 
     return await tokenPromise;
   } catch (error) {

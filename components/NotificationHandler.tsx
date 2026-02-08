@@ -10,6 +10,11 @@ import {
   onForegroundMessage,
   getNotificationStatus,
 } from "@/lib/notifications";
+import {
+  isCapacitorNative,
+  registerCapacitorPush,
+  setupCapacitorPushListeners,
+} from "@/lib/capacitor-push";
 
 export default function NotificationHandler() {
   const { user } = useAuth();
@@ -23,7 +28,30 @@ export default function NotificationHandler() {
     const status = getNotificationStatus();
     setPermissionStatus(status);
 
-    // Show prompt if user is logged in and hasn't decided yet
+    // If running in Capacitor native app, auto-register push
+    if (user && isCapacitorNative()) {
+      registerCapacitorPush(user.id).then((token) => {
+        if (token) setPermissionStatus("granted");
+      });
+      setupCapacitorPushListeners(
+        // On foreground notification
+        (notification) => {
+          setToast({
+            title: notification.title,
+            body: notification.body,
+            link: notification.data?.link || "/proposals",
+          });
+          setTimeout(() => setToast(null), 5000);
+        },
+        // On notification tapped
+        (data) => {
+          if (data?.link) router.push(data.link);
+        }
+      );
+      return; // Skip web notification flow
+    }
+
+    // Web flow: Show prompt if user is logged in and hasn't decided yet
     if (user && status === "default") {
       // Delay prompt by 3 seconds for better UX
       const timer = setTimeout(() => {
@@ -37,16 +65,16 @@ export default function NotificationHandler() {
     }
   }, [user]);
 
-  // Auto-register token if permission already granted
+  // Auto-register token if permission already granted (web only)
   useEffect(() => {
-    if (user && permissionStatus === "granted") {
+    if (user && permissionStatus === "granted" && !isCapacitorNative()) {
       registerToken();
     }
   }, [user, permissionStatus]);
 
-  // Listen for foreground messages
+  // Listen for foreground messages (web only — Capacitor uses native listeners above)
   useEffect(() => {
-    if (!user) return;
+    if (!user || isCapacitorNative()) return;
 
     const cleanup = onForegroundMessage((payload) => {
       setToast(payload);

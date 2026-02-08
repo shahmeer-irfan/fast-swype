@@ -39,6 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
+# Capacitor Android build artifacts
+/android/
+!/public/fastswype.apk
+
 # PWA generated files
 public/sw.js
 public/sw.js.map

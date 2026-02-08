@@ -40,7 +40,7 @@ export default function Home() {
   );
 }
 
-const StyledWrapper = styled.div
+const StyledWrapper = styled.div`
   .maintenance-container {
     min-height: 100vh;
     min-height: 100dvh;
@@ -194,4 +194,4 @@ const StyledWrapper = styled.div
       font-size: 38px;
     }
   }
-;
+`;

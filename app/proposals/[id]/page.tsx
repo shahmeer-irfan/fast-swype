@@ -48,8 +48,8 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
         .from('proposals')
         .select(`
           *,
-          from_profile:from_user_id(id, name, email, department, batch, campus, bio, domain, looking_for, profile_picture_url),
-          to_profile:to_user_id(id, name, email, department, batch, campus, bio, domain, looking_for, profile_picture_url)
+          from_profile:from_user_id(id, name, email, department, batch, campus, bio, domain, looking_for, profile_picture_url, phone_number, contact_email),
+          to_profile:to_user_id(id, name, email, department, batch, campus, bio, domain, looking_for, profile_picture_url, phone_number, contact_email)
         `)
         .eq('id', resolvedParams.id)
         .single();
@@ -275,28 +275,41 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
                   <div className="section-title">CONTACT INFO</div>
                   <div className="contact-info">
                     <div className="contact-item">
-                      📧 {proposal.to_profile?.email}
+                      📧 {(proposal.to_profile as any)?.contact_email || proposal.to_profile?.email}
                     </div>
-                    <div className="contact-item">
-                      💬 Share your WhatsApp or meeting link
-                    </div>
+                    {(proposal.to_profile as any)?.phone_number && (
+                      <div className="contact-item">
+                        📱 {(proposal.to_profile as any).phone_number}
+                      </div>
+                    )}
+                    {!(proposal.to_profile as any)?.phone_number && !(proposal.to_profile as any)?.contact_email && (
+                      <div className="contact-item contact-missing">
+                        ⚠️ They haven't added contact details yet
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
             </>
           )}
 
-          {/* For received proposals, show contact if accepted */}
           {status === "accepted" && proposal.to_user_id === user.id && (
             <div className="contact-section">
               <div className="section-title">CONTACT INFO</div>
               <div className="contact-info">
                 <div className="contact-item">
-                  📧 {proposal.from_profile?.email}
+                  📧 {(proposal.from_profile as any)?.contact_email || proposal.from_profile?.email}
                 </div>
-                <div className="contact-item">
-                  💬 Share your WhatsApp or meeting link
-                </div>
+                {(proposal.from_profile as any)?.phone_number && (
+                  <div className="contact-item">
+                    📱 {(proposal.from_profile as any).phone_number}
+                  </div>
+                )}
+                {!(proposal.from_profile as any)?.phone_number && !(proposal.from_profile as any)?.contact_email && (
+                  <div className="contact-item contact-missing">
+                    ⚠️ They haven't added contact details yet
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -568,6 +581,12 @@ const StyledWrapper = styled.div`
     background: #2d2d2d;
     border: 2px solid #4387f4;
     font-weight: 600;
+  }
+
+  .contact-item.contact-missing {
+    color: #f59e0b;
+    border-color: #f59e0b;
+    font-size: 12px;
   }
 
   .status-message {

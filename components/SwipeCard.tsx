@@ -12,9 +12,10 @@ import { useClickSound } from "@/hooks/useClickSound";
 interface SwipeCardProps {
   profile: Profile;
   onSwipe: (direction: "left" | "right") => void;
+  userSkills?: { skill: string }[];
 }
 
-export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
+export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCardProps) {
   const { user } = useAuth();
   const { playClick, playDismiss, playConfirm, playWoosh } = useClickSound();
   const [isFlipped, setIsFlipped] = useState(false);
@@ -30,6 +31,22 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
   const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0, 1, 1, 1, 0]);
   const leftIndicatorOpacity = useTransform(x, [-100, -50, 0], [1, 0.5, 0]);
   const rightIndicatorOpacity = useTransform(x, [0, 50, 100], [0, 0.5, 1]);
+
+  // Calculate skill match percentage
+  const skillMatch = (() => {
+    const userSet = new Set(userSkills.map(s => s.skill.toLowerCase().trim()));
+    const profileSet = new Set((profile.skills || []).map((s: any) => s.skill.toLowerCase().trim()));
+    if (userSet.size === 0 && profileSet.size === 0) return 0;
+    const allSkills = new Set([...userSet, ...profileSet]);
+    const common = [...userSet].filter(s => profileSet.has(s));
+    return Math.round((common.length / allSkills.size) * 100);
+  })();
+
+  const getMatchColor = (pct: number) => {
+    if (pct >= 60) return '#10b981';
+    if (pct >= 30) return '#f59e0b';
+    return '#ef4444';
+  };
 
   const handleSendProposal = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -254,52 +271,64 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
         <div className="card-inner">
           {/* Front of card */}
           <div className="card-front">
-            {/* Profile Picture */}
-            {profile.profile_picture_url ? (
-              <div className="profile-picture">
-                <img src={profile.profile_picture_url} alt={profile.name} />
-              </div>
-            ) : (
-              <div className="profile-picture-placeholder">
-                <span className="profile-initial">{profile.name.charAt(0).toUpperCase()}</span>
-              </div>
-            )}
-            
-            <div className="brutalist-card__header">
-              <div className="brutalist-card__name">{profile.name}</div>
-              <div className="brutalist-card__meta">
-                <span className="meta-tag">{profile.department} • {profile.batch} • {profile.campus}</span>
-              </div>
-            </div>
-            
-            <div className="brutalist-card__content">
-              <div className="content-section">
-                <div className="section-title">BIO</div>
-                <p className="bio-text">{profile.bio || 'No bio yet'}</p>
-              </div>
-
-              <div className="content-section">
-                <div className="section-title">LOOKING FOR</div>
-                <div className="looking-badge">{profile.looking_for || 'Not specified'}</div>
+            {/* Top Row: Avatar + Info side by side */}
+            <div className="card-top">
+              {profile.profile_picture_url ? (
+                <div className="avatar">
+                  <img src={profile.profile_picture_url} alt={profile.name} />
+                </div>
+              ) : (
+                <div className="avatar avatar-placeholder">
+                  <span>{profile.name.charAt(0).toUpperCase()}</span>
+                </div>
+              )}
+              <div className="card-top-info">
+                <div className="card-name">{profile.name}</div>
+                <div className="card-dept">{profile.department}</div>
+                <div className="card-batch-campus">{profile.batch} • {profile.campus}</div>
               </div>
             </div>
 
-            <div className="brutalist-card__actions">
+            {/* Content Area */}
+            <div className="card-body">
+              {profile.bio && profile.bio !== 'No bio yet' ? (
+                <p className="card-bio">{profile.bio}</p>
+              ) : (
+                <p className="card-bio card-bio-empty">No bio added yet</p>
+              )}
+
+              {profile.looking_for && profile.looking_for !== 'Not specified' && (
+                <div className="card-tag-row">
+                  <span className="card-tag-label">LOOKING FOR</span>
+                  <span className="card-tag-value">{profile.looking_for}</span>
+                </div>
+              )}
+
+              {profile.domain && (
+                <div className="card-tag-row">
+                  <span className="card-tag-label">DOMAIN</span>
+                  <span className="card-tag-value">{profile.domain}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="card-actions">
               <button 
-                className="brutalist-card__button brutalist-card__button--view" 
+                className="btn-secondary" 
                 onClick={handleViewProfile}
                 onMouseEnter={playClick}
                 type="button"
               >
-                View Profile
+                Full Profile
               </button>
               <button 
-                className="brutalist-card__button brutalist-card__button--send" 
+                className="btn-primary" 
                 onClick={handleFlip}
                 onMouseEnter={playClick}
                 type="button"
               >
-                Let's Go
+                Propose →
               </button>
             </div>
           </div>
@@ -317,22 +346,12 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
                 <textarea
                   className="proposal-textarea"
                   placeholder="Keep it short and funny..."
-                  maxLength={100}
+                  maxLength={300}
                   value={proposalText}
                   onChange={(e) => setProposalText(e.target.value)}
                   required
                 />
-                <div className="char-count">{proposalText.length}/100</div>
-              </div>
-
-              {/* Tips Section */}
-              <div className="tips-section">
-                <div className="tips-title">Some cute tips writing perfect proposal</div>
-                <div className="tips-list">
-                  <div className="tip-item">Share WhatsApp/Calendar links to meet IRL☕</div>
-                  <div className="tip-item">Mention what you need and what you can offer👃</div>
-                  <div className="tip-item">Show what makes you a great teammate🤝</div>
-                </div>
+                <div className="char-count">{proposalText.length}/300</div>
               </div>
 
               {error && (
@@ -370,8 +389,8 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
 
 const StyledWrapper = styled.div`
   .brutalist-card {
-    width: 340px;
-    height: 520px;
+    width: 350px;
+    height: 500px;
     perspective: 1000px;
     position: relative;
     cursor: grab;
@@ -398,144 +417,229 @@ const StyledWrapper = styled.div`
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
+    background: #1e1e1e;
     border: 3px solid #000;
-    background-color: #2d2d2d;
-    padding: 20px;
-    box-shadow: 8px 8px 0 #4387f4;
     font-family: "Arial", sans-serif;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    box-shadow: 8px 8px 0 #4387f4;
   }
 
   .card-back {
     transform: rotateY(180deg);
+    padding: 20px;
+    background: #2d2d2d;
   }
 
-  .profile-picture {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 20px;
-    border: 4px solid #000;
-    box-shadow: 4px 4px 0 #000;
+  /* ═══ CARD FRONT — NEW LAYOUT ═══ */
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 20px 18px;
+    border-bottom: 2px solid #333;
+  }
+
+  .avatar {
+    width: 90px;
+    height: 90px;
     overflow: hidden;
+    flex-shrink: 0;
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 #4387f4;
   }
 
-  .profile-picture img {
+  .avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .profile-picture-placeholder {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 20px;
-    border: 4px solid #000;
-    box-shadow: 4px 4px 0 #4387f4;
+  .avatar-placeholder {
     background: #4387f4;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .profile-initial {
-    font-size: 48px;
+  .avatar-placeholder span {
+    font-size: 38px;
     font-weight: 900;
     color: #fff;
   }
 
-  .brutalist-card__header {
-    border-bottom: 3px solid #000;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
-  }
-
-  .brutalist-card__name {
-    font-weight: 900;
-    color: #ffffff;
-    font-size: 32px;
-    text-transform: uppercase;
-    line-height: 1;
-    letter-spacing: -1.5px;
-    margin-bottom: 10px;
-  }
-
-  .brutalist-card__meta {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .meta-tag {
-    background-color: #4387f4;
-    color: #fff;
-    padding: 4px 10px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    border: 2px solid #000;
-    display: inline-block;
-    width: fit-content;
-  }
-
-  .brutalist-card__content {
+  .card-top-info {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    overflow: hidden;
+    min-width: 0;
   }
 
-  .content-section {
-    flex-shrink: 0;
-  }
-
-  .section-title {
-    font-size: 11px;
+  .card-name {
+    font-size: 24px;
     font-weight: 900;
-    color: #ffffff;
-    margin-bottom: 8px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 6px;
+    word-wrap: break-word;
+  }
+
+  .card-dept {
+    font-size: 14px;
+    font-weight: 900;
+    color: #4387f4;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .card-batch-campus {
+    font-size: 12px;
+    font-weight: 800;
+    color: #aaa;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
-  .bio-text {
-    color: #ffffff;
-    font-size: 14px;
-    line-height: 1.5;
-    font-weight: 600;
-    max-height: 85px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
+  /* Skill Match Bar */
+  .match-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 20px;
+    padding: 8px 14px;
+    background: #1a1a1a;
+    border: 2px solid #000;
+    border-left: 4px solid;
   }
 
-  .domain-badge, .looking-badge {
-    background-color: #4387f4;
+  .match-value {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+    font-family: "Archivo Black", sans-serif;
+  }
+
+  .match-text {
+    font-size: 11px;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Card Body */
+  .card-body {
+    flex: 1;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+  }
+
+  .card-bio {
+    font-size: 15px;
+    font-weight: 500;
+    color: #ccc;
+    line-height: 1.6;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-bio-empty {
+    color: #555;
+    font-style: italic;
+  }
+
+  .card-tag-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-tag-label {
+    font-size: 11px;
+    font-weight: 900;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    min-width: 90px;
+  }
+
+  .card-tag-value {
+    font-size: 13px;
+    font-weight: 800;
     color: #fff;
-    padding: 8px 12px;
-    font-size: 12px;
+    background: #4387f4;
+    padding: 6px 14px;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 #2c5aa0;
+    text-transform: uppercase;
+    letter-spacing: -0.3px;
+    word-wrap: break-word;
+    word-break: break-word;
+  }
+
+  /* Card Actions */
+  .card-actions {
+    display: flex;
+    gap: 0;
+    border-top: 3px solid #000;
+  }
+
+  .btn-secondary, .btn-primary {
+    flex: 1;
+    padding: 16px;
+    font-size: 13px;
     font-weight: 900;
     text-transform: uppercase;
-    display: inline-block;
-    border: 2px solid #000;
-    box-shadow: 3px 3px 0 #2c5aa0;
-    word-wrap: break-word;
-    max-width: 100%;
-    line-height: 1.3;
+    letter-spacing: 0.5px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
 
-  .looking-badge {
-    background-color: #4387f4;
-    color: #ffffff;
-    border: 3px solid #000;
-    box-shadow: 3px 3px 0 #2c5aa0;
-    word-wrap: break-word;
-    max-width: 100%;
-    line-height: 1.3;
+  .btn-secondary {
+    background: #1a1a1a;
+    color: #999;
+    border-right: 3px solid #000;
+  }
+
+  .btn-secondary:hover {
+    background: #333;
+    color: #fff;
+  }
+
+  .btn-primary {
+    background: #4387f4;
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background: #00ff00;
+    color: #000;
+  }
+
+  .btn-secondary:active, .btn-primary:active {
+    transform: scale(0.97);
+  }
+
+  .modal-match-badge {
+    font-family: "Archivo Black", sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    border: 3px solid;
+    padding: 6px 12px;
+    background: rgba(0,0,0,0.3);
+    min-width: 60px;
+    text-align: center;
   }
 
   .tags-container {
@@ -668,11 +772,7 @@ const StyledWrapper = styled.div`
     letter-spacing: -0.5px;
   }
 
-  .brutalist-card__button--send {
-    background-color: #4387f4;
-    color: #fff;
-  }
-
+  .brutalist-card__button--send,
   .brutalist-card__button--confirm {
     background-color: #4387f4;
     color: #fff;
@@ -683,17 +783,7 @@ const StyledWrapper = styled.div`
     box-shadow: 6px 6px 0 #000;
   }
 
-  .brutalist-card__button--reject:hover {
-    background-color: #ff0000;
-    border-color: #000;
-    color: #fff;
-  }
-
-  .brutalist-card__button--send:hover {
-    background-color: #00ff00;
-    color: #000;
-  }
-
+  .brutalist-card__button--send:hover,
   .brutalist-card__button--confirm:hover {
     background-color: #00ff00;
     color: #000;
@@ -740,7 +830,7 @@ const StyledWrapper = styled.div`
 
   .proposal-textarea {
     width: 100%;
-    min-height: 80px;
+    flex: 1;
     border: 3px solid #000;
     background-color: #1a1a1a;
     box-shadow: 4px 4px 0 #4387f4;
@@ -765,35 +855,6 @@ const StyledWrapper = styled.div`
     font-weight: 700;
     color: #999;
     margin-top: 6px;
-  }
-
-  .tips-section {
-    margin: 3px 0 12px 0;
-    padding: 16px;
-    background: #1a1a1a;
-    border: 2px solid #4387f4;
-  }
-
-  .tips-title {
-    font-size: 11px;
-    font-weight: 900;
-    text-transform: lowercase;
-    letter-spacing: 0.5px;
-    color: #999;
-    margin-bottom: 8px;
-  }
-
-  .tips-list {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .tip-item {
-    font-size: 10px;
-    font-weight: 600;
-    line-height: 1.4;
-    color: #ffffff;
   }
 
   .proposal-form .content-section {
@@ -1126,7 +1187,7 @@ const StyledWrapper = styled.div`
     opacity: 0.9;
   }
 
-  /* View Profile button style */
+  /* View Profile button style — card back only */
   .brutalist-card__button--view {
     background-color: #1a1a1a;
     color: #ffffff;
@@ -1135,5 +1196,36 @@ const StyledWrapper = styled.div`
   .brutalist-card__button--view:hover {
     background-color: #4387f4;
     color: #ffffff;
+  }
+
+  /* ═══ CARD BACK OVERRIDES ═══ */
+  .card-back .brutalist-card__header {
+    border-bottom: 3px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  .card-back .brutalist-card__name {
+    font-weight: 900;
+    color: #ffffff;
+    font-size: 26px;
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: -1.5px;
+    margin-bottom: 6px;
+  }
+
+  .card-back .section-title {
+    font-size: 11px;
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .card-back .content-section {
+    flex-shrink: 0;
   }
 `;

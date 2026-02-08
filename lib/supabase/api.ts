@@ -398,3 +398,30 @@ export async function recordSwipe(userId: string, swipedUserId: string, directio
   return { data, error: null };
 }
 
+// =====================================================
+// CONTACT FUNCTIONS
+// =====================================================
+
+export async function getContactDetails(userId: string) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('phone_number, contact_email')
+    .eq('id', userId)
+    .single();
+
+  if (error) return { data: null, error };
+  return { data, error: null };
+}
+
+export async function updateContactDetails(userId: string, contactDetails: { phone_number?: string; contact_email?: string }) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(contactDetails)
+    .eq('id', userId)
+    .select('phone_number, contact_email')
+    .single();
+
+  if (error) return { data: null, error };
+  return { data, error: null };
+}
+

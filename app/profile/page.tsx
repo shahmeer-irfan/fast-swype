@@ -121,6 +121,16 @@ export default function ProfilePage() {
             Status: <strong>{profile.availability || 'Not Set'}</strong>
           </div>
 
+          <Link href="/contact">
+            <button 
+              onClick={playClick}
+              onMouseEnter={playHover}
+              className="contact-details-button"
+            >
+              📞 CONTACT DETAILS
+            </button>
+          </Link>
+
           <Link href="/swipe">
             <button 
               onClick={playClick}
@@ -345,6 +355,33 @@ const StyledWrapper = styled.div`
     text-align: center;
     color: #ffffff;
     box-shadow: 4px 4px 0 #2c5aa0;
+  }
+
+  .contact-details-button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 20px;
+    font-size: 15px;
+    font-weight: 900;
+    text-transform: uppercase;
+    background: #2d2d2d;
+    color: #4387f4;
+    border: 3px solid #4387f4;
+    box-shadow: 4px 4px 0 #4387f4;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .contact-details-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #4387f4;
+    background: #1a1a1a;
+  }
+
+  .contact-details-button:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
   }
 
   .swipe-button {

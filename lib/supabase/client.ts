@@ -35,6 +35,8 @@ export interface Profile {
   looking_for?: string;
   availability?: string;
   profile_picture_url?: string;
+  phone_number?: string;
+  contact_email?: string;
   created_at: string;
   updated_at: string;
   skills?: Skill[];

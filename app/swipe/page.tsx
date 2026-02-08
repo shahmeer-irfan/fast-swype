@@ -200,6 +200,16 @@ export default function SwipePage() {
             <h1 className="logo" onMouseEnter={playHover}>FastSwype</h1>
           </Link>
           <div className="header-buttons">
+            <Link href="/contact">
+              <button 
+                onClick={playClick}
+                onMouseEnter={playHover}
+                className="contact-button"
+                title="Contact Details"
+              >
+                <span className="button-icon">📞</span>
+              </button>
+            </Link>
             <Link href="/proposals">
               <button 
                 onClick={playClick}
@@ -274,6 +284,7 @@ export default function SwipePage() {
               key={filteredProfiles[currentIndex].id}
               profile={filteredProfiles[currentIndex]}
               onSwipe={handleSwipe}
+              userSkills={profile?.skills || []}
             />
           </div>
 
@@ -327,7 +338,8 @@ const StyledWrapper = styled.div`
   }
 
   .profile-button,
-  .proposals-button {
+  .proposals-button,
+  .contact-button {
     width: 48px;
     height: 48px;
     background: #4387f4;
@@ -342,7 +354,8 @@ const StyledWrapper = styled.div`
   }
 
   .profile-button::after,
-  .proposals-button::after {
+  .proposals-button::after,
+  .contact-button::after {
     content: attr(title);
     position: absolute;
     bottom: -40px;
@@ -364,18 +377,21 @@ const StyledWrapper = styled.div`
   }
 
   .profile-button:hover::after,
-  .proposals-button:hover::after {
+  .proposals-button:hover::after,
+  .contact-button:hover::after {
     opacity: 1;
   }
 
   .profile-button:hover,
-  .proposals-button:hover {
+  .proposals-button:hover,
+  .contact-button:hover {
     transform: translate(-2px, -2px);
     box-shadow: 6px 6px 0 #4387f4;
   }
 
   .profile-button:active,
-  .proposals-button:active {
+  .proposals-button:active,
+  .contact-button:active {
     transform: translate(4px, 4px);
     box-shadow: none;
   }

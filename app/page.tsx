@@ -9,10 +9,22 @@ import { useClickSound } from "@/hooks/useClickSound";
 export default function Home() {
   const { playConfirm, playHover, playClick } = useClickSound();
   const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [isSafari, setIsSafari] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+  const [showSafariGuide, setShowSafariGuide] = useState(false);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
 
-  // Capture PWA install prompt
+  // Detect Safari & standalone mode
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    const safari = /Safari/.test(ua) && !/Chrome/.test(ua) && !/CriOS/.test(ua) && !/Edg/.test(ua);
+    setIsSafari(safari);
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone === true;
+    setIsStandalone(standalone);
+  }, []);
+
+  // Capture PWA install prompt (Chrome/Edge only)
   useEffect(() => {
     const handler = (e: Event) => {
       e.preventDefault();
@@ -50,6 +62,9 @@ export default function Home() {
       if (result.outcome === "accepted") {
         setInstallPrompt(null);
       }
+    } else if (isSafari) {
+      playClick();
+      setShowSafariGuide(true);
     }
   };
 
@@ -60,6 +75,33 @@ export default function Home() {
   return (
     <StyledWrapper>
       <BrutalistPattern />
+
+      {/* Safari Install Guide Modal */}
+      {showSafariGuide && (
+        <div className="safari-overlay" onClick={() => setShowSafariGuide(false)}>
+          <div className="safari-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="safari-close" onClick={() => setShowSafariGuide(false)}>✕</button>
+            <div className="safari-icon">📲</div>
+            <h2 className="safari-title">Install on Safari</h2>
+            <p className="safari-subtitle">Follow these quick steps:</p>
+            <div className="safari-steps">
+              <div className="safari-step">
+                <span className="step-num">1</span>
+                <span className="step-text">Tap the <strong>Share button</strong> <span className="share-icon-inline">⎙</span> at the bottom of Safari</span>
+              </div>
+              <div className="safari-step">
+                <span className="step-num">2</span>
+                <span className="step-text">Scroll down and tap <strong>&quot;Add to Home Screen&quot;</strong></span>
+              </div>
+              <div className="safari-step">
+                <span className="step-num">3</span>
+                <span className="step-text">Tap <strong>&quot;Add&quot;</strong> — done! 🎉</span>
+              </div>
+            </div>
+            <button className="safari-got-it" onClick={() => setShowSafariGuide(false)}>Got it!</button>
+          </div>
+        </div>
+      )}
 
       {/* ═══════════════ SECTION 1: HERO ═══════════════ */}
       <section className="hero-section">
@@ -108,14 +150,16 @@ export default function Home() {
                 Continue on Web →
               </button>
             </Link>
-            <button
-              className="cta-secondary"
-              onClick={handleInstall}
-              onMouseEnter={playHover}
-              style={{ opacity: installPrompt ? 1 : 0.5, pointerEvents: installPrompt ? "auto" : "none" }}
-            >
-              📲 Install App
-            </button>
+            {!isStandalone && (
+              <button
+                className="cta-secondary"
+                onClick={handleInstall}
+                onMouseEnter={playHover}
+                style={{ opacity: (installPrompt || isSafari) ? 1 : 0.5, pointerEvents: (installPrompt || isSafari) ? "auto" : "none" }}
+              >
+                {isSafari ? "📲 How to Install" : "📲 Install App"}
+              </button>
+            )}
           </div>
 
           {/* Scroll hint */}
@@ -463,17 +507,20 @@ const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    color: #555;
-    font-size: 12px;
-    font-weight: 700;
+    gap: 10px;
+    color: #888;
+    font-size: 13px;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     animation: fadeInUp 0.6s ease-out 0.6s both;
+    padding: 16px;
+    margin-top: 20px;
   }
 
   .scroll-arrow {
-    font-size: 18px;
+    font-size: 24px;
+    color: #4387f4;
     animation: bounce 2s infinite;
   }
 
@@ -783,22 +830,73 @@ const StyledWrapper = styled.div`
   }
 
   /* ══════════ RESPONSIVE ══════════ */
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 32px 16px;
+    }
+
+    .hero-content {
+      gap: 22px;
+    }
+
+    .hero-badge {
+      font-size: 10px;
+      padding: 7px 14px;
+      letter-spacing: 1.5px;
+    }
+
     .hero-title {
-      font-size: 52px;
+      font-size: 56px;
       letter-spacing: -3px;
     }
 
     .hero-tagline {
-      font-size: 15px;
+      font-size: 16px;
     }
 
     .stats-bar {
       gap: 16px;
-      padding: 14px 20px;
+      padding: 14px 24px;
+      width: 100%;
+      max-width: 380px;
     }
 
     .stat-number {
+      font-size: 24px;
+    }
+
+    .stat-label {
+      font-size: 9px;
+    }
+
+    .cta-group {
+      gap: 10px;
+      max-width: 100%;
+    }
+
+    .cta-primary {
+      padding: 16px 24px;
+      font-size: 16px;
+      box-shadow: 4px 4px 0 #2c5aa0;
+    }
+
+    .cta-primary:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 #2c5aa0;
+    }
+
+    .cta-secondary {
+      padding: 14px 24px;
+      font-size: 14px;
+    }
+
+    .scroll-hint {
+      font-size: 12px;
+      margin-top: 16px;
+      color: #999;
+    }
+
+    .scroll-arrow {
       font-size: 22px;
     }
 
@@ -813,8 +911,15 @@ const StyledWrapper = styled.div`
     }
 
     .cta-final {
-      font-size: 18px;
+      font-size: 17px;
       padding: 18px 28px;
+      max-width: 100%;
+      box-shadow: 6px 6px 0 #2c5aa0;
+    }
+
+    .cta-final:hover {
+      box-shadow: 8px 8px 0 #2c5aa0;
+      transform: translate(-2px, -2px);
     }
 
     .step {
@@ -843,18 +948,249 @@ const StyledWrapper = styled.div`
     }
   }
 
-  @media (max-width: 380px) {
+  @media (max-width: 480px) {
     .hero-title {
-      font-size: 44px;
+      font-size: 48px;
+      letter-spacing: -2.5px;
+    }
+
+    .hero-tagline {
+      font-size: 15px;
     }
 
     .stats-bar {
-      gap: 12px;
-      padding: 12px 16px;
+      gap: 14px;
+      padding: 12px 18px;
+      flex-wrap: nowrap;
+    }
+
+    .stat-number {
+      font-size: 22px;
+    }
+
+    .stat-label {
+      font-size: 8px;
+    }
+
+    .cta-primary {
+      padding: 15px 20px;
+      font-size: 15px;
+    }
+
+    .cta-secondary {
+      padding: 13px 20px;
+      font-size: 13px;
+    }
+
+    .scroll-hint {
+      font-size: 11px;
+      padding: 12px;
+    }
+
+    .scroll-arrow {
+      font-size: 20px;
+    }
+
+    .section-title {
+      font-size: 32px;
+    }
+
+    .cta-title {
+      font-size: 34px;
+    }
+
+    .cta-final {
+      font-size: 15px;
+      padding: 16px 24px;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .hero-title {
+      font-size: 42px;
+      letter-spacing: -2px;
+    }
+
+    .stats-bar {
+      gap: 10px;
+      padding: 10px 14px;
     }
 
     .stat-number {
       font-size: 20px;
     }
+
+    .stat-label {
+      font-size: 7px;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-divider {
+      height: 28px;
+    }
+
+    .cta-primary {
+      padding: 14px 18px;
+      font-size: 14px;
+    }
+
+    .cta-secondary {
+      padding: 12px 18px;
+      font-size: 12px;
+    }
+  }
+
+  /* ══════ Safari Install Guide Modal ══════ */
+  .safari-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .safari-modal {
+    background: #1a1a1a;
+    border: 4px solid #000;
+    box-shadow: 10px 10px 0 #4387f4;
+    padding: 40px 32px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .safari-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: #2d2d2d;
+    border: 2px solid #333;
+    color: #999;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .safari-close:hover {
+    background: #ff4444;
+    color: #fff;
+    border-color: #000;
+  }
+
+  .safari-icon {
+    font-size: 56px;
+    margin-bottom: 16px;
+  }
+
+  .safari-title {
+    font-size: 28px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    color: #ffffff;
+    margin-bottom: 6px;
+  }
+
+  .safari-subtitle {
+    font-size: 14px;
+    color: #888;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .safari-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+
+  .safari-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #2d2d2d;
+    border: 2px solid #333;
+    padding: 14px 16px;
+  }
+
+  .step-num {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    background: #4387f4;
+    border: 2px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 900;
+    color: #fff;
+  }
+
+  .step-text {
+    font-size: 14px;
+    color: #ccc;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .step-text strong {
+    color: #fff;
+  }
+
+  .share-icon-inline {
+    display: inline-block;
+    font-size: 16px;
+    vertical-align: middle;
+  }
+
+  .safari-got-it {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+    background: #4387f4;
+    color: #fff;
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0 #2c5aa0;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .safari-got-it:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 #2c5aa0;
+  }
+
+  .safari-got-it:active {
+    transform: translate(5px, 5px);
+    box-shadow: none;
   }
 `;

@@ -660,23 +660,215 @@ const StyledWrapper = styled.div`
     box-shadow: none;
   }
 
-  @media (max-width: 640px) {
-    .logo {
-      font-size: 36px;
+  /* ── Tablet ── */
+  @media (max-width: 768px) {
+    .swipe-container {
+      padding: 16px;
     }
 
-    .profile-button {
-      width: 50px;
-      height: 50px;
+    .header {
+      margin-bottom: 24px;
+    }
+
+    .completion-card {
+      padding: 40px 24px;
     }
 
     .completion-title {
-      font-size: 42px;
+      font-size: 36px;
     }
 
     .completion-button {
       font-size: 18px;
       padding: 16px;
+    }
+  }
+
+  /* ── Phone ── */
+  @media (max-width: 480px) {
+    .swipe-container {
+      padding: 12px 10px;
+    }
+
+    /* Stack header: logo row + buttons row */
+    .header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .logo {
+      font-size: 28px;
+      text-align: center;
+      letter-spacing: -1.5px;
+    }
+
+    .header-buttons {
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .profile-button,
+    .proposals-button,
+    .contact-button {
+      width: 44px;
+      height: 44px;
+      border-width: 2px;
+      box-shadow: 3px 3px 0 #2c5aa0;
+    }
+
+    .profile-icon,
+    .button-icon {
+      font-size: 20px;
+    }
+
+    /* Hide hover tooltips on touch */
+    .profile-button::after,
+    .proposals-button::after,
+    .contact-button::after {
+      display: none;
+    }
+
+    /* Filters */
+    .filters-bar {
+      margin-bottom: 12px;
+      gap: 6px;
+    }
+
+    .filter-select-inline {
+      padding: 8px 24px 8px 8px;
+      font-size: 11px;
+      border-width: 2px;
+    }
+
+    .clear-btn {
+      width: 32px;
+      height: 32px;
+      font-size: 11px;
+    }
+
+    .filter-count {
+      width: 32px;
+      height: 32px;
+      font-size: 12px;
+    }
+
+    /* Cards */
+    .cards-wrapper {
+      gap: 16px;
+    }
+
+    .counter {
+      border-width: 2px;
+      padding: 6px 16px;
+      box-shadow: 3px 3px 0 #4387f4;
+    }
+
+    .counter-text {
+      font-size: 12px;
+    }
+
+    /* Completion */
+    .completion-card {
+      padding: 32px 16px;
+      border-width: 3px;
+      box-shadow: 6px 6px 0 #4387f4;
+    }
+
+    .completion-icon {
+      font-size: 56px;
+      margin-bottom: 20px;
+    }
+
+    .completion-title {
+      font-size: 28px;
+      letter-spacing: -1px;
+    }
+
+    .completion-text {
+      font-size: 13px;
+    }
+
+    .refresh-notice {
+      padding: 12px 16px;
+      border-width: 2px;
+    }
+
+    .refresh-text {
+      font-size: 12px;
+    }
+
+    .completion-button {
+      font-size: 15px;
+      padding: 14px;
+      border-width: 3px;
+      box-shadow: 4px 4px 0 #2c5aa0;
+    }
+
+    .completion-button.refresh-button {
+      box-shadow: 4px 4px 0 #059669;
+    }
+
+    .completion-button.secondary {
+      box-shadow: 4px 4px 0 #4387f4;
+    }
+
+    .completion-buttons {
+      gap: 10px;
+    }
+  }
+
+  /* ── Small phones (≤360px) ── */
+  @media (max-width: 360px) {
+    .swipe-container {
+      padding: 8px 6px;
+    }
+
+    .header {
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      font-size: 24px;
+    }
+
+    .header-buttons {
+      gap: 8px;
+    }
+
+    .profile-button,
+    .proposals-button,
+    .contact-button {
+      width: 40px;
+      height: 40px;
+    }
+
+    .profile-icon,
+    .button-icon {
+      font-size: 18px;
+    }
+
+    .filter-select-inline {
+      padding: 6px 22px 6px 6px;
+      font-size: 10px;
+    }
+
+    .clear-btn,
+    .filter-count {
+      width: 28px;
+      height: 28px;
+      font-size: 10px;
+    }
+
+    .completion-title {
+      font-size: 24px;
+    }
+
+    .completion-button {
+      font-size: 14px;
+      padding: 12px;
     }
   }
 `;

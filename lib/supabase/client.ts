@@ -1,10 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
+import { capacitorStorage } from '@/lib/capacitor-storage';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    // Use native SharedPreferences on Android, localStorage on web
+    storage: capacitorStorage,
+  },
+});
 
 // Admin client for operations that need to bypass RLS (server-side only)
 export const supabaseAdmin = typeof window === 'undefined' && supabaseServiceKey

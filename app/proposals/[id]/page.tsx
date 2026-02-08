@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase/client";
 import { updateProposalStatus } from "@/lib/supabase/api";
 import { Proposal } from "@/lib/supabase/client";
+import { notifyProposalAccepted } from "@/lib/notify";
 import Loader from "@/components/Loader";
 
 export default function ProposalDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -108,6 +109,12 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
     try {
       const { error } = await updateProposalStatus(proposal.id, 'accepted');
       if (error) throw error;
+
+      // Send push notification to proposal sender (fire and forget)
+      if (proposal.from_user_id) {
+        const accepterName = user?.email || "Someone";
+        notifyProposalAccepted(proposal.from_user_id, accepterName).catch(console.error);
+      }
 
       playConfirm();
       setStatus("accepted");

@@ -7,6 +7,7 @@ import { Profile } from "@/lib/supabase/client";
 import { sendProposal, canSendProposal, getUserLimits } from "@/lib/supabase/api";
 import { useAuth } from "@/lib/auth-context";
 import PaymentModal from "@/components/PaymentModal";
+import { notifyNewProposal } from "@/lib/notify";
 import { useClickSound } from "@/hooks/useClickSound";
 
 interface SwipeCardProps {
@@ -59,6 +60,9 @@ export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
       if (proposalError) {
         throw proposalError;
       }
+
+      // Send push notification to receiver (fire and forget)
+      notifyNewProposal(profile.id, user.email || "Someone").catch(console.error);
 
       // Get updated limits to show remaining proposals
       try {

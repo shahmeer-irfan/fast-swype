@@ -158,10 +158,10 @@ async function sendPushNotification(payload: SendNotificationPayload): Promise<b
       return sendPushNotification(payload);
     }
 
-    return false;
+    throw new Error(`FCM send failed (${response.status}): ${errorResult}`);
   } catch (error) {
     console.error("Error sending push notification:", error);
-    return false;
+    throw error;
   }
 }
 
@@ -198,8 +198,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ error: "Failed to send notification" }, { status: 500 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Notification API error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error", detail: error?.message || String(error) }, { status: 500 });
   }
 }

@@ -47,55 +47,73 @@ export async function registerWebPush(userId: string): Promise<string | null> {
   }
 
   try {
-    const messaging = await getFirebaseMessaging();
-    if (!messaging) {
-      console.warn("Firebase Messaging not supported");
-      return null;
-    }
-
-    // Register the Firebase messaging service worker
-    const swRegistration = await navigator.serviceWorker.register(
-      "/firebase-messaging-sw.js",
-      { scope: "/" }
-    );
-
-    // Wait for the service worker to be ready
-    await navigator.serviceWorker.ready;
-
-    // Request notification permission
+    // 1. Request notification permission FIRST (before any SW work)
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
-      console.warn("Notification permission denied");
-      return null;
+      console.warn("Notification permission denied:", permission);
+      throw new Error(`Notification permission ${permission}`);
+    }
+    console.log("[web-push] Permission granted");
+
+    // 2. Get Firebase Messaging instance
+    const messaging = await getFirebaseMessaging();
+    if (!messaging) {
+      throw new Error("Firebase Messaging not supported in this browser");
+    }
+    console.log("[web-push] Firebase Messaging initialized");
+
+    // 3. Register the Firebase messaging service worker with its OWN scope
+    //    (must NOT be "/" — that conflicts with the PWA service worker from next-pwa)
+    const swRegistration = await navigator.serviceWorker.register(
+      "/firebase-messaging-sw.js",
+      { scope: "/firebase-cloud-messaging-push-scope" }
+    );
+    console.log("[web-push] Service worker registered, state:",
+      swRegistration.active?.state ?? swRegistration.installing?.state ?? swRegistration.waiting?.state);
+
+    // 4. Wait for the service worker to become active
+    if (!swRegistration.active) {
+      await new Promise<void>((resolve, reject) => {
+        const sw = swRegistration.installing || swRegistration.waiting;
+        if (!sw) { reject(new Error("No service worker installing/waiting")); return; }
+        sw.addEventListener("statechange", () => {
+          if (sw.state === "activated") resolve();
+          if (sw.state === "redundant") reject(new Error("Service worker became redundant"));
+        });
+        // Timeout after 10 seconds
+        setTimeout(() => reject(new Error("Service worker activation timed out")), 10000);
+      });
+      console.log("[web-push] Service worker now active");
     }
 
-    // Get FCM token
+    // 5. Get FCM token
     const token = await getToken(messaging, {
       vapidKey: VAPID_KEY,
       serviceWorkerRegistration: swRegistration,
     });
 
     if (!token) {
-      console.warn("Failed to get FCM token");
-      return null;
+      throw new Error("getToken returned empty — check VAPID key and Firebase config");
     }
 
-    console.log("Web push FCM token obtained");
+    console.log("[web-push] FCM token obtained:", token.substring(0, 20) + "...");
 
-    // Save token to Supabase (same field as native — fcm_token)
-    try {
-      await supabase
-        .from("profiles")
-        .update({ fcm_token: token })
-        .eq("id", userId);
-    } catch (e) {
-      console.error("Error saving web push FCM token to Supabase:", e);
+    // 6. Save token to Supabase
+    const { error: dbError } = await supabase
+      .from("profiles")
+      .update({ fcm_token: token })
+      .eq("id", userId);
+
+    if (dbError) {
+      console.error("[web-push] Supabase save error:", dbError);
+      throw new Error(`Failed to save token: ${dbError.message}`);
     }
 
+    console.log("[web-push] Token saved to Supabase successfully");
     return token;
-  } catch (error) {
-    console.error("Web push registration failed:", error);
-    return null;
+  } catch (error: any) {
+    console.error("[web-push] Registration failed:", error);
+    throw error; // Re-throw so NotificationHandler can show the error
   }
 }
 

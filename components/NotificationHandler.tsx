@@ -88,11 +88,18 @@ export default function NotificationHandler() {
           });
           setTimeout(() => setToast(null), 5000);
         });
-      } else {
-        console.warn("Failed to get push notification token");
+        // Show success toast
+        setToast({ title: "Notifications Enabled!", body: "You'll now receive push notifications." });
+        setTimeout(() => setToast(null), 3000);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to register push:", error);
+      // Show error as a visible toast so user can see what happened
+      setToast({
+        title: "Notification Setup Failed",
+        body: error?.message || "Unknown error — check browser settings",
+      });
+      setTimeout(() => setToast(null), 6000);
     }
   };
 

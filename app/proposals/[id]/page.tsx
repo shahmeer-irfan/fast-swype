@@ -10,7 +10,6 @@ import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase/client";
 import { updateProposalStatus } from "@/lib/supabase/api";
 import { Proposal } from "@/lib/supabase/client";
-import { notifyProposalAccepted } from "@/lib/notify";
 import Loader from "@/components/Loader";
 
 export default function ProposalDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -109,12 +108,6 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
     try {
       const { error } = await updateProposalStatus(proposal.id, 'accepted');
       if (error) throw error;
-
-      // Send push notification to proposal sender (fire and forget)
-      if (proposal.from_user_id) {
-        const accepterName = authProfile?.name || "Someone";
-        notifyProposalAccepted(proposal.from_user_id, accepterName).catch(console.error);
-      }
 
       playConfirm();
       setStatus("accepted");
@@ -321,13 +314,13 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
             <div className="modal-card" onClick={(e) => e.stopPropagation()}>
               <div className="modal-title">⚠️ HOLD UP</div>
               <div className="modal-text">
-                <strong>Only accept if you've already contacted {proposal.from_profile?.name}.</strong>
+                <strong>Once you accept, your contact details will be revealed to both you and {proposal.from_profile?.name}.</strong>
               </div>
               <div className="modal-text">
-                Use WhatsApp, email, or Google Meet to reach out first.
+                Make sure your contact info is up to date in your profile!
               </div>
               <div className="modal-text-small">
-                ⚡ There's no in-app chat. Accepting = you're ready to collaborate.
+                ⚡ There's no in-app chat. Use WhatsApp, email, or Google Meet to collaborate.
               </div>
               <div className="modal-buttons">
                 <button
@@ -339,7 +332,7 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
                   disabled={updating}
                   className="modal-button cancel-button"
                 >
-                  NOT YET
+                  CANCEL
                 </button>
                 <button
                   onClick={confirmAccept}
@@ -347,7 +340,7 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
                   disabled={updating}
                   className="modal-button confirm-button"
                 >
-                  {updating ? 'CONFIRMING...' : 'YES, CONTACTED'}
+                  {updating ? 'CONFIRMING...' : 'ACCEPT'}
                 </button>
               </div>
             </div>

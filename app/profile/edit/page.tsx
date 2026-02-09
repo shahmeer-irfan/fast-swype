@@ -140,6 +140,39 @@ export default function EditProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validate required fields
+    if (!formData.name.trim()) {
+      setError('Name is required');
+      playDismiss();
+      return;
+    }
+    if (!formData.batch.trim()) {
+      setError('Batch is required');
+      playDismiss();
+      return;
+    }
+    if (!formData.bio.trim()) {
+      setError('Bio is required — write at least a sentence about yourself');
+      playDismiss();
+      return;
+    }
+    if (formData.domains.length === 0) {
+      setError('Select at least one domain');
+      playDismiss();
+      return;
+    }
+    if (formData.skills.length === 0) {
+      setError('Select at least one skill');
+      playDismiss();
+      return;
+    }
+    if (formData.interests.length === 0) {
+      setError('Select at least one interest');
+      playDismiss();
+      return;
+    }
+
     setSaving(true);
 
     try {

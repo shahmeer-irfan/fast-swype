@@ -70,19 +70,3 @@ export async function notifyNewProposal(
     tag: "new-proposal",
   });
 }
-
-/**
- * Notify sender when their proposal is accepted
- */
-export async function notifyProposalAccepted(
-  senderId: string,
-  accepterName: string
-): Promise<void> {
-  await triggerNotification({
-    userId: senderId,
-    title: "Proposal Accepted! 🎉",
-    body: `${accepterName} accepted your proposal!`,
-    link: "/proposals",
-    tag: "proposal-accepted",
-  });
-}

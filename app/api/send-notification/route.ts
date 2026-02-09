@@ -120,9 +120,7 @@ async function sendPushNotification(payload: SendNotificationPayload): Promise<b
         body: JSON.stringify({
           message: {
             token: payload.token,
-            // Data-only message — no "notification" field.
-            // This prevents the browser from auto-displaying a notification
-            // while the service worker's onBackgroundMessage also shows one (duplicate).
+            // Data fields for the service worker's onBackgroundMessage handler
             data: {
               title: payload.title,
               body: payload.body,
@@ -132,6 +130,15 @@ async function sendPushNotification(payload: SendNotificationPayload): Promise<b
               badge: "/icons/icon-72x72.png",
             },
             webpush: {
+              // Notification field ensures Android shows the correct title/body
+              // even when the browser auto-handles the push before the SW runs
+              notification: {
+                title: payload.title,
+                body: payload.body,
+                icon: "/icons/icon-192x192.png",
+                badge: "/icons/icon-72x72.png",
+                tag: payload.tag || "fastswype",
+              },
               fcm_options: {
                 link: payload.link || "/proposals",
               },

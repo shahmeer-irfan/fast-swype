@@ -37,8 +37,10 @@ export default function SwipePage() {
   // Redirect to edit if profile is incomplete
   useEffect(() => {
     if (!loading && user && profile) {
-      if (!profile.bio || !profile.domain || !profile.looking_for || 
-          (profile.skills && profile.skills.length === 0)) {
+      const isIncomplete = !profile.name || !profile.bio || !profile.domain || !profile.looking_for || !profile.batch ||
+          !profile.skills || profile.skills.length === 0 ||
+          !profile.interests || profile.interests.length === 0;
+      if (isIncomplete) {
         router.push('/profile/edit');
       }
     }

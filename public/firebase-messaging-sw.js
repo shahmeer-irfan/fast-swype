@@ -28,8 +28,16 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log("[firebase-messaging-sw.js] Background message received:", payload);
 
-  const notificationTitle = payload.data?.title || payload.notification?.title || "FastSwype";
-  const notificationBody = payload.data?.body || payload.notification?.body || "You have a new notification";
+  // If the push already has a notification field (webpush.notification),
+  // the browser will display it automatically. Only show manually for
+  // data-only messages to avoid duplicates.
+  if (payload.notification) {
+    // Browser auto-displays this — skip manual showNotification
+    return;
+  }
+
+  const notificationTitle = payload.data?.title || "FastSwype";
+  const notificationBody = payload.data?.body || "You have a new notification";
   const link = payload.data?.link || "/proposals";
   const tag = payload.data?.tag || "fastswype";
   const icon = payload.data?.icon || "/icons/icon-192x192.png";

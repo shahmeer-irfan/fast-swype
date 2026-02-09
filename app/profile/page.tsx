@@ -28,8 +28,9 @@ export default function ProfilePage() {
   }
 
   // Redirect to edit if profile is incomplete (first-time user) or doesn't exist
-  if (!profile || !profile.bio || !profile.domain || !profile.looking_for || 
-      (profile.skills && profile.skills.length === 0)) {
+  if (!profile || !profile.name || !profile.bio || !profile.domain || !profile.looking_for || !profile.batch ||
+      !profile.skills || profile.skills.length === 0 ||
+      !profile.interests || profile.interests.length === 0) {
     router.push('/profile/edit');
     return <Loader />;
   }

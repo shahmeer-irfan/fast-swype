@@ -122,8 +122,8 @@ BEGIN
   VALUES (
     NEW.id,
     0,
-    3,
-    FALSE,
+    999999,
+    TRUE,
     NOW(),
     NOW()
   )

@@ -115,7 +115,7 @@ CREATE POLICY "Users can view own proposals"
 
 CREATE POLICY "Users can create proposals"
   ON public.proposals FOR INSERT
-  WITH CHECK (auth.uid() = from_user_id AND can_send_proposal(auth.uid()));
+  WITH CHECK (auth.uid() = from_user_id);
 
 -- Recipients can only update status to accepted/rejected (not modify message etc.)
 CREATE POLICY "Recipients can update proposal status"

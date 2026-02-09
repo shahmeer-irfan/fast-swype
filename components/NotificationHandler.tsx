@@ -72,6 +72,9 @@ export default function NotificationHandler() {
     if (!user) return;
 
     try {
+      // Show a "setting up" toast so user knows it's working
+      setToast({ title: "Setting Up...", body: "Registering for push notifications..." });
+
       const token = await registerWebPush(user.id);
       if (token) {
         setupWebPushListeners((notification) => {
@@ -88,12 +91,28 @@ export default function NotificationHandler() {
       }
     } catch (error: any) {
       console.error("Failed to register push:", error);
-      // Show error as a visible toast so user can see what happened
+
+      const isAbort =
+        error?.name === "AbortError" ||
+        error?.message?.includes("abort") ||
+        error?.message?.includes("Abort");
+
+      // Show user-friendly error
       setToast({
         title: "Notification Setup Failed",
-        body: error?.message || "Unknown error — check browser settings",
+        body: isAbort
+          ? "Connection was slow — tap ENABLE to try again"
+          : error?.message || "Unknown error — check browser settings",
       });
       setTimeout(() => setToast(null), 6000);
+
+      // Auto-retry once after 5 seconds for abort errors
+      if (isAbort) {
+        setTimeout(() => setShowPrompt(true), 8000);
+      } else {
+        // Re-show prompt after 60s for other errors
+        setTimeout(() => setShowPrompt(true), 60000);
+      }
     }
   };
 

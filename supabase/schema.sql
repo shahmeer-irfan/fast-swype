@@ -98,7 +98,7 @@ CREATE INDEX idx_payments_status ON public.payments(status);
 CREATE TABLE public.user_limits (
   user_id UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
   proposals_sent INT DEFAULT 0,
-  proposals_limit INT DEFAULT 3, -- Free limit
+  proposals_limit INT DEFAULT 999999, -- Unlimited
   has_paid BOOLEAN DEFAULT FALSE,
   last_proposal_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -120,26 +120,9 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Function to check if user can send proposals
 CREATE OR REPLACE FUNCTION public.can_send_proposal(user_uuid UUID)
 RETURNS BOOLEAN AS $$
-DECLARE
-  proposal_count INT;
-  has_paid BOOLEAN;
 BEGIN
-  -- Get user's payment status
-  SELECT COALESCE(ul.has_paid, FALSE) INTO has_paid
-  FROM public.user_limits ul
-  WHERE ul.user_id = user_uuid;
-  
-  -- If paid, allow unlimited
-  IF has_paid THEN
-    RETURN TRUE;
-  END IF;
-  
-  -- Count proposals
-  SELECT COUNT(*) INTO proposal_count
-  FROM public.proposals
-  WHERE from_user_id = user_uuid;
-  
-  RETURN proposal_count < 3;
+  -- No limits — everyone can send unlimited proposals
+  RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -147,8 +130,9 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.user_limits (user_id)
-  VALUES (NEW.id);
+  INSERT INTO public.user_limits (user_id, proposals_limit, has_paid)
+  VALUES (NEW.id, 999999, TRUE)
+  ON CONFLICT (user_id) DO NOTHING;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

@@ -7,7 +7,6 @@
  * 3. Listen for foreground messages
  * 
  * Background messages are handled by firebase-messaging-sw.js service worker.
- * Background messages are handled by firebase-messaging-sw.js service worker.
  */
 
 import { getToken, onMessage, type Messaging } from "firebase/messaging";
@@ -29,9 +28,156 @@ export function isWebPushSupported(): boolean {
 }
 
 /**
+ * Get or reuse the Firebase messaging service worker registration.
+ * Avoids re-registering on every call, which causes "redundant" state on Android.
+ */
+async function getOrRegisterServiceWorker(): Promise<ServiceWorkerRegistration> {
+  // First, check if we already have a firebase-messaging-sw.js registered
+  const existingRegistrations = await navigator.serviceWorker.getRegistrations();
+  const existing = existingRegistrations.find(
+    (reg) => reg.active?.scriptURL?.includes("firebase-messaging-sw.js")
+  );
+  if (existing) {
+    console.log("[web-push] Reusing existing Firebase SW registration");
+    return existing;
+  }
+
+  // Register fresh — use scope "/" so it doesn't conflict with the Workbox SW
+  // scope. Firebase needs the SW to intercept push events at the root scope.
+  console.log("[web-push] Registering new Firebase SW...");
+  const registration = await navigator.serviceWorker.register(
+    "/firebase-messaging-sw.js",
+    { scope: "/firebase-cloud-messaging-push-scope" }
+  );
+
+  // Wait for it to become active (with generous timeout for Android)
+  if (!registration.active) {
+    await new Promise<void>((resolve, reject) => {
+      const sw = registration.installing || registration.waiting;
+      if (!sw) {
+        reject(new Error("No service worker installing/waiting"));
+        return;
+      }
+
+      const onStateChange = () => {
+        if (sw.state === "activated") {
+          sw.removeEventListener("statechange", onStateChange);
+          resolve();
+        }
+        if (sw.state === "redundant") {
+          sw.removeEventListener("statechange", onStateChange);
+          reject(new Error("Service worker became redundant"));
+        }
+      };
+      sw.addEventListener("statechange", onStateChange);
+
+      // 30-second timeout for slow Android devices
+      setTimeout(() => {
+        sw.removeEventListener("statechange", onStateChange);
+        // If the SW is activated by now, resolve anyway
+        if (registration.active) {
+          resolve();
+        } else {
+          reject(new Error("Service worker activation timed out"));
+        }
+      }, 30000);
+    });
+  }
+
+  console.log("[web-push] Firebase SW active");
+  return registration;
+}
+
+/**
+ * Attempt to get FCM token with retry logic.
+ * Firebase's getToken() can fail with AbortError on Android due to slow
+ * push subscription. We retry with exponential backoff.
+ */
+async function getTokenWithRetry(
+  messaging: Messaging,
+  swRegistration: ServiceWorkerRegistration,
+  maxRetries = 3
+): Promise<string> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`[web-push] getToken attempt ${attempt}/${maxRetries}...`);
+
+      const token = await getToken(messaging, {
+        vapidKey: VAPID_KEY!,
+        serviceWorkerRegistration: swRegistration,
+      });
+
+      if (!token) {
+        throw new Error("getToken returned empty — check VAPID key and Firebase config");
+      }
+
+      console.log("[web-push] FCM token obtained:", token.substring(0, 20) + "...");
+      return token;
+    } catch (error: any) {
+      lastError = error;
+      const isAbortError =
+        error?.name === "AbortError" ||
+        error?.message?.includes("abort") ||
+        error?.message?.includes("Abort") ||
+        error?.code === 20;
+
+      console.warn(
+        `[web-push] getToken attempt ${attempt} failed:`,
+        isAbortError ? "AbortError (Android push subscription slow)" : error?.message
+      );
+
+      if (attempt < maxRetries) {
+        // Exponential backoff: 2s, 4s, 8s
+        const delay = Math.pow(2, attempt) * 1000;
+        console.log(`[web-push] Retrying in ${delay / 1000}s...`);
+        await new Promise((r) => setTimeout(r, delay));
+      }
+    }
+  }
+
+  throw lastError || new Error("getToken failed after all retries");
+}
+
+/**
+ * Save FCM token to Supabase profiles table.
+ * Retries on failure to ensure the token is persisted.
+ */
+async function saveTokenToSupabase(userId: string, token: string): Promise<void> {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const { error: dbError } = await supabase
+        .from("profiles")
+        .update({ fcm_token: token })
+        .eq("id", userId);
+
+      if (dbError) {
+        throw new Error(dbError.message);
+      }
+
+      console.log("[web-push] Token saved to Supabase successfully");
+      return;
+    } catch (err: any) {
+      console.error(`[web-push] Save attempt ${attempt} failed:`, err?.message);
+      if (attempt < 3) {
+        await new Promise((r) => setTimeout(r, 1000 * attempt));
+      } else {
+        throw new Error(`Failed to save token after 3 attempts: ${err?.message}`);
+      }
+    }
+  }
+}
+
+/**
  * Register for web push notifications.
  * Requests permission, registers the Firebase messaging service worker,
  * gets an FCM token, and saves it to Supabase.
+ * 
+ * Handles Android-specific issues:
+ * - AbortError from slow push subscription (retries with backoff)
+ * - Service worker conflicts (reuses existing registrations)
+ * - Slow SW activation (30s timeout instead of 10s)
  * 
  * @returns The FCM token string, or null if registration failed.
  */
@@ -62,53 +208,15 @@ export async function registerWebPush(userId: string): Promise<string | null> {
     }
     console.log("[web-push] Firebase Messaging initialized");
 
-    // 3. Register the Firebase messaging service worker
-    const swRegistration = await navigator.serviceWorker.register(
-      "/firebase-messaging-sw.js",
-      { scope: "/firebase-cloud-messaging-push-scope" }
-    );
-    console.log("[web-push] Service worker registered, state:",
-      swRegistration.active?.state ?? swRegistration.installing?.state ?? swRegistration.waiting?.state);
+    // 3. Get or reuse the Firebase messaging service worker (don't re-register)
+    const swRegistration = await getOrRegisterServiceWorker();
 
-    // 4. Wait for the service worker to become active
-    if (!swRegistration.active) {
-      await new Promise<void>((resolve, reject) => {
-        const sw = swRegistration.installing || swRegistration.waiting;
-        if (!sw) { reject(new Error("No service worker installing/waiting")); return; }
-        sw.addEventListener("statechange", () => {
-          if (sw.state === "activated") resolve();
-          if (sw.state === "redundant") reject(new Error("Service worker became redundant"));
-        });
-        // Timeout after 10 seconds
-        setTimeout(() => reject(new Error("Service worker activation timed out")), 10000);
-      });
-      console.log("[web-push] Service worker now active");
-    }
+    // 4. Get FCM token with retry logic for Android AbortError
+    const token = await getTokenWithRetry(messaging, swRegistration);
 
-    // 5. Get FCM token
-    const token = await getToken(messaging, {
-      vapidKey: VAPID_KEY,
-      serviceWorkerRegistration: swRegistration,
-    });
+    // 5. Save token to Supabase with retry
+    await saveTokenToSupabase(userId, token);
 
-    if (!token) {
-      throw new Error("getToken returned empty — check VAPID key and Firebase config");
-    }
-
-    console.log("[web-push] FCM token obtained:", token.substring(0, 20) + "...");
-
-    // 6. Save token to Supabase
-    const { error: dbError } = await supabase
-      .from("profiles")
-      .update({ fcm_token: token })
-      .eq("id", userId);
-
-    if (dbError) {
-      console.error("[web-push] Supabase save error:", dbError);
-      throw new Error(`Failed to save token: ${dbError.message}`);
-    }
-
-    console.log("[web-push] Token saved to Supabase successfully");
     return token;
   } catch (error: any) {
     console.error("[web-push] Registration failed:", error);

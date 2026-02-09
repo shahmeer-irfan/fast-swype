@@ -82,11 +82,6 @@ export default function InstallPage() {
                 <p>Open FastSwype from your home screen. It works offline and sends push notifications just like a native app.</p>
               </div>
             </div>
-
-            <div className="alternative">
-              <h4>Alternative: Download APK</h4>
-              <p>If you prefer sideloading, download our <a href="/fastswype.apk" download>Android APK file</a> and enable "Install from Unknown Sources" in Settings.</p>
-            </div>
           </div>
         )}
 

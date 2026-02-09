@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import BrutalistPattern from "@/components/BrutalistPattern";
@@ -9,8 +9,6 @@ import { useClickSound } from "@/hooks/useClickSound";
 export default function Home() {
   const { playConfirm, playHover, playClick } = useClickSound();
   const [installPrompt, setInstallPrompt] = useState<any>(null);
-  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
-  const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
 
   // Capture PWA install prompt
   useEffect(() => {
@@ -22,26 +20,6 @@ export default function Home() {
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  // Intersection Observer for scroll animations
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisibleSections((prev) => new Set(prev).add(entry.target.id));
-          }
-        });
-      },
-      { threshold: 0.15 }
-    );
-
-    Object.values(sectionRefs.current).forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
   const handleInstall = async () => {
     if (installPrompt) {
       playConfirm();
@@ -51,10 +29,6 @@ export default function Home() {
         setInstallPrompt(null);
       }
     }
-  };
-
-  const setSectionRef = (id: string) => (el: HTMLElement | null) => {
-    sectionRefs.current[id] = el;
   };
 
   return (
@@ -75,8 +49,8 @@ export default function Home() {
             Fast<span className="highlight">Swype</span>
           </h1>
           <p className="hero-tagline">
-            Stop searching WhatsApp groups.<br />
-            <span className="tagline-emphasis">Swipe. Match. Build your FYP.</span>
+            No more WhatsApp group chaos.<br />
+            <span className="tagline-emphasis">Match. Partner. Build.</span>
           </p>
 
           {/* Stats bar */}
@@ -108,86 +82,75 @@ export default function Home() {
                 Continue on Web →
               </button>
             </Link>
-            <button
-              className="cta-secondary"
-              onClick={handleInstall}
-              onMouseEnter={playHover}
-              style={{ opacity: installPrompt ? 1 : 0.5, pointerEvents: installPrompt ? "auto" : "none" }}
-            >
-              📲 Install App
-            </button>
+            <Link href="/install">
+              <button
+                className="cta-secondary"
+                onClick={playClick}
+                onMouseEnter={playHover}
+              >
+                📲 Install App
+              </button>
+            </Link>
           </div>
 
-          {/* Scroll hint */}
-          <div className="scroll-hint">
-            <span>Scroll to see why we're different</span>
-            <div className="scroll-arrow">↓</div>
-          </div>
+
         </div>
       </section>
 
-      {/* ═══════════════ SECTION 2: WHY FASTSWYPE ═══════════════ */}
-      <section
-        id="why-fastswype"
-        ref={setSectionRef("why-fastswype")}
-        className={`content-section ${visibleSections.has("why-fastswype") ? "visible" : ""}`}
-      >
+      {/* ═══════════════ SECTION 2: HOW IT WORKS ═══════════════ */}
+      <section className="content-section">
         <div className="section-inner">
-          <div className="section-badge">REALITY CHECK</div>
+          <div className="section-badge">THE REAL DEAL</div>
           <h2 className="section-title">
-            Why login on a website<br />when you can install it?
+            Add to home screen.<br />Works like a native app.
           </h2>
           <div className="roast-grid">
             <div className="roast-card" onMouseEnter={playHover}>
               <div className="roast-icon">📱</div>
-              <h3>iOS + Android</h3>
-              <p>Web-only apps? Cute. <strong>We're installable on any device.</strong> Add to home screen, works offline, feels native. No app store needed.</p>
+              <h3>Install Anywhere</h3>
+              <p>iPhone or Android. <strong>No app store. No download.</strong> Just add to home screen and you're set.</p>
             </div>
             <div className="roast-card" onMouseEnter={playHover}>
               <div className="roast-icon">⚡</div>
-              <h3>Zero Complexity</h3>
-              <p>No 20-question personality quiz. <strong>Add your skills, set your domain, start swiping.</strong> That's it. Under 2 minutes.</p>
+              <h3>Setup in seconds</h3>
+              <p><strong>Skills. Domain. Done.</strong> Start matching in under 2 minutes.</p>
             </div>
             <div className="roast-card" onMouseEnter={playHover}>
               <div className="roast-icon">🔔</div>
-              <h3>Never Miss a Match</h3>
-              <p><strong>Push notifications when you get a proposal</strong> — even when your phone is locked. Works across all FAST campuses with campus filters.</p>
+              <h3>Get Notified</h3>
+              <p><strong>Real-time alerts</strong> when someone wants to team up. Even when your phone's locked.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════ SECTION 3: HOW IT WORKS ═══════════════ */}
-      <section
-        id="how-it-works"
-        ref={setSectionRef("how-it-works")}
-        className={`content-section ${visibleSections.has("how-it-works") ? "visible" : ""}`}
-      >
+      {/* ═══════════════ SECTION 3: 3 STEPS ═══════════════ */}
+      <section className="content-section">
         <div className="section-inner">
           <div className="section-badge">3 STEPS</div>
-          <h2 className="section-title">Dead simple.</h2>
+          <h2 className="section-title">How it works</h2>
           <div className="steps-container">
             <div className="step" onMouseEnter={playHover}>
               <div className="step-number">01</div>
               <div className="step-content">
-                <h3>Build your profile</h3>
-                <p>Add your real skills, domain, and what you're looking for. No fluff.</p>
+                <h3>Set up profile</h3>
+                <p>Add skills, pick domain, specify what you need.</p>
               </div>
             </div>
             <div className="step-connector" />
             <div className="step" onMouseEnter={playHover}>
               <div className="step-number">02</div>
               <div className="step-content">
-                <h3>Swipe through profiles</h3>
-                <p>See actual tech stacks, domains, and availability. Left to pass, right to propose.</p>
+                <h3>Browse partners</h3>
+                <p>See skills, domain, campus. Pass or propose.</p>
               </div>
             </div>
             <div className="step-connector" />
             <div className="step" onMouseEnter={playHover}>
               <div className="step-number">03</div>
               <div className="step-content">
-                <h3>Send unlimited proposals</h3>
-                <p>No limits, no paywalls. If they accept, you both get each other's contact info.</p>
+                <h3>Team up</h3>
+                <p>They accept? You both get contact info. Go build.</p>
               </div>
             </div>
           </div>
@@ -195,44 +158,30 @@ export default function Home() {
       </section>
 
       {/* ═══════════════ SECTION 4: FEATURES ═══════════════ */}
-      <section
-        id="features"
-        ref={setSectionRef("features")}
-        className={`content-section ${visibleSections.has("features") ? "visible" : ""}`}
-      >
+      <section className="content-section features-section">
         <div className="section-inner">
-          <div className="section-badge">WHY FASTSWYPE</div>
-          <h2 className="section-title">Built different.</h2>
+          <div className="section-badge">WHAT YOU GET</div>
+          <h2 className="section-title">Everything. For free.</h2>
           <div className="features-grid">
             <div className="feature-card" onMouseEnter={playHover}>
-              <span className="feature-icon">⚡</span>
-              <h3>% Skill Match</h3>
-              <p>See exactly how your skills overlap with each profile — no vibes, just data</p>
-            </div>
-            <div className="feature-card" onMouseEnter={playHover}>
               <span className="feature-icon">🏫</span>
-              <h3>Campus Filter</h3>
-              <p>Lahore, Islamabad, Karachi, Peshawar — find partners from your campus or any FAST campus</p>
+              <h3>Campus Filters</h3>
+              <p>ISB, LHR, KHI, PWR — pick your city</p>
             </div>
             <div className="feature-card" onMouseEnter={playHover}>
               <span className="feature-icon">🔔</span>
-              <h3>Push Notifications</h3>
-              <p>Get notified instantly when someone sends you a proposal or accepts yours — even on mobile</p>
-            </div>
-            <div className="feature-card" onMouseEnter={playHover}>
-              <span className="feature-icon">📱</span>
-              <h3>Install as App</h3>
-              <p>Works on Android & iOS. Add to home screen. No app store needed. Updates automatically</p>
-            </div>
-            <div className="feature-card" onMouseEnter={playHover}>
-              <span className="feature-icon">🔒</span>
-              <h3>FAST Verified</h3>
-              <p>Only @nu.edu.pk emails allowed. No random people, no spam, just FAST students</p>
+              <h3>Push Alerts</h3>
+              <p>Get pinged when someone proposes or accepts</p>
             </div>
             <div className="feature-card" onMouseEnter={playHover}>
               <span className="feature-icon">♾️</span>
-              <h3>Zero Limits</h3>
-              <p>Unlimited swipes. Unlimited proposals. No premium tier. No "upgrade to unlock." Free.</p>
+              <h3>No Limits</h3>
+              <p>Unlimited proposals. No paywall. Ever.</p>
+            </div>
+            <div className="feature-card" onMouseEnter={playHover}>
+              <span className="feature-icon">📱</span>
+              <h3>Works Offline</h3>
+              <p>Install once. Runs like a native app.</p>
             </div>
           </div>
         </div>
@@ -241,17 +190,13 @@ export default function Home() {
 
 
       {/* ═══════════════ SECTION 6: FINAL CTA ═══════════════ */}
-      <section
-        id="final-cta"
-        ref={setSectionRef("final-cta")}
-        className={`content-section cta-section ${visibleSections.has("final-cta") ? "visible" : ""}`}
-      >
+      <section className="content-section cta-section">
         <div className="section-inner cta-inner">
           <h2 className="cta-title">
-            Your FYP partner is<br />one swipe away.
+            Find your FYP partner.<br />Start now.
           </h2>
           <p className="cta-subtitle">
-            100+ FAST students already here.<br />Real skills. Real people. Completely free.
+            100+ students already matching.<br />No BS. Just partners.
           </p>
           <Link href="/login">
             <button
@@ -259,7 +204,7 @@ export default function Home() {
               onClick={playConfirm}
               onMouseEnter={playHover}
             >
-              START SWIPING — IT'S FREE →
+              GET STARTED →
             </button>
           </Link>
           <div className="creator-section">
@@ -458,43 +403,10 @@ const StyledWrapper = styled.div`
     box-shadow: none;
   }
 
-  /* Scroll hint */
-  .scroll-hint {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    color: #555;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    animation: fadeInUp 0.6s ease-out 0.6s both;
-  }
-
-  .scroll-arrow {
-    font-size: 18px;
-    animation: bounce 2s infinite;
-  }
-
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(8px); }
-    60% { transform: translateY(4px); }
-  }
-
   /* ══════════ CONTENT SECTIONS ══════════ */
   .content-section {
     padding: 100px 20px;
     position: relative;
-    opacity: 0;
-    transform: translateY(40px);
-    transition: all 0.7s ease-out;
-  }
-
-  .content-section.visible {
-    opacity: 1;
-    transform: translateY(0);
   }
 
   .section-inner {
@@ -631,47 +543,71 @@ const StyledWrapper = styled.div`
     margin-left: 50px;
   }
 
+  /* ══════════ FEATURES SECTION ══════════ */
+  .features-section {
+    padding: 120px 20px;
+    background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+  }
+
+  .features-section .section-inner {
+    max-width: 1000px;
+  }
+
+  .features-section .section-badge {
+    padding: 8px 20px;
+    font-size: 13px;
+    letter-spacing: 3px;
+  }
+
+  .features-section .section-title {
+    font-size: 56px;
+    margin-bottom: 50px;
+  }
+
   /* ══════════ FEATURES GRID ══════════ */
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto;
   }
 
   .feature-card {
     background: #2d2d2d;
-    border: 3px solid #000;
-    padding: 24px 20px;
-    box-shadow: 4px 4px 0 #333;
+    border: 4px solid #000;
+    padding: 40px 32px;
+    box-shadow: 8px 8px 0 #4387f4;
     transition: all 0.2s;
+    text-align: center;
   }
 
   .feature-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #4387f4;
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0 #4387f4;
     border-color: #4387f4;
   }
 
   .feature-icon {
-    font-size: 28px;
+    font-size: 56px;
     display: block;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
   }
 
   .feature-card h3 {
-    font-size: 15px;
+    font-size: 22px;
     font-weight: 900;
     text-transform: uppercase;
     color: #fff;
-    margin-bottom: 6px;
-    letter-spacing: -0.3px;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
   }
 
   .feature-card p {
-    font-size: 13px;
-    font-weight: 500;
-    color: #888;
-    line-height: 1.5;
+    font-size: 16px;
+    font-weight: 600;
+    color: #bbb;
+    line-height: 1.6;
   }
 
 
@@ -827,9 +763,34 @@ const StyledWrapper = styled.div`
       min-width: 44px;
     }
 
-    .roast-grid,
+    .roast-grid {
+      grid-template-columns: 1fr;
+    }
+
     .features-grid {
       grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .feature-card {
+      padding: 36px 28px;
+      box-shadow: 6px 6px 0 #4387f4;
+    }
+
+    .feature-card:hover {
+      box-shadow: 9px 9px 0 #4387f4;
+    }
+
+    .feature-icon {
+      font-size: 48px;
+    }
+
+    .feature-card h3 {
+      font-size: 20px;
+    }
+
+    .feature-card p {
+      font-size: 15px;
     }
 
     .comparison-header > div,
@@ -840,6 +801,14 @@ const StyledWrapper = styled.div`
 
     .content-section {
       padding: 60px 16px;
+    }
+
+    .features-section {
+      padding: 80px 20px;
+    }
+
+    .features-section .section-title {
+      font-size: 42px;
     }
   }
 

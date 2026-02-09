@@ -189,7 +189,7 @@ export default function SwipePage() {
     <StyledWrapper>
       <BrutalistPattern />
       <Tooltip 
-        message="Swipe left to pass, right to send a proposal! Unlimited proposals — go wild!"
+        message="Use the buttons below to pass or send a proposal. Unlimited proposals — go wild!"
         storageKey="swipe_intro"
         delay={1000}
       />

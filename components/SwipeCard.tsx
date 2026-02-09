@@ -17,7 +17,7 @@ interface SwipeCardProps {
 
 export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCardProps) {
   const { user, profile: authProfile } = useAuth();
-  const { playClick, playDismiss, playConfirm, playWoosh } = useClickSound();
+  const { playClick, playDismiss, playConfirm, playWoosh, playHover } = useClickSound();
   const [isFlipped, setIsFlipped] = useState(false);
   const [proposalText, setProposalText] = useState("");
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -110,19 +110,21 @@ export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCa
   };
 
   const handleDragEnd = (event: any, info: PanInfo) => {
-    if (info.offset.x > 100) {
-      // Swipe right - just flip card (no swipe animation)
-      playClick();
-      setIsFlipped(true);
-    } else if (info.offset.x < -100) {
-      // Swipe left - reject with animation
-      setExitX(-200);
-      playWoosh();
-      playDismiss();
-      setTimeout(() => {
-        onSwipe("left");
-      }, 300);
-    }
+    // Disabled - using buttons now
+  };
+
+  const handlePassButton = () => {
+    playWoosh();
+    playDismiss();
+    setExitX(-200);
+    setTimeout(() => {
+      onSwipe("left");
+    }, 300);
+  };
+
+  const handleProposeButton = () => {
+    playClick();
+    setIsFlipped(true);
   };
 
   return (
@@ -234,107 +236,89 @@ export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCa
         </div>
       )}
       
-      <motion.div 
-        className={`brutalist-card ${isFlipped ? 'flipped' : ''}`}
-        style={{ x, rotate, opacity }}
-        drag={!isFlipped ? "x" : false}
-        dragConstraints={{ left: 0, right: 0 }}
-        onDragEnd={handleDragEnd}
-        animate={exitX !== 0 ? { x: exitX, opacity: 0 } : {}}
-        transition={{ duration: 0.3 }}
-      >
-        {/* Swipe Indicators */}
+      <div className="card-layout">
+        {/* Left: Pass Button */}
         {!isFlipped && (
-          <>
-            <div className="swipe-indicator left-indicator">
-              <div className="indicator-content">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="19" y1="12" x2="5" y2="12"></line>
-                  <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-                <span>PASS</span>
-              </div>
-            </div>
-            
-            <div className="swipe-indicator right-indicator">
-              <div className="indicator-content">
-                <span>PROPOSE</span>
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </div>
-            </div>
-          </>
+          <button 
+            className="side-btn pass-btn"
+            onClick={handlePassButton}
+            onMouseEnter={playHover}
+            type="button"
+            title="Pass"
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         )}
+
+        <motion.div 
+          className={`brutalist-card ${isFlipped ? 'flipped' : ''}`}
+          style={{ opacity }}
+          animate={exitX !== 0 ? { x: exitX, opacity: 0 } : {}}
+          transition={{ duration: 0.3 }}
+        >
         
-        <div className="card-inner">
-          {/* Front of card */}
-          <div className="card-front">
-            {/* Top Row: Avatar + Info side by side */}
-            <div className="card-top">
-              {profile.profile_picture_url ? (
-                <div className="avatar">
-                  <img src={profile.profile_picture_url} alt={profile.name} />
+          <div className="card-inner">
+            {/* Front of card */}
+            <div className="card-front">
+              {/* Top Row: Avatar + Info side by side */}
+              <div className="card-top">
+                {profile.profile_picture_url ? (
+                  <div className="avatar">
+                    <img src={profile.profile_picture_url} alt={profile.name} />
+                  </div>
+                ) : (
+                  <div className="avatar avatar-placeholder">
+                    <span>{profile.name.charAt(0).toUpperCase()}</span>
+                  </div>
+                )}
+                <div className="card-top-info">
+                  <div className="card-name">{profile.name}</div>
+                  <div className="card-dept">{profile.department}</div>
+                  <div className="card-batch-campus">{profile.batch} • {profile.campus}</div>
                 </div>
-              ) : (
-                <div className="avatar avatar-placeholder">
-                  <span>{profile.name.charAt(0).toUpperCase()}</span>
-                </div>
-              )}
-              <div className="card-top-info">
-                <div className="card-name">{profile.name}</div>
-                <div className="card-dept">{profile.department}</div>
-                <div className="card-batch-campus">{profile.batch} • {profile.campus}</div>
+              </div>
+
+              {/* Content Area */}
+              <div className="card-body">
+                {profile.bio && profile.bio !== 'No bio yet' ? (
+                  <p className="card-bio">{profile.bio}</p>
+                ) : (
+                  <p className="card-bio card-bio-empty">No bio added yet</p>
+                )}
+
+                {profile.looking_for && profile.looking_for !== 'Not specified' && (
+                  <div className="card-tag-row">
+                    <span className="card-tag-label">LOOKING FOR</span>
+                    <span className="card-tag-value">{profile.looking_for}</span>
+                  </div>
+                )}
+
+                {profile.domain && (
+                  <div className="card-tag-row">
+                    <span className="card-tag-label">DOMAIN</span>
+                    <span className="card-tag-value">{profile.domain}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* View Profile Button */}
+              <div className="card-actions">
+                <button 
+                  className="btn-view-profile" 
+                  onClick={handleViewProfile}
+                  onMouseEnter={playClick}
+                  type="button"
+                >
+                  👤 View Full Profile
+                </button>
               </div>
             </div>
 
-            {/* Content Area */}
-            <div className="card-body">
-              {profile.bio && profile.bio !== 'No bio yet' ? (
-                <p className="card-bio">{profile.bio}</p>
-              ) : (
-                <p className="card-bio card-bio-empty">No bio added yet</p>
-              )}
-
-              {profile.looking_for && profile.looking_for !== 'Not specified' && (
-                <div className="card-tag-row">
-                  <span className="card-tag-label">LOOKING FOR</span>
-                  <span className="card-tag-value">{profile.looking_for}</span>
-                </div>
-              )}
-
-              {profile.domain && (
-                <div className="card-tag-row">
-                  <span className="card-tag-label">DOMAIN</span>
-                  <span className="card-tag-value">{profile.domain}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Actions */}
-            <div className="card-actions">
-              <button 
-                className="btn-secondary" 
-                onClick={handleViewProfile}
-                onMouseEnter={playClick}
-                type="button"
-              >
-                Full Profile
-              </button>
-              <button 
-                className="btn-primary" 
-                onClick={handleFlip}
-                onMouseEnter={playClick}
-                type="button"
-              >
-                Propose →
-              </button>
-            </div>
-          </div>
-
-          {/* Back of card - Proposal form */}
-          <div className="card-back">
+            {/* Back of card - Proposal form */}
+            <div className="card-back">
             <div className="brutalist-card__header">
               <div className="brutalist-card__name">Slide Into DMs</div>
               <div className="proposal-to">to {profile.name}</div>
@@ -383,6 +367,22 @@ export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCa
           </div>
         </div>
       </motion.div>
+
+      {/* Right: Propose Button */}
+      {!isFlipped && (
+        <button 
+          className="side-btn propose-btn"
+          onClick={handleProposeButton}
+          onMouseEnter={playHover}
+          type="button"
+          title="Propose"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </button>
+      )}
+      </div>
     </StyledWrapper>
   );
 }
@@ -393,11 +393,6 @@ const StyledWrapper = styled.div`
     height: 500px;
     perspective: 1000px;
     position: relative;
-    cursor: grab;
-  }
-
-  .brutalist-card:active {
-    cursor: grabbing;
   }
 
   .card-inner {
@@ -673,81 +668,6 @@ const StyledWrapper = styled.div`
     text-transform: uppercase;
     display: inline-block;
     box-shadow: 3px 3px 0 #2c5aa0;
-  }
-
-  .swipe-indicator {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    z-index: 10;
-    padding: 20px;
-  }
-
-  .left-indicator {
-    left: -80px;
-  }
-
-  .right-indicator {
-    right: -80px;
-  }
-
-  .indicator-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    animation: bounce 0.6s ease-in-out infinite;
-  }
-
-  .left-indicator .indicator-content {
-    color: #ff4444;
-  }
-
-  .right-indicator .indicator-content {
-    color: #00ff88;
-  }
-
-  .indicator-content span {
-    font-size: 18px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-  }
-
-  @keyframes bounce {
-    0%, 100% {
-      transform: translateX(0);
-    }
-    50% {
-      transform: translateX(${props => props.className?.includes('left') ? '-10px' : '10px'});
-    }
-  }
-
-  .left-indicator .indicator-content {
-    animation: bounceLeft 0.6s ease-in-out infinite;
-  }
-
-  .right-indicator .indicator-content {
-    animation: bounceRight 0.6s ease-in-out infinite;
-  }
-
-  @keyframes bounceLeft {
-    0%, 100% {
-      transform: translateX(0);
-    }
-    50% {
-      transform: translateX(-10px);
-    }
-  }
-
-  @keyframes bounceRight {
-    0%, 100% {
-      transform: translateX(0);
-    }
-    50% {
-      transform: translateX(10px);
-    }
   }
 
   .brutalist-card__actions {
@@ -1226,6 +1146,64 @@ const StyledWrapper = styled.div`
   }
 
   .card-back .content-section {
+    flex-shrink: 0;
+  }
+
+  /* ═══ SWIPE BUTTONS ═══ */
+  .swipe-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    justify-content: center;
+  }
+
+  .swipe-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 3px solid #000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .pass-btn {
+    background: #ff4444;
+    color: #fff;
+    box-shadow: 6px 6px 0 #cc0000;
+  }
+
+  .pass-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #cc0000;
+  }
+
+  .pass-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+  }
+
+  .propose-btn {
+    background: #00ff88;
+    color: #000;
+    box-shadow: 6px 6px 0 #00cc66;
+  }
+
+  .propose-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #00cc66;
+  }
+
+  .propose-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+  }
+
+  .swipe-btn svg {
     flex-shrink: 0;
   }
 `;

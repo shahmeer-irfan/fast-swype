@@ -107,7 +107,15 @@ export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCa
   };
 
   const handleDragEnd = (event: any, info: PanInfo) => {
-    // Disabled - using buttons now
+    const threshold = 100;
+    if (info.offset.x > threshold) {
+      // Swiped right = propose
+      playClick();
+      setIsFlipped(true);
+    } else if (info.offset.x < -threshold) {
+      // Swiped left = pass
+      handlePassButton();
+    }
   };
 
   const handlePassButton = () => {
@@ -252,6 +260,11 @@ export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCa
 
         <motion.div 
           className={`brutalist-card ${isFlipped ? 'flipped' : ''}`}
+          drag={!isFlipped ? "x" : false}
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.7}
+          onDragEnd={handleDragEnd}
+          style={{ x, rotate: !isFlipped ? rotate : 0 }}
           animate={exitX !== 0 ? { x: exitX, opacity: 0 } : {}}
           transition={{ duration: 0.3 }}
         >

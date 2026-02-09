@@ -108,14 +108,15 @@ export default function Home() {
                 Continue on Web →
               </button>
             </Link>
-            <button
-              className="cta-secondary"
-              onClick={handleInstall}
-              onMouseEnter={playHover}
-              style={{ opacity: installPrompt ? 1 : 0.5, pointerEvents: installPrompt ? "auto" : "none" }}
-            >
-              📲 Install App
-            </button>
+            <Link href="/install">
+              <button
+                className="cta-secondary"
+                onClick={playClick}
+                onMouseEnter={playHover}
+              >
+                📲 Install App
+              </button>
+            </Link>
           </div>
 
           {/* Scroll hint */}

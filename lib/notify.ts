@@ -1,7 +1,5 @@
 import { supabase } from "./supabase/client";
 
-const NOTIFICATION_API_KEY = process.env.NEXT_PUBLIC_NOTIFICATION_API_KEY;
-
 interface NotifyPayload {
   userId: string; // User to notify
   title: string;
@@ -11,31 +9,27 @@ interface NotifyPayload {
 }
 
 /**
- * Send push notification to a user via API route
+ * Send push notification to a user via API route.
+ * The server looks up the FCM token — we never read it on the client.
  */
 async function triggerNotification(payload: NotifyPayload): Promise<boolean> {
   try {
-    // Get the user's FCM token from their profile
-    const { data: profile, error } = await supabase
-      .from("profiles")
-      .select("fcm_token")
-      .eq("id", payload.userId)
-      .single();
-
-    if (error || !profile?.fcm_token) {
-      console.log("User has no FCM token, skipping notification");
+    // Get current user's Supabase session token for auth
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      console.log("No active session, skipping notification");
       return false;
     }
 
-    // Call our API route to send the push notification
+    // Call our API route — server handles fcm_token lookup
     const response = await fetch("/api/send-notification", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${NOTIFICATION_API_KEY}`,
+        Authorization: `Bearer ${session.access_token}`,
       },
       body: JSON.stringify({
-        token: profile.fcm_token,
+        userId: payload.userId,
         title: payload.title,
         body: payload.body,
         link: payload.link,

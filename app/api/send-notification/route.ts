@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 // Sends push notifications via Firebase Cloud Messaging HTTP v1 API.
 // Uses service account credentials for OAuth2 authentication.
-// This delivers web push notifications to PWA users via FCM web push.
-// Background messages are handled by the firebase-messaging-sw.js service worker.
+// The caller's Supabase session is verified — no API keys are exposed to the client.
+
+// Admin client for server-side fcm_token lookup (bypasses RLS)
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  { auth: { autoRefreshToken: false, persistSession: false } }
+);
 
 interface SendNotificationPayload {
   token: string;
@@ -171,26 +178,45 @@ async function sendPushNotification(payload: SendNotificationPayload): Promise<b
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify the request has required auth
+    // 1. Verify caller via Supabase auth token
     const authHeader = request.headers.get("authorization");
-    const expectedKey = process.env.NOTIFICATION_API_KEY;
-
-    if (!expectedKey || authHeader !== `Bearer ${expectedKey}`) {
+    if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { token, title, body: messageBody, link, tag } = body;
+    const accessToken = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
 
-    if (!token || !title || !messageBody) {
+    if (authError || !user) {
+      return NextResponse.json({ error: "Invalid session" }, { status: 401 });
+    }
+
+    // 2. Parse request body
+    const body = await request.json();
+    const { userId, title, body: messageBody, link, tag } = body;
+
+    if (!userId || !title || !messageBody) {
       return NextResponse.json(
-        { error: "Missing required fields: token, title, body" },
+        { error: "Missing required fields: userId, title, body" },
         { status: 400 }
       );
     }
 
+    // 3. Look up target user's FCM token server-side (bypasses RLS)
+    const { data: targetProfile, error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .select("fcm_token")
+      .eq("id", userId)
+      .single();
+
+    if (profileError || !targetProfile?.fcm_token) {
+      // User has no FCM token — not an error, just skip
+      return NextResponse.json({ success: true, skipped: true });
+    }
+
+    // 4. Send push notification via FCM
     const success = await sendPushNotification({
-      token,
+      token: targetProfile.fcm_token,
       title,
       body: messageBody,
       link,

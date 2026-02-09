@@ -104,3 +104,92 @@ input, textarea {
   font-family: "Lexend Deca", sans-serif;
   font-weight: 400;
 }
+
+/* ═════════ GLOBAL FLOATING ORBS ═════════ */
+.global-orbs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.global-orbs .orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.12;
+}
+
+.global-orbs .orb-1 {
+  width: 350px;
+  height: 350px;
+  background: #4387f4;
+  top: -80px;
+  right: -60px;
+  animation: orbFloat1 8s ease-in-out infinite;
+}
+
+.global-orbs .orb-2 {
+  width: 250px;
+  height: 250px;
+  background: #10b981;
+  bottom: 10%;
+  left: -40px;
+  animation: orbFloat2 10s ease-in-out infinite;
+}
+
+.global-orbs .orb-3 {
+  width: 200px;
+  height: 200px;
+  background: #a855f7;
+  top: 40%;
+  right: 15%;
+  animation: orbFloat3 12s ease-in-out infinite;
+}
+
+.global-orbs .orb-4 {
+  width: 180px;
+  height: 180px;
+  background: #4387f4;
+  bottom: -60px;
+  right: 30%;
+  animation: orbFloat4 9s ease-in-out infinite;
+}
+
+.global-orbs .orb-5 {
+  width: 120px;
+  height: 120px;
+  background: #f59e0b;
+  top: 20%;
+  left: 20%;
+  animation: orbFloat5 11s ease-in-out infinite;
+}
+
+@keyframes orbFloat1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-40px, 60px) scale(1.1); }
+  66% { transform: translate(30px, -30px) scale(0.9); }
+}
+
+@keyframes orbFloat2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(60px, -40px) scale(1.15); }
+}
+
+@keyframes orbFloat3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-50px, 30px) scale(1.1); }
+  75% { transform: translate(20px, -50px) scale(0.95); }
+}
+
+@keyframes orbFloat4 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40% { transform: translate(40px, -60px) scale(1.2); }
+  80% { transform: translate(-30px, 20px) scale(0.9); }
+}
+
+@keyframes orbFloat5 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-30px, 50px) scale(1.1); }
+}

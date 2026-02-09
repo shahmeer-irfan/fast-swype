@@ -35,6 +35,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Changa+One:ital@0;1&family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet" />
       </head>
       <body className="antialiased">
+        {/* Global floating orbs animation */}
+        <div className="global-orbs">
+          <div className="orb orb-1" />
+          <div className="orb orb-2" />
+          <div className="orb orb-3" />
+          <div className="orb orb-4" />
+          <div className="orb orb-5" />
+        </div>
+
         <StyledComponentsRegistry>
           <AuthProvider>
             <NotificationHandler />

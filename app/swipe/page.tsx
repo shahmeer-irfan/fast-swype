@@ -492,6 +492,9 @@ const StyledWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .card-container .brutalist-card {
     animation: slideInFromRight 0.4s ease-out;
   }
 

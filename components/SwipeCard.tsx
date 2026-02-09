@@ -28,9 +28,6 @@ export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCa
 
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 0, 200], [-25, 0, 25]);
-  const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0, 1, 1, 1, 0]);
-  const leftIndicatorOpacity = useTransform(x, [-100, -50, 0], [1, 0.5, 0]);
-  const rightIndicatorOpacity = useTransform(x, [0, 50, 100], [0, 0.5, 1]);
 
   // Calculate skill match percentage
   const skillMatch = (() => {
@@ -255,7 +252,6 @@ export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCa
 
         <motion.div 
           className={`brutalist-card ${isFlipped ? 'flipped' : ''}`}
-          style={{ opacity }}
           animate={exitX !== 0 ? { x: exitX, opacity: 0 } : {}}
           transition={{ duration: 0.3 }}
         >
@@ -388,6 +384,59 @@ export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCa
 }
 
 const StyledWrapper = styled.div`
+  /* ═══ CARD LAYOUT: Side buttons + Card ═══ */
+  .card-layout {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center;
+  }
+
+  .side-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .side-btn.pass-btn {
+    background: #ff4444;
+    color: #fff;
+    box-shadow: 4px 4px 0 #cc0000;
+  }
+
+  .side-btn.pass-btn:hover {
+    transform: scale(1.15);
+    box-shadow: 6px 6px 0 #cc0000;
+  }
+
+  .side-btn.pass-btn:active {
+    transform: scale(0.95);
+    box-shadow: none;
+  }
+
+  .side-btn.propose-btn {
+    background: #10b981;
+    color: #fff;
+    box-shadow: 4px 4px 0 #059669;
+  }
+
+  .side-btn.propose-btn:hover {
+    transform: scale(1.15);
+    box-shadow: 6px 6px 0 #059669;
+  }
+
+  .side-btn.propose-btn:active {
+    transform: scale(0.95);
+    box-shadow: none;
+  }
+
   .brutalist-card {
     width: 350px;
     height: 500px;
@@ -584,45 +633,29 @@ const StyledWrapper = styled.div`
 
   /* Card Actions */
   .card-actions {
-    display: flex;
-    gap: 0;
     border-top: 3px solid #000;
   }
 
-  .btn-secondary, .btn-primary {
-    flex: 1;
-    padding: 16px;
-    font-size: 13px;
+  .btn-view-profile {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 14px;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
-  }
-
-  .btn-secondary {
     background: #1a1a1a;
-    color: #999;
-    border-right: 3px solid #000;
+    color: #aaa;
   }
 
-  .btn-secondary:hover {
-    background: #333;
-    color: #fff;
-  }
-
-  .btn-primary {
+  .btn-view-profile:hover {
     background: #4387f4;
     color: #fff;
   }
 
-  .btn-primary:hover {
-    background: #00ff00;
-    color: #000;
-  }
-
-  .btn-secondary:active, .btn-primary:active {
+  .btn-view-profile:active {
     transform: scale(0.97);
   }
 
@@ -1149,61 +1182,38 @@ const StyledWrapper = styled.div`
     flex-shrink: 0;
   }
 
-  /* ═══ SWIPE BUTTONS ═══ */
-  .swipe-buttons {
-    display: flex;
-    gap: 16px;
-    margin-top: 20px;
-    justify-content: center;
-  }
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 500px) {
+    .side-btn {
+      width: 52px;
+      height: 52px;
+    }
 
-  .swipe-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 16px 32px;
-    font-size: 16px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border: 3px solid #000;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
+    .side-btn svg {
+      width: 22px;
+      height: 22px;
+    }
 
-  .pass-btn {
-    background: #ff4444;
-    color: #fff;
-    box-shadow: 6px 6px 0 #cc0000;
-  }
+    .card-layout {
+      gap: 10px;
+    }
 
-  .pass-btn:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 9px 9px 0 #cc0000;
-  }
+    .brutalist-card {
+      width: 260px;
+      height: 440px;
+    }
 
-  .pass-btn:active {
-    transform: translate(4px, 4px);
-    box-shadow: none;
-  }
+    .card-name {
+      font-size: 20px;
+    }
 
-  .propose-btn {
-    background: #00ff88;
-    color: #000;
-    box-shadow: 6px 6px 0 #00cc66;
-  }
+    .avatar {
+      width: 70px;
+      height: 70px;
+    }
 
-  .propose-btn:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 9px 9px 0 #00cc66;
-  }
-
-  .propose-btn:active {
-    transform: translate(4px, 4px);
-    box-shadow: none;
-  }
-
-  .swipe-btn svg {
-    flex-shrink: 0;
+    .avatar-placeholder span {
+      font-size: 30px;
+    }
   }
 `;

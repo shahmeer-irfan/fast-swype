@@ -120,23 +120,20 @@ async function sendPushNotification(payload: SendNotificationPayload): Promise<b
         body: JSON.stringify({
           message: {
             token: payload.token,
-            notification: {
+            // Data-only message — no "notification" field.
+            // This prevents the browser from auto-displaying a notification
+            // while the service worker's onBackgroundMessage also shows one (duplicate).
+            data: {
               title: payload.title,
               body: payload.body,
-            },
-            data: {
               link: payload.link || "/proposals",
               tag: payload.tag || "fastswype",
+              icon: "/icons/icon-192x192.png",
+              badge: "/icons/icon-72x72.png",
             },
             webpush: {
               fcm_options: {
                 link: payload.link || "/proposals",
-              },
-              notification: {
-                icon: "/icons/icon-192x192.png",
-                badge: "/icons/icon-72x72.png",
-                vibrate: [200, 100, 200],
-                require_interaction: "true",
               },
             },
           },

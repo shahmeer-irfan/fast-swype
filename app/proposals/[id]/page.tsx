@@ -16,7 +16,7 @@ import Loader from "@/components/Loader";
 export default function ProposalDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile: authProfile, loading: authLoading } = useAuth();
   const { playClick, playConfirm, playDismiss, playHover } = useClickSound();
   
   const [proposal, setProposal] = useState<Proposal | null>(null);
@@ -112,7 +112,7 @@ export default function ProposalDetailPage({ params }: { params: Promise<{ id: s
 
       // Send push notification to proposal sender (fire and forget)
       if (proposal.from_user_id) {
-        const accepterName = user?.email || "Someone";
+        const accepterName = authProfile?.name || "Someone";
         notifyProposalAccepted(proposal.from_user_id, accepterName).catch(console.error);
       }
 

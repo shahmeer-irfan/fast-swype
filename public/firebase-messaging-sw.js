@@ -28,15 +28,17 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log("[firebase-messaging-sw.js] Background message received:", payload);
 
-  const notificationTitle = payload.notification?.title || "FastSwype";
-  const notificationBody = payload.notification?.body || "You have a new notification";
+  const notificationTitle = payload.data?.title || payload.notification?.title || "FastSwype";
+  const notificationBody = payload.data?.body || payload.notification?.body || "You have a new notification";
   const link = payload.data?.link || "/proposals";
   const tag = payload.data?.tag || "fastswype";
+  const icon = payload.data?.icon || "/icons/icon-192x192.png";
+  const badge = payload.data?.badge || "/icons/icon-72x72.png";
 
   self.registration.showNotification(notificationTitle, {
     body: notificationBody,
-    icon: "/icons/icon-192x192.png",
-    badge: "/icons/icon-72x72.png",
+    icon: icon,
+    badge: badge,
     tag: tag,
     data: { link },
     vibrate: [200, 100, 200],

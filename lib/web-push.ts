@@ -128,10 +128,13 @@ export function setupWebPushListeners(
 
     onMessage(messaging, (payload) => {
       console.log("Foreground web push message:", payload);
-      if (onNotification && payload.notification) {
+      if (onNotification) {
+        // Support both notification payload and data-only payload
+        const title = payload.notification?.title || payload.data?.title || "FastSwype";
+        const body = payload.notification?.body || payload.data?.body || "You have a new notification";
         onNotification({
-          title: payload.notification.title || "FastSwype",
-          body: payload.notification.body || "You have a new notification",
+          title,
+          body,
           data: payload.data,
         });
       }

@@ -16,7 +16,7 @@ interface SwipeCardProps {
 }
 
 export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCardProps) {
-  const { user } = useAuth();
+  const { user, profile: authProfile } = useAuth();
   const { playClick, playDismiss, playConfirm, playWoosh } = useClickSound();
   const [isFlipped, setIsFlipped] = useState(false);
   const [proposalText, setProposalText] = useState("");
@@ -64,7 +64,7 @@ export default function SwipeCard({ profile, onSwipe, userSkills = [] }: SwipeCa
       }
 
       // Send push notification to receiver (fire and forget)
-      notifyNewProposal(profile.id, user.email || "Someone").catch(console.error);
+      notifyNewProposal(profile.id, authProfile?.name || "Someone").catch(console.error);
 
       // Success - show success message then swipe right
       playConfirm();

@@ -62,8 +62,7 @@ export async function registerWebPush(userId: string): Promise<string | null> {
     }
     console.log("[web-push] Firebase Messaging initialized");
 
-    // 3. Register the Firebase messaging service worker with its OWN scope
-    //    (must NOT be "/" — that conflicts with the PWA service worker from next-pwa)
+    // 3. Register the Firebase messaging service worker
     const swRegistration = await navigator.serviceWorker.register(
       "/firebase-messaging-sw.js",
       { scope: "/firebase-cloud-messaging-push-scope" }

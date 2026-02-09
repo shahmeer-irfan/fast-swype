@@ -51,5 +51,5 @@ public/sw.js.map
 public/workbox-*.js
 public/workbox-*.js.map
 public/swe-worker-*.js
-public/firebase-messaging-sw.js
+# NOTE: Do NOT ignore firebase-messaging-sw.js — it's manually written, not generated
 next-env.d.ts

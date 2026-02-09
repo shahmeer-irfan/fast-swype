@@ -1185,21 +1185,23 @@ const StyledWrapper = styled.div`
   /* ═══ RESPONSIVE ═══ */
   @media (max-width: 500px) {
     .side-btn {
-      width: 52px;
-      height: 52px;
+      width: 44px;
+      height: 44px;
     }
 
     .side-btn svg {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
     }
 
     .card-layout {
-      gap: 10px;
+      gap: 8px;
     }
 
     .brutalist-card {
-      width: 260px;
+      width: calc(100vw - 140px);
+      min-width: 240px;
+      max-width: 320px;
       height: 440px;
     }
 

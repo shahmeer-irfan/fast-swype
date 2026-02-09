@@ -53,18 +53,12 @@ export default function NotificationHandler() {
           // Already registered — set up foreground listeners
           setupWebPushListeners(showToastNotification);
         } else {
-          // No token yet — show prompt so user can opt-in
-          const dismissed = sessionStorage.getItem("notification_prompt_dismissed");
-          if (!dismissed) {
-            setTimeout(() => setShowPrompt(true), 3000);
-          }
+          // No token yet — always show prompt until user enables
+          setTimeout(() => setShowPrompt(true), 2000);
         }
       } catch {
         // Show prompt as fallback
-        const dismissed = sessionStorage.getItem("notification_prompt_dismissed");
-        if (!dismissed) {
-          setTimeout(() => setShowPrompt(true), 3000);
-        }
+        setTimeout(() => setShowPrompt(true), 2000);
       }
     };
     checkExistingToken();
@@ -105,7 +99,10 @@ export default function NotificationHandler() {
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    sessionStorage.setItem("notification_prompt_dismissed", "true");
+    // Re-show after 60 seconds if still not enabled
+    setTimeout(() => {
+      setShowPrompt(true);
+    }, 60000);
   };
 
   const handleToastClick = () => {

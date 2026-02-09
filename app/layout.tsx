@@ -4,7 +4,6 @@ import { AuthProvider } from "@/lib/auth-context";
 import StyledComponentsRegistry from "@/lib/registry";
 import { Analytics } from "@vercel/analytics/react";
 import NotificationHandler from "@/components/NotificationHandler";
-import PWAUpdater from "@/components/PWAUpdater";
 
 export const metadata: Metadata = {
   title: "FastSwype — Find Your FYP Partner | FAST Students",
@@ -39,7 +38,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <StyledComponentsRegistry>
           <AuthProvider>
             <NotificationHandler />
-            <PWAUpdater />
             {children}
           </AuthProvider>
         </StyledComponentsRegistry>

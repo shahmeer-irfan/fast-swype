@@ -9,6 +9,7 @@ import {
   registerWebPush,
   setupWebPushListeners,
 } from "@/lib/web-push";
+import { isMobile } from "@/lib/platform";
 
 /**
  * NotificationHandler — Web push notifications via Firebase Cloud Messaging.
@@ -17,19 +18,21 @@ import {
  * (Add to Home Screen), notifications appear in the Android notification shade
  * even when the browser is closed, just like a native app.
  */
-export default function NotificationHandler() {
+
   const { user } = useAuth();
   const router = useRouter();
   const [showPrompt, setShowPrompt] = useState(false);
   const [toast, setToast] = useState<{ title: string; body: string; link?: string } | null>(null);
   const [supported, setSupported] = useState(false);
+  const [mobile, setMobile] = useState(false);
 
   useEffect(() => {
     setSupported(isWebPushSupported());
+    setMobile(isMobile());
   }, []);
 
   useEffect(() => {
-    if (!user || !supported) return;
+    if (!user || !supported || !mobile) return;
 
     const showToastNotification = (notification: { title: string; body: string; data?: any }) => {
       setToast({
@@ -62,10 +65,10 @@ export default function NotificationHandler() {
       }
     };
     checkExistingToken();
-  }, [user, supported]);
+  }, [user, supported, mobile]);
 
-  // Nothing to render on unsupported browsers
-  if (!supported) return null;
+  // Only show on supported mobile browsers
+  if (!supported || !mobile) return null;
 
   const handleEnable = async () => {
     setShowPrompt(false);

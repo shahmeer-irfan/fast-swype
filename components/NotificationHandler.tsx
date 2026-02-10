@@ -68,7 +68,9 @@ import { isMobile } from "@/lib/platform";
   }, [user, supported, mobile]);
 
   // Only show on supported mobile browsers
-  if (!supported || !mobile) return null;
+  if (!supported || !mobile) {
+    return null;
+  }
 
   const handleEnable = async () => {
     setShowPrompt(false);

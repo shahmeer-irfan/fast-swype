@@ -19,6 +19,7 @@ import { isMobile } from "@/lib/platform";
  * even when the browser is closed, just like a native app.
  */
 
+export default function NotificationHandler() {
   const { user } = useAuth();
   const router = useRouter();
   const [showPrompt, setShowPrompt] = useState(false);
